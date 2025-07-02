@@ -41,7 +41,7 @@ Task ID: {{{taskId}}}
 Status Update Request: {{{statusUpdateNLP}}}
 
 Based on the above information, determine the most appropriate updated status for the task. Respond ONLY with the status, nothing else.
-`,,
+`,
 });
 
 const updateTaskStatusFlow = ai.defineFlow(
@@ -55,4 +55,3 @@ const updateTaskStatusFlow = ai.defineFlow(
     return {updatedStatus: output!.updatedStatus};
   }
 );
-
