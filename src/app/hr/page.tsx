@@ -1,24 +1,122 @@
+
+'use client';
+
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { MoreHorizontal, PlusCircle } from 'lucide-react';
+import { useData } from '@/contexts/data-context';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import type { JobPosting } from '@/lib/data';
+import { Badge } from '@/components/ui/badge';
+import { JobFormDialog } from '@/components/hr/job-form-dialog';
+import { DeleteConfirmationDialog } from '@/components/common/delete-confirmation-dialog';
 
 export default function HRPage() {
+  const { jobPostings, deleteJobPosting } = useData();
+  const [isFormOpen, setFormOpen] = useState(false);
+  const [isConfirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [selectedJob, setSelectedJob] = useState<JobPosting | undefined>(undefined);
+
+  const handleEdit = (job: JobPosting) => {
+    setSelectedJob(job);
+    setFormOpen(true);
+  };
+
+  const handleDelete = (job: JobPosting) => {
+    setSelectedJob(job);
+    setConfirmDeleteOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (selectedJob) {
+      deleteJobPosting(selectedJob.id);
+      setConfirmDeleteOpen(false);
+      setSelectedJob(undefined);
+    }
+  };
+  
+  const openAddDialog = () => {
+    setSelectedJob(undefined);
+    setFormOpen(true);
+  }
+
+  const statusVariant: { [key: string]: "default" | "secondary" | "destructive" } = {
+    'Open': 'default',
+    'Closed': 'secondary',
+    'Archived': 'destructive',
+  };
+
   return (
-    <div className="flex flex-col gap-8">
-      <h1 className="text-3xl font-bold tracking-tight">Human Resources</h1>
-      
-      <Card>
-        <CardHeader>
-          <CardTitle>HR Module</CardTitle>
-          <CardDescription>This section is under development. Future features for managing HR tasks will be available here.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-lg">
-            <p className="text-muted-foreground">Coming Soon</p>
-            <p className="text-sm text-muted-foreground mt-2">Features like payroll, benefits administration, and compliance management will be integrated here.</p>
-            <Button variant="outline" className="mt-4">Request a Feature</Button>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+    <>
+      <div className="flex flex-col gap-8">
+        <h1 className="text-3xl font-bold tracking-tight">Human Resources</h1>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div>
+              <CardTitle>Job Postings</CardTitle>
+              <CardDescription>Manage open positions and recruitment pipelines.</CardDescription>
+            </div>
+            <Button size="sm" onClick={openAddDialog}>
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Add Job Posting
+            </Button>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Title</TableHead>
+                  <TableHead>Department</TableHead>
+                  <TableHead>Location</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead><span className="sr-only">Actions</span></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {jobPostings.map((job) => (
+                  <TableRow key={job.id}>
+                    <TableCell className="font-medium">{job.title}</TableCell>
+                    <TableCell>{job.department}</TableCell>
+                    <TableCell>{job.location}</TableCell>
+                    <TableCell>
+                      <Badge variant={statusVariant[job.status]}>{job.status}</Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => handleEdit(job)}>Edit</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleDelete(job)} className="text-destructive">Delete</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
+
+      <JobFormDialog
+        open={isFormOpen}
+        onOpenChange={setFormOpen}
+        job={selectedJob}
+      />
+      <DeleteConfirmationDialog
+        open={isConfirmDeleteOpen}
+        onOpenChange={setConfirmDeleteOpen}
+        onConfirm={confirmDelete}
+        title="Are you sure you want to delete this job posting?"
+        description="This action cannot be undone. This will permanently remove the job posting."
+      />
+    </>
   );
 }

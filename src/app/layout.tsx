@@ -4,6 +4,7 @@ import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { SiteHeader } from '@/components/layout/header';
 import { SiteSidebar } from '@/components/layout/sidebar';
 import { Toaster } from '@/components/ui/toaster';
+import { DataProvider } from '@/contexts/data-context';
 
 export const metadata: Metadata = {
   title: 'WareFlow',
@@ -23,18 +24,20 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased">
-        <SidebarProvider>
-          <SiteSidebar />
-          <SidebarInset>
-            <div className="flex flex-col h-full">
-              <SiteHeader />
-              <main className="flex-1 p-4 md:p-6 lg:p-8">
-                {children}
-              </main>
-            </div>
-          </SidebarInset>
-        </SidebarProvider>
-        <Toaster />
+        <DataProvider>
+          <SidebarProvider>
+            <SiteSidebar />
+            <SidebarInset>
+              <div className="flex flex-col h-full">
+                <SiteHeader />
+                <main className="flex-1 p-4 md:p-6 lg:p-8">
+                  {children}
+                </main>
+              </div>
+            </SidebarInset>
+          </SidebarProvider>
+          <Toaster />
+        </DataProvider>
       </body>
     </html>
   );

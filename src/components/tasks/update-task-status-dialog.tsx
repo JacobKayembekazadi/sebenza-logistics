@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -16,6 +17,7 @@ import { useToast } from '@/hooks/use-toast';
 import { handleUpdateTaskStatus } from '@/app/actions';
 import { Loader2 } from 'lucide-react';
 import type { Task } from '@/lib/data';
+import { useData } from '@/contexts/data-context';
 
 interface UpdateTaskStatusDialogProps {
   task: Task;
@@ -33,6 +35,7 @@ export function UpdateTaskStatusDialog({
   const [nlpText, setNlpText] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
   const { toast } = useToast();
+  const { updateTask } = useData();
 
   const handleSubmit = async () => {
     if (!nlpText.trim()) return;
@@ -48,10 +51,14 @@ export function UpdateTaskStatusDialog({
         throw new Error(result.error);
       }
       
-      onStatusUpdate(task.id, result.updatedStatus!);
+      const newStatus = result.updatedStatus! as Task['status'];
+      
+      // Update state via context
+      updateTask({ ...task, status: newStatus });
+      
       toast({
         title: 'Status Updated',
-        description: `Task "${task.name}" status updated to ${result.updatedStatus!}.`,
+        description: `Task "${task.name}" status updated to ${newStatus}.`,
       });
       onOpenChange(false);
       setNlpText('');

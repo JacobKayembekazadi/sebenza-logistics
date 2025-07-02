@@ -1,42 +1,90 @@
-import { projects, tasks as allTasks } from '@/lib/data';
-import { notFound } from 'next/navigation';
+
+'use client';
+
+import { useState } from 'react';
+import { notFound, useRouter } from 'next/navigation';
+import { useData } from '@/contexts/data-context';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { TaskList } from '@/components/tasks/task-list';
+import { Button } from '@/components/ui/button';
+import { Pencil, Trash2 } from 'lucide-react';
+import { ProjectFormDialog } from '@/components/projects/project-form-dialog';
+import { DeleteConfirmationDialog } from '@/components/common/delete-confirmation-dialog';
+import type { Project } from '@/lib/data';
 
 export default function ProjectDetailPage({ params }: { params: { id: string } }) {
+  const { projects, deleteProject } = useData();
+  const router = useRouter();
+
+  const [isFormOpen, setFormOpen] = useState(false);
+  const [isConfirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  
   const project = projects.find((p) => p.id === params.id);
   
   if (!project) {
-    notFound();
+    // We can't use notFound() in a client component after hooks.
+    // So we can show a message or redirect.
+    if (typeof window !== 'undefined') {
+       router.push('/404');
+    }
+    return <p>Project not found.</p>;
   }
 
-  const tasks = allTasks.filter((t) => t.projectId === project.id);
+  const handleDelete = () => {
+    deleteProject(project.id);
+    router.push('/projects');
+  };
 
   return (
-    <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">{project.name}</h1>
-        <p className="text-muted-foreground">{project.location}</p>
+    <>
+      <div className="flex flex-col gap-8">
+        <div className="flex justify-between items-start">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">{project.name}</h1>
+            <p className="text-muted-foreground">{project.location}</p>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => setFormOpen(true)}>
+              <Pencil className="mr-2 h-4 w-4" /> Edit
+            </Button>
+            <Button variant="destructive" size="sm" onClick={() => setConfirmDeleteOpen(true)}>
+              <Trash2 className="mr-2 h-4 w-4" /> Delete
+            </Button>
+          </div>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Project Progress</CardTitle>
+            <CardDescription>{project.description}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-medium text-muted-foreground">Overall Progress</span>
+                <span className="text-sm font-bold">{project.progress}%</span>
+              </div>
+              <Progress value={project.progress} className="h-3" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <TaskList projectId={project.id} />
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Project Progress</CardTitle>
-          <CardDescription>{project.description}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <span className="text-sm font-medium text-muted-foreground">Overall Progress</span>
-              <span className="text-sm font-bold">{project.progress}%</span>
-            </div>
-            <Progress value={project.progress} className="h-3" />
-          </div>
-        </CardContent>
-      </Card>
-      
-      <TaskList initialTasks={tasks} />
-    </div>
+      <ProjectFormDialog
+        open={isFormOpen}
+        onOpenChange={setFormOpen}
+        project={project}
+      />
+      <DeleteConfirmationDialog
+        open={isConfirmDeleteOpen}
+        onOpenChange={setConfirmDeleteOpen}
+        onConfirm={handleDelete}
+        title="Are you sure you want to delete this project?"
+        description="This will also delete all associated tasks. This action cannot be undone."
+      />
+    </>
   );
 }

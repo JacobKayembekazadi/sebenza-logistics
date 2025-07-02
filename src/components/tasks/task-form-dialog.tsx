@@ -13,27 +13,45 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useData } from "@/contexts/data-context";
-import { useState } from "react";
+import type { Task } from "@/lib/data";
+import { useEffect, useState } from "react";
 
-interface AddTaskDialogProps {
+interface TaskFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   projectId: string;
+  task?: Task;
 }
 
-export function AddTaskDialog({ open, onOpenChange, projectId }: AddTaskDialogProps) {
-    const { addTask } = useData();
+export function TaskFormDialog({ open, onOpenChange, projectId, task }: TaskFormDialogProps) {
+    const { addTask, updateTask } = useData();
     const [name, setName] = useState('');
     const [assignee, setAssignee] = useState('');
     const [dueDate, setDueDate] = useState('');
 
+    const isEditMode = !!task;
+
+    useEffect(() => {
+      if (task) {
+        setName(task.name);
+        setAssignee(task.assignee);
+        setDueDate(task.dueDate);
+      } else {
+        setName('');
+        setAssignee('');
+        setDueDate(new Date().toISOString().split('T')[0]);
+      }
+    }, [task, open]);
+
     const handleSubmit = () => {
         if (name && assignee && dueDate) {
-            addTask({ name, assignee, dueDate, projectId, status: "PENDING" });
+            const taskData = { name, assignee, dueDate, projectId };
+            if (isEditMode && task) {
+              updateTask({ ...task, ...taskData });
+            } else {
+              addTask({ ...taskData, status: 'PENDING' });
+            }
             onOpenChange(false);
-            setName('');
-            setAssignee('');
-            setDueDate('');
         }
     };
 
@@ -41,9 +59,9 @@ export function AddTaskDialog({ open, onOpenChange, projectId }: AddTaskDialogPr
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add New Task</DialogTitle>
+          <DialogTitle>{isEditMode ? 'Edit Task' : 'Add New Task'}</DialogTitle>
           <DialogDescription>
-            Fill in the details below to add a new task to the project.
+            {isEditMode ? "Update the task details below." : "Fill in the details below to add a new task to the project."}
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -68,7 +86,7 @@ export function AddTaskDialog({ open, onOpenChange, projectId }: AddTaskDialogPr
         </div>
         <DialogFooter>
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button type="submit" onClick={handleSubmit}>Add Task</Button>
+          <Button type="submit" onClick={handleSubmit}>{isEditMode ? 'Save Changes' : 'Add Task'}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
