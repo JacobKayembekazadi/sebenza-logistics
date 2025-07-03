@@ -26,6 +26,7 @@ export default function ProjectDetailPage() {
 
   const [isFormOpen, setFormOpen] = useState(false);
   const [isConfirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [today, setToday] = useState<Date | null>(null);
   
   const project = projects.find((p) => p.id === params.id as string);
 
@@ -33,6 +34,9 @@ export default function ProjectDetailPage() {
     if (!project) {
       router.push('/projects');
     }
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    setToday(d);
   }, [project, router]);
   
   if (!project) {
@@ -51,8 +55,9 @@ export default function ProjectDetailPage() {
       return 'Paid';
     }
     
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    if (!today) {
+      return invoice.status;
+    }
     const dueDate = new Date(invoice.date);
 
     if (dueDate < today) {

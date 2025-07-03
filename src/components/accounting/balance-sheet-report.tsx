@@ -4,9 +4,15 @@
 import { useData } from "@/contexts/data-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow, TableFooter } from "@/components/ui/table";
+import { useEffect, useState } from "react";
 
 export function BalanceSheetReport() {
     const { assets, purchaseOrders, invoices } = useData();
+    const [reportDate, setReportDate] = useState('');
+
+    useEffect(() => {
+      setReportDate(new Date().toLocaleDateString());
+    }, []);
     
     // Assets
     const accountsReceivable = invoices
@@ -33,7 +39,7 @@ export function BalanceSheetReport() {
             <CardHeader>
                 <CardTitle>Balance Sheet</CardTitle>
                 <CardDescription>
-                    As of {new Date().toLocaleDateString()}
+                    As of {reportDate}
                 </CardDescription>
             </CardHeader>
             <CardContent>

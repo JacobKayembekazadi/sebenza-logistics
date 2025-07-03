@@ -4,9 +4,15 @@
 import { useData } from "@/contexts/data-context";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableFooter } from "@/components/ui/table";
+import { useEffect, useState } from "react";
 
 export function ProfitLossStatement() {
   const { invoices, expenses } = useData();
+  const [reportDate, setReportDate] = useState('');
+
+  useEffect(() => {
+    setReportDate(new Date().toLocaleDateString());
+  }, []);
 
   const totalRevenue = invoices
     .filter(inv => inv.status === 'Paid')
@@ -26,7 +32,7 @@ export function ProfitLossStatement() {
       <CardHeader>
         <CardTitle>Profit & Loss Statement</CardTitle>
         <CardDescription>
-          For the period ending {new Date().toLocaleDateString()}
+          For the period ending {reportDate}
         </CardDescription>
       </CardHeader>
       <CardContent>

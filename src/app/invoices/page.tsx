@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -28,7 +28,14 @@ export default function InvoicesPage() {
   const [isPaymentDialogOpen, setPaymentDialogOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | undefined>(undefined);
   const [isApplyingFee, setIsApplyingFee] = useState<string | null>(null);
+  const [today, setToday] = useState<Date | null>(null);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    setToday(d);
+  }, []);
 
   const handleEdit = (invoice: Invoice) => {
     setSelectedInvoice(invoice);
@@ -63,8 +70,9 @@ export default function InvoicesPage() {
       return 'Paid';
     }
     
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    if (!today) {
+      return invoice.status;
+    }
     const dueDate = new Date(invoice.date);
 
     if (dueDate < today) {

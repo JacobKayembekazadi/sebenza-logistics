@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
 import { useData } from '@/contexts/data-context';
@@ -21,7 +21,11 @@ type CalendarEvent = {
 
 export default function CalendarPage() {
   const { projects, tasks, invoices } = useData();
-  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [date, setDate] = useState<Date | undefined>(undefined);
+
+  useEffect(() => {
+    setDate(new Date());
+  }, []);
 
   const events = useMemo(() => {
     const allEvents: CalendarEvent[] = [

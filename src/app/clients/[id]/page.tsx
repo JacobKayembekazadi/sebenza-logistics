@@ -13,7 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { Pencil, File, Receipt, FileText, FolderKanban } from 'lucide-react';
 import type { Invoice, Estimate } from '@/lib/data';
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 
 type EffectiveStatus = Invoice['status'] | 'Overdue';
 
@@ -21,6 +21,7 @@ export default function ClientProfilePage() {
     const params = useParams();
     const router = useRouter();
     const { clients, invoices, estimates, projects, documents } = useData();
+    const [today, setToday] = useState<Date | null>(null);
 
     const clientId = params.id as string;
     const client = clients.find(c => c.id === clientId);
@@ -52,12 +53,16 @@ export default function ClientProfilePage() {
         if (!client) {
           router.push('/clients');
         }
+        const d = new Date();
+        d.setHours(0, 0, 0, 0);
+        setToday(d);
     }, [client, router]);
 
     const getInvoiceEffectiveStatus = (invoice: Invoice): EffectiveStatus => {
         if (invoice.status === 'Paid') return 'Paid';
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        if (!today) {
+            return invoice.status;
+        }
         const dueDate = new Date(invoice.date);
         if (dueDate < today) return 'Overdue';
         return invoice.status;
