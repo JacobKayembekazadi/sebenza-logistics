@@ -1,6 +1,7 @@
 
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -94,6 +95,12 @@ const adminNavItems = [
 ];
 
 export function SiteSidebar() {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const router = useRouter();
@@ -108,18 +115,21 @@ export function SiteSidebar() {
     return pathname.startsWith(path);
   }
 
+  if (!isClient) {
+    return null;
+  }
+
   return (
-    <Sidebar collapsible="icon" className="border-r" suppressHydrationWarning>
+    <Sidebar collapsible="icon" className="border-r">
       <SidebarHeader>
         <Button variant="ghost" className="w-full justify-start gap-2 px-2 h-12" asChild>
           <Link href="/dashboard">
             <Warehouse className="size-6 text-primary" />
             <div
               className="flex flex-col items-start group-data-[collapsible=icon]:hidden"
-              suppressHydrationWarning
             >
-              <span className="font-bold text-md leading-none" suppressHydrationWarning>Sebenza</span>
-              <span className="text-xs text-muted-foreground leading-none" suppressHydrationWarning>Logistics Suite</span>
+              <span className="font-bold text-md leading-none">Sebenza</span>
+              <span className="text-xs text-muted-foreground leading-none">Logistics Suite</span>
             </div>
           </Link>
         </Button>
@@ -135,7 +145,7 @@ export function SiteSidebar() {
               >
                 <Link href={item.href}>
                   <item.icon />
-                  <span suppressHydrationWarning>{item.label}</span>
+                  <span>{item.label}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -153,7 +163,7 @@ export function SiteSidebar() {
                 >
                   <Link href={item.href}>
                     <item.icon />
-                    <span suppressHydrationWarning>{item.label}</span>
+                    <span>{item.label}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -172,7 +182,7 @@ export function SiteSidebar() {
                 >
                   <Link href={item.href}>
                     <item.icon />
-                    <span suppressHydrationWarning>{item.label}</span>
+                    <span>{item.label}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -191,7 +201,7 @@ export function SiteSidebar() {
                 >
                   <Link href={item.href}>
                     <item.icon />
-                    <span suppressHydrationWarning>{item.label}</span>
+                    <span>{item.label}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -208,7 +218,7 @@ export function SiteSidebar() {
               >
                 <Link href={item.href}>
                   <item.icon />
-                  <span suppressHydrationWarning>{item.label}</span>
+                  <span>{item.label}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -228,7 +238,7 @@ export function SiteSidebar() {
                   >
                     <Link href={item.href}>
                       <item.icon />
-                      <span suppressHydrationWarning>{item.label}</span>
+                      <span>{item.label}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -243,7 +253,7 @@ export function SiteSidebar() {
             <SidebarMenuButton asChild tooltip={{ children: 'Settings', side: 'right' }}>
               <Link href="/settings">
                 <Settings />
-                <span suppressHydrationWarning>Settings</span>
+                <span>Settings</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -251,7 +261,7 @@ export function SiteSidebar() {
             <SidebarMenuItem>
               <SidebarMenuButton onClick={handleLogout} tooltip={{ children: 'Logout', side: 'right' }}>
                 <LogOut />
-                <span suppressHydrationWarning>Logout</span>
+                <span>Logout</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           )}
