@@ -22,7 +22,7 @@ export type Invoice = {
   id: string;
   client: string;
   amount: number;
-  status: 'Paid' | 'Pending' | 'Overdue';
+  status: 'Paid' | 'Pending' | 'Partial';
   date: string;
   projectId?: string;
 };
@@ -235,9 +235,9 @@ export const tasks: Task[] = [
 
 export const invoices: Invoice[] = [
   { id: 'INV-001', client: 'Nexus Corp', amount: 2500.00, status: 'Paid', date: '2024-10-15', projectId: 'proj-1' },
-  { id: 'INV-002', client: 'Quantum Solutions', amount: 1200.50, status: 'Pending', date: '2024-11-22' },
+  { id: 'INV-002', client: 'Quantum Solutions', amount: 1200.50, status: 'Pending', date: '2024-12-22' },
   { id: 'INV-003', client: 'Stellar Goods', amount: 850.00, status: 'Paid', date: '2024-09-30' },
-  { id: 'INV-004', client: 'Apex Logistics', amount: 3400.00, status: 'Pending', date: '2024-11-01', projectId: 'proj-2' },
+  { id: 'INV-004', client: 'Apex Logistics', amount: 3400.00, status: 'Partial', date: '2024-11-01', projectId: 'proj-2' },
 ];
 
 export const employees: Employee[] = [
@@ -280,46 +280,43 @@ export const documents: Document[] = [
 ];
 
 export const services: Service[] = [
-  { id: 'svc-1', name: 'Standard Pallet Storage', description: 'Per pallet, per month storage fee.', price: 25.00, quantityType: 'pallet' },
-  { id: 'svc-2', name: 'Order Fulfillment', description: 'Pick, pack, and ship per order.', price: 3.50, quantityType: 'item' },
-  { id: 'svc-3', name: 'Cross-Docking', description: 'Unload, sort, and reload per shipment.', price: 250.00, quantityType: 'shipment' },
-  { id: 'svc-4', name: 'Local Delivery', description: 'Per delivery within a 50-mile radius.', price: 75.00, quantityType: 'delivery' },
+    { id: 'serv-1', name: 'Standard Freight', description: 'Standard ground transportation.', price: 500, quantityType: 'delivery' },
+    { id: 'serv-2', name: 'Warehousing Fee', description: 'Per-pallet weekly storage.', price: 25, quantityType: 'pallet' },
+    { id: 'serv-3', name: 'Customs Clearance', description: 'Handling of import/export documentation.', price: 350, quantityType: 'shipment' },
 ];
 
 export const suppliers: Supplier[] = [
-    { id: 'sup-1', name: 'Global Shipping Supply', contactPerson: 'Mark Johnson', email: 'mark.j@gss.com', phone: '555-0201' },
-    { id: 'sup-2', name: 'Packaging Pros Inc.', contactPerson: 'Susan Chen', email: 's.chen@packagingpros.com', phone: '555-0202' },
-    { id: 'sup-3', name: 'Fleet Maintenance Co.', contactPerson: 'David Rodriguez', email: 'dave@fleetmc.com', phone: '555-0203' },
+    { id: 'sup-1', name: 'Global Shipping Co.', contactPerson: 'John Smith', email: 'john@gsc.com', phone: '555-0201' },
+    { id: 'sup-2', name: 'Packaging Pros', contactPerson: 'Mary Allen', email: 'mary@packpros.com', phone: '555-0202' },
 ];
 
 export const purchaseOrders: PurchaseOrder[] = [
-    { id: 'po-1', poNumber: 'PO-1001', supplierId: 'sup-1', supplierName: 'Global Shipping Supply', date: '2024-10-20', amount: 1500.00, status: 'Sent' },
-    { id: 'po-2', poNumber: 'PO-1002', supplierId: 'sup-2', supplierName: 'Packaging Pros Inc.', date: '2024-10-22', amount: 450.75, status: 'Fulfilled' },
-    { id: 'po-3', poNumber: 'PO-1003', supplierId: 'sup-1', supplierName: 'Global Shipping Supply', date: '2024-10-25', amount: 2500.00, status: 'Draft' },
+    { id: 'po-1', poNumber: 'PO-1001', supplierId: 'sup-1', supplierName: 'Global Shipping Co.', date: '2024-10-20', amount: 3500, status: 'Sent' },
+    { id: 'po-2', poNumber: 'PO-1002', supplierId: 'sup-2', supplierName: 'Packaging Pros', date: '2024-10-22', amount: 800, status: 'Fulfilled' },
 ];
 
 export const assets: Asset[] = [
-  { id: 'asset-1', name: 'Dell Latitude 7420 Laptop', description: 'Laptop for office admin', quantity: 1, purchaseDate: '2023-05-10', value: 1450.00 },
-  { id: 'asset-2', name: 'Zebra ZD421 Label Printer', description: 'For printing shipping labels in warehouse A', quantity: 3, purchaseDate: '2023-08-22', value: 450.00 },
-  { id: 'asset-3', name: 'Hyster Forklift E50XN', description: 'Primary forklift for heavy lifting', quantity: 1, purchaseDate: '2022-11-01', value: 25000.00 },
+    { id: 'asset-1', name: 'Forklift A', description: 'Electric forklift, 5000lb capacity', quantity: 1, purchaseDate: '2023-05-15', value: 25000 },
+    { id: 'asset-2', name: 'Pallet Jack', description: 'Manual pallet jack, 2500lb capacity', quantity: 5, purchaseDate: '2023-01-20', value: 400 },
 ];
 
 export const warehouses: Warehouse[] = [
-  { id: 'wh-1', name: 'Main Warehouse', location: 'Newark, NJ' },
-  { id: 'wh-2', name: 'Chicago Distribution Center', location: 'Chicago, IL' },
-  { id: 'wh-3', name: 'West Coast Hub', location: 'Los Angeles, CA' },
+    { id: 'wh-1', name: 'Main Warehouse', location: 'Newark, NJ' },
+    { id: 'wh-2', name: 'Staging Area A', location: 'Chicago, IL' },
+    { id: 'wh-3', name: 'Virtual-Returns', location: 'Online' },
 ];
 
 export const stockItems: StockItem[] = [
-  { id: 'stk-1', reference: 'SHP-XYZ-001', senderName: 'Nexus Corp', receiverName: 'East Coast Hub', description: 'Electronics Components', quantity: 200, weight: 5.5, value: 150.00, status: 'In Warehouse', entryDate: '2024-10-25', warehouseId: 'wh-1', warehouseName: 'Main Warehouse', color: 'Blue' },
-  { id: 'stk-2', reference: 'SHP-ABC-002', senderName: 'Stellar Goods', receiverName: 'Midwest Logistics', description: 'Apparel Shipment', quantity: 500, weight: 0.8, value: 45.00, status: 'In Transit', entryDate: '2024-10-24', warehouseId: 'wh-2', warehouseName: 'Chicago Distribution Center' },
-  { id: 'stk-3', reference: 'SHP-QRT-003', senderName: 'Quantum Solutions', receiverName: 'West Coast Warehouse', description: 'Industrial Machinery Parts', quantity: 50, weight: 25.0, value: 800.00, status: 'Delivered', entryDate: '2024-10-20', warehouseId: 'wh-3', warehouseName: 'West Coast Hub', color: 'Red' },
-  { id: 'stk-4', reference: 'SHP-APX-004', senderName: 'Apex Logistics', receiverName: 'East Coast Hub', description: 'Pharmaceutical Supplies', quantity: 1000, weight: 0.2, value: 20.00, status: 'In Warehouse', entryDate: '2024-10-26', warehouseId: 'wh-1', warehouseName: 'Main Warehouse' },
+    { id: 'item-1', reference: 'SHP-123', senderName: 'Sender A', receiverName: 'Receiver X', description: 'Electronics Components', quantity: 50, weight: 2.5, value: 150, status: 'In Warehouse', entryDate: '2024-11-01', warehouseId: 'wh-1', warehouseName: 'Main Warehouse', color: 'Blue' },
+    { id: 'item-2', reference: 'SHP-124', senderName: 'Sender B', receiverName: 'Receiver Y', description: 'Textiles', quantity: 200, weight: 1.0, value: 25, status: 'In Transit', entryDate: '2024-11-03', warehouseId: 'wh-1', warehouseName: 'Main Warehouse', color: 'Red' },
+    { id: 'item-3', reference: 'SHP-125', senderName: 'Sender C', receiverName: 'Receiver Z', description: 'Auto Parts', quantity: 10, weight: 15.0, value: 400, status: 'Delivered', entryDate: '2024-10-28', warehouseId: 'wh-2', warehouseName: 'Staging Area A', color: 'Black' },
 ];
 
-export const stockTransferLogs: StockTransferLog[] = [];
+export const stockTransferLogs: StockTransferLog[] = [
+    { id: 'log-1', itemId: 'item-3', itemName: 'Auto Parts', fromWarehouseName: 'Main Warehouse', toWarehouseName: 'Staging Area A', quantity: 10, date: '2024-10-25' },
+];
 
 export const moneyTransfers: MoneyTransfer[] = [
-  { id: 'mt-1', fromLocation: 'USA', toLocation: 'Nigeria', senderName: 'John Appleseed', receiverName: 'Adebayo Akinwunmi', amountSent: 500, exchangeRate: 1450.50, amountToCollect: 725250, referenceCode: 'USA-NGA-001', status: 'Pending Collection', date: '2024-10-28' },
-  { id: 'mt-2', fromLocation: 'UK', toLocation: 'Ghana', senderName: 'Sarah Connor', receiverName: 'Kwame Nkrumah', amountSent: 300, exchangeRate: 15.20, amountToCollect: 4560, referenceCode: 'UK-GHA-001', status: 'Collected', date: '2024-10-25' },
+    { id: 'mt-1', fromLocation: 'USA', toLocation: 'Mexico', senderName: 'John Doe', receiverName: 'Maria Garcia', amountSent: 500, exchangeRate: 17.5, amountToCollect: 8750, referenceCode: 'MT12345', status: 'Collected', date: '2024-10-28' },
+    { id: 'mt-2', fromLocation: 'Canada', toLocation: 'USA', senderName: 'Pierre Dubois', receiverName: 'Jane Smith', amountSent: 1000, exchangeRate: 0.75, amountToCollect: 750, referenceCode: 'MT67890', status: 'Pending Collection', date: '2024-11-01' },
 ];

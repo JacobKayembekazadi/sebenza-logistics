@@ -14,6 +14,8 @@ import type { Invoice } from "@/lib/data";
 import { DeleteConfirmationDialog } from "@/components/common/delete-confirmation-dialog";
 import { InvoiceFormDialog } from "@/components/invoices/invoice-form-dialog";
 
+type EffectiveStatus = Invoice['status'] | 'Overdue';
+
 export default function InvoicesPage() {
   const { invoices, deleteInvoice, projects } = useData();
   const [isFormOpen, setFormOpen] = useState(false);
@@ -43,19 +45,19 @@ export default function InvoicesPage() {
     setFormOpen(true);
   };
 
-  const getEffectiveStatus = (invoice: Invoice): Invoice['status'] => {
-    if (invoice.status !== 'Pending') {
-      return invoice.status;
+  const getEffectiveStatus = (invoice: Invoice): EffectiveStatus => {
+    if (invoice.status === 'Paid') {
+      return 'Paid';
     }
-    // Create a date for today at midnight for comparison
+    
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    // Assumes date string is in a format that new Date() can parse correctly, like YYYY-MM-DD
     const dueDate = new Date(invoice.date);
 
     if (dueDate < today) {
       return 'Overdue';
     }
+    
     return invoice.status;
   };
 
@@ -108,8 +110,14 @@ export default function InvoicesPage() {
                       <TableCell>{invoice.date}</TableCell>
                       <TableCell>
                         <Badge variant={
-                          effectiveStatus === 'Paid' ? 'outline' : effectiveStatus === 'Pending' ? 'default' : 'destructive'
-                        } className={effectiveStatus === 'Paid' ? 'bg-accent text-accent-foreground' : ''}>
+                          effectiveStatus === 'Paid' ? 'outline' :
+                          effectiveStatus === 'Overdue' ? 'destructive' :
+                          effectiveStatus === 'Partial' ? 'secondary' :
+                          'default'
+                        } className={
+                          effectiveStatus === 'Paid' ? 'bg-accent text-accent-foreground' :
+                          effectiveStatus === 'Partial' ? 'bg-yellow-200 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300' : ''
+                        }>
                           {effectiveStatus}
                         </Badge>
                       </TableCell>

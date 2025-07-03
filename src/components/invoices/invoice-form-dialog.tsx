@@ -27,7 +27,7 @@ export function InvoiceFormDialog({ open, onOpenChange, invoice }: InvoiceFormDi
   const { clients, projects, addInvoice, updateInvoice } = useData();
   const [client, setClient] = useState('');
   const [amount, setAmount] = useState('');
-  const [status, setStatus] = useState<'Paid' | 'Pending' | 'Overdue'>('Pending');
+  const [status, setStatus] = useState<Invoice['status']>('Pending');
   const [date, setDate] = useState('');
   const [projectId, setProjectId] = useState<string | undefined>();
   
@@ -116,7 +116,7 @@ export function InvoiceFormDialog({ open, onOpenChange, invoice }: InvoiceFormDi
               <SelectContent>
                 <SelectItem value="Pending">Pending</SelectItem>
                 <SelectItem value="Paid">Paid</SelectItem>
-                <SelectItem value="Overdue">Overdue</SelectItem>
+                <SelectItem value="Partial">Partial</SelectItem>
               </SelectContent>
             </Select>
           </div>
