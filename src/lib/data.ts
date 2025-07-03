@@ -227,6 +227,13 @@ export type JournalEntry = {
   lines: JournalEntryLine[];
 };
 
+export type Meeting = {
+  id: string;
+  title: string;
+  description: string;
+  date: string; // ISO date string 'YYYY-MM-DD'
+};
+
 
 export const projects: Project[] = [
   {
@@ -416,4 +423,19 @@ export const journalEntries: JournalEntry[] = [
             { accountId: 'acc-1', accountName: 'Cash', debit: 0, credit: 5000.00 },
         ]
     }
+];
+
+export const meetings: Meeting[] = [
+  {
+    id: 'meet-1',
+    title: 'Weekly Sync',
+    description: 'Discuss project progress and blockers.',
+    date: '2024-11-25',
+  },
+  {
+    id: 'meet-2',
+    title: 'Client Call - Nexus Corp',
+    description: 'Follow-up on the latest invoice and upcoming work.',
+    date: '2024-12-02',
+  }
 ];

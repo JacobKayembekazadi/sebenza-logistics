@@ -25,8 +25,9 @@ import {
   payments as initialPayments,
   chartOfAccounts as initialChartOfAccounts,
   journalEntries as initialJournalEntries,
+  meetings as initialMeetings,
   Project, Task, Invoice, Employee, JobPosting, Expense, Client, Estimate, Document, Service, Supplier, PurchaseOrder, Asset, StockItem, Warehouse, StockTransferLog, MoneyTransfer,
-  Payment, Account, JournalEntry
+  Payment, Account, JournalEntry, Meeting
 } from '@/lib/data';
 
 type DataContextType = {
@@ -128,6 +129,11 @@ type DataContextType = {
   addJournalEntry: (entry: Omit<JournalEntry, 'id'>) => void;
   updateJournalEntry: (entry: JournalEntry) => void;
   deleteJournalEntry: (entryId: string) => void;
+
+  meetings: Meeting[];
+  addMeeting: (meeting: Omit<Meeting, 'id'>) => void;
+  updateMeeting: (meeting: Meeting) => void;
+  deleteMeeting: (meetingId: string) => void;
 };
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -153,6 +159,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [moneyTransfers, setMoneyTransfers] = useState<MoneyTransfer[]>(initialMoneyTransfers);
   const [chartOfAccounts, setChartOfAccounts] = useState<Account[]>(initialChartOfAccounts);
   const [journalEntries, setJournalEntries] = useState<JournalEntry[]>(initialJournalEntries);
+  const [meetings, setMeetings] = useState<Meeting[]>(initialMeetings);
 
 
   // Projects
@@ -501,6 +508,18 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     setJournalEntries(prev => prev.filter(e => e.id !== entryId));
   };
 
+  // Meetings
+  const addMeeting = (meeting: Omit<Meeting, 'id'>) => {
+    const newMeeting: Meeting = { ...meeting, id: uuidv4() };
+    setMeetings(prev => [newMeeting, ...prev]);
+  };
+  const updateMeeting = (updatedMeeting: Meeting) => {
+    setMeetings(prev => prev.map(m => m.id === updatedMeeting.id ? updatedMeeting : m));
+  };
+  const deleteMeeting = (meetingId: string) => {
+    setMeetings(prev => prev.filter(m => m.id !== meetingId));
+  };
+
   return (
     <DataContext.Provider value={{
       projects, addProject, updateProject, deleteProject,
@@ -522,7 +541,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       stockTransferLogs, transferStockItem,
       moneyTransfers, addMoneyTransfer, updateMoneyTransfer, deleteMoneyTransfer,
       chartOfAccounts, addAccount, updateAccount, deleteAccount,
-      journalEntries, addJournalEntry, updateJournalEntry, deleteJournalEntry
+      journalEntries, addJournalEntry, updateJournalEntry, deleteJournalEntry,
+      meetings, addMeeting, updateMeeting, deleteMeeting,
     }}>
       {children}
     </DataContext.Provider>
