@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, PlusCircle, Repeat } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Repeat, ScrollText } from 'lucide-react';
 import { useData } from '@/contexts/data-context';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
@@ -13,6 +13,7 @@ import { DeleteConfirmationDialog } from '@/components/common/delete-confirmatio
 import { InventoryFormDialog } from '@/components/inventory/inventory-form-dialog';
 import { Badge } from '@/components/ui/badge';
 import { TransferStockDialog } from '@/components/inventory/transfer-stock-dialog';
+import Link from 'next/link';
 
 export default function InventoryPage() {
   const { stockItems, deleteStockItem } = useData();
@@ -70,10 +71,18 @@ export default function InventoryPage() {
               <CardTitle>Stock Items</CardTitle>
               <CardDescription>Track all incoming and outgoing stock consignments.</CardDescription>
             </div>
-            <Button size="sm" onClick={openAddDialog}>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Add Stock Item
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button size="sm" variant="outline" asChild>
+                <Link href="/stock-transfers">
+                  <ScrollText className="mr-2 h-4 w-4" />
+                  Transfer History
+                </Link>
+              </Button>
+              <Button size="sm" onClick={openAddDialog}>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Add Stock Item
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <Table>
