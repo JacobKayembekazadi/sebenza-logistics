@@ -72,6 +72,12 @@ export type Estimate = {
   client: string;
   estimateNumber: string;
   amount: number;
+  tax?: number;
+  discount?: number;
+  shippingAddress?: string;
+  notes?: string;
+  termsAndConditions?: string;
+  signature?: string;
   status: 'Draft' | 'Sent' | 'Accepted' | 'Declined';
   date: string;
 };
@@ -238,7 +244,7 @@ export const invoices: Invoice[] = [
   { id: 'INV-001', client: 'Nexus Corp', amount: 2500.00, status: 'Paid', date: '2024-10-15', projectId: 'proj-1' },
   { id: 'INV-002', client: 'Quantum Solutions', amount: 1200.50, status: 'Pending', date: '2024-12-22' },
   { id: 'INV-003', client: 'Stellar Goods', amount: 850.00, status: 'Paid', date: '2024-09-30' },
-  { id: 'INV-004', client: 'Apex Logistics', amount: 3400.00, status: 'Partial', date: '2024-11-01', projectId: 'proj-2' },
+  { id: 'INV-004', client: 'Apex Logistics', amount: 3400.00, status: 'Partial', date: '2024-11-01', projectId: 'proj-2', lateFee: 50.00 },
 ];
 
 export const employees: Employee[] = [
@@ -269,8 +275,8 @@ export const clients: Client[] = [
 ];
 
 export const estimates: Estimate[] = [
-  { id: 'est-1', client: 'Nexus Corp', estimateNumber: 'EST-001', amount: 5000.00, status: 'Sent', date: '2024-10-18' },
-  { id: 'est-2', client: 'Quantum Solutions', estimateNumber: 'EST-002', amount: 7500.00, status: 'Accepted', date: '2024-10-12' },
+  { id: 'est-1', client: 'Nexus Corp', estimateNumber: 'EST-001', amount: 5000.00, status: 'Sent', date: '2024-10-18', tax: 400, discount: 100, notes: 'Standard 2-week delivery.', termsAndConditions: 'Payment due upon receipt.' },
+  { id: 'est-2', client: 'Quantum Solutions', estimateNumber: 'EST-002', amount: 7500.00, status: 'Accepted', date: '2024-10-12', tax: 600, signature: "Bob Belcher" },
   { id: 'est-3', client: 'Stellar Goods', estimateNumber: 'EST-003', amount: 1200, status: 'Draft', date: '2024-10-25' },
 ];
 

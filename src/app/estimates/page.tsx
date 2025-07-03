@@ -47,9 +47,10 @@ export default function EstimatesPage() {
   };
 
   const handleConvertToInvoice = (estimate: Estimate) => {
+    const totalAmount = estimate.amount + (estimate.tax || 0) - (estimate.discount || 0);
     addInvoice({
       client: estimate.client,
-      amount: estimate.amount,
+      amount: totalAmount,
       status: 'Pending',
       date: new Date().toISOString().split('T')[0]
     });
@@ -61,9 +62,10 @@ export default function EstimatesPage() {
   };
   
   const handleConvertToProject = (estimate: Estimate) => {
+    const totalAmount = estimate.amount + (estimate.tax || 0) - (estimate.discount || 0);
     addProject({
       name: `Project for ${estimate.client} - ${estimate.estimateNumber}`,
-      description: `Project created from estimate #${estimate.estimateNumber} for an amount of $${estimate.amount.toFixed(2)}.`,
+      description: `Project created from estimate #${estimate.estimateNumber} for an amount of $${totalAmount.toFixed(2)}.`,
       location: 'To be determined',
       endDate: new Date(new Date().setMonth(new Date().getMonth() + 3)).toISOString().split('T')[0], // Default end date: 3 months from now
     });
@@ -109,52 +111,55 @@ export default function EstimatesPage() {
                   <TableHead>Client</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
+                  <TableHead className="text-right">Total</TableHead>
                   <TableHead><span className="sr-only">Actions</span></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {estimates.map((estimate) => (
-                  <TableRow key={estimate.id}>
-                    <TableCell className="font-medium">{estimate.estimateNumber}</TableCell>
-                    <TableCell>{estimate.client}</TableCell>
-                    <TableCell>{estimate.date}</TableCell>
-                    <TableCell>
-                       <Badge variant={statusVariant[estimate.status]} className={statusStyle[estimate.status]}>
-                        {estimate.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">${estimate.amount.toFixed(2)}</TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleEdit(estimate)}>Edit</DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={() => handleConvertToInvoice(estimate)}
-                            disabled={estimate.status !== 'Accepted'}
-                          >
-                            <Receipt className="mr-2 h-4 w-4" />
-                            Convert to Invoice
-                          </DropdownMenuItem>
-                           <DropdownMenuItem 
-                            onClick={() => handleConvertToProject(estimate)}
-                            disabled={estimate.status !== 'Accepted'}
-                          >
-                            <FolderKanban className="mr-2 h-4 w-4" />
-                            Convert to Project
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem onClick={() => handleDelete(estimate)} className="text-destructive">Delete</DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {estimates.map((estimate) => {
+                  const totalAmount = estimate.amount + (estimate.tax || 0) - (estimate.discount || 0);
+                  return (
+                    <TableRow key={estimate.id}>
+                      <TableCell className="font-medium">{estimate.estimateNumber}</TableCell>
+                      <TableCell>{estimate.client}</TableCell>
+                      <TableCell>{estimate.date}</TableCell>
+                      <TableCell>
+                        <Badge variant={statusVariant[estimate.status]} className={statusStyle[estimate.status]}>
+                          {estimate.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">${totalAmount.toFixed(2)}</TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleEdit(estimate)}>Edit</DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => handleConvertToInvoice(estimate)}
+                              disabled={estimate.status !== 'Accepted'}
+                            >
+                              <Receipt className="mr-2 h-4 w-4" />
+                              Convert to Invoice
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => handleConvertToProject(estimate)}
+                              disabled={estimate.status !== 'Accepted'}
+                            >
+                              <FolderKanban className="mr-2 h-4 w-4" />
+                              Convert to Project
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => handleDelete(estimate)} className="text-destructive">Delete</DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </CardContent>
