@@ -8,7 +8,7 @@ import { useData } from '@/contexts/data-context';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { FolderKanban, Receipt, ClipboardCheck } from 'lucide-react';
+import { FolderKanban, Receipt, ClipboardCheck, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
 type CalendarEvent = {
@@ -22,12 +22,10 @@ type CalendarEvent = {
 export default function CalendarPage() {
   const { projects, tasks, invoices } = useData();
   const [date, setDate] = useState<Date | undefined>(undefined);
-  const [today, setToday] = useState<Date | undefined>(undefined);
 
   useEffect(() => {
-    const now = new Date();
-    setDate(now);
-    setToday(now);
+    // Set initial date only on the client to avoid hydration mismatch
+    setDate(new Date());
   }, []);
 
   const events = useMemo(() => {
@@ -60,6 +58,34 @@ export default function CalendarPage() {
     Invoice: { icon: Receipt, color: 'bg-green-500' },
   };
 
+  // Render a loading state until the component has mounted on the client
+  if (!date) {
+    return (
+      <div className="flex flex-col gap-8">
+        <h1 className="text-3xl font-bold tracking-tight">Calendar</h1>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2">
+            <Card>
+              <CardContent className="p-1 flex items-center justify-center min-h-[400px]">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+              </CardContent>
+            </Card>
+          </div>
+          <div className="lg:col-span-1">
+            <Card className="min-h-[550px]">
+              <CardHeader>
+                <CardTitle>Events</CardTitle>
+              </CardHeader>
+              <CardContent className="flex items-center justify-center h-full">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-8">
       <h1 className="text-3xl font-bold tracking-tight">Calendar</h1>
@@ -76,7 +102,7 @@ export default function CalendarPage() {
                 modifiersClassNames={{
                   event: 'relative !bg-primary/20 rounded-full',
                 }}
-                today={today}
+                today={date}
               />
             </CardContent>
           </Card>
