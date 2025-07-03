@@ -4,6 +4,7 @@
 
 
 
+
 export type Project = {
   id: string;
   name: string;
@@ -89,11 +90,15 @@ export type Document = {
   relatedTo: string; // e.g., 'INV-001', 'proj-1'
 };
 
+export const quantityTypes = ['kg', 'item', 'pallet', 'delivery', 'shipment'] as const;
+export type QuantityType = (typeof quantityTypes)[number];
+
 export type Service = {
   id: string;
   name: string;
   description: string;
   price: number;
+  quantityType: QuantityType;
 };
 
 export type Supplier = {
@@ -281,10 +286,10 @@ export const documents: Document[] = [
 ];
 
 export const services: Service[] = [
-  { id: 'svc-1', name: 'Standard Pallet Storage', description: 'Per pallet, per month storage fee.', price: 25.00 },
-  { id: 'svc-2', name: 'Order Fulfillment', description: 'Pick, pack, and ship per order.', price: 3.50 },
-  { id: 'svc-3', name: 'Cross-Docking', description: 'Unload, sort, and reload per shipment.', price: 250.00 },
-  { id: 'svc-4', name: 'Local Delivery', description: 'Per delivery within a 50-mile radius.', price: 75.00 },
+  { id: 'svc-1', name: 'Standard Pallet Storage', description: 'Per pallet, per month storage fee.', price: 25.00, quantityType: 'pallet' },
+  { id: 'svc-2', name: 'Order Fulfillment', description: 'Pick, pack, and ship per order.', price: 3.50, quantityType: 'item' },
+  { id: 'svc-3', name: 'Cross-Docking', description: 'Unload, sort, and reload per shipment.', price: 250.00, quantityType: 'shipment' },
+  { id: 'svc-4', name: 'Local Delivery', description: 'Per delivery within a 50-mile radius.', price: 75.00, quantityType: 'delivery' },
 ];
 
 export const suppliers: Supplier[] = [

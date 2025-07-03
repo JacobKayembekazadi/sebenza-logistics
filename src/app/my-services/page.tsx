@@ -63,6 +63,7 @@ export default function ServicesPage() {
                 <TableRow>
                   <TableHead>Name</TableHead>
                   <TableHead>Description</TableHead>
+                  <TableHead>Unit Type</TableHead>
                   <TableHead className="text-right">Price</TableHead>
                   <TableHead><span className="sr-only">Actions</span></TableHead>
                 </TableRow>
@@ -72,6 +73,7 @@ export default function ServicesPage() {
                   <TableRow key={service.id}>
                     <TableCell className="font-medium">{service.name}</TableCell>
                     <TableCell className="text-muted-foreground">{service.description}</TableCell>
+                    <TableCell className="capitalize">{service.quantityType}</TableCell>
                     <TableCell className="text-right">${service.price.toFixed(2)}</TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu>
