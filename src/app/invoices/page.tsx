@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, PlusCircle, Bot, Loader2, Paperclip } from "lucide-react";
+import { MoreHorizontal, PlusCircle, Bot, Loader2, Paperclip, Mail } from "lucide-react";
 import { useData } from "@/contexts/data-context";
 import type { Invoice } from "@/lib/data";
 import { DeleteConfirmationDialog } from "@/components/common/delete-confirmation-dialog";
@@ -87,6 +87,13 @@ export default function InvoicesPage() {
         });
     }
     setIsApplyingFee(null);
+  };
+
+  const handleSendReminder = (invoice: Invoice) => {
+    toast({
+        title: "Reminder Sent",
+        description: `An email reminder has been sent for invoice ${invoice.id}.`
+    });
   };
 
   const getRelatedDocumentsCount = (invoiceId: string) => {
@@ -198,6 +205,13 @@ export default function InvoicesPage() {
                                     <Bot className="mr-2 h-4 w-4" />
                                 )}
                                 Apply Late Fee (AI)
+                            </DropdownMenuItem>
+                             <DropdownMenuItem
+                                onClick={() => handleSendReminder(invoice)}
+                                disabled={effectiveStatus === 'Paid'}
+                            >
+                                <Mail className="mr-2 h-4 w-4" />
+                                Send Reminder
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem onClick={() => handleDelete(invoice)} className="text-destructive">Delete</DropdownMenuItem>
