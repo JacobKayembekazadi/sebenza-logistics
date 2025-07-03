@@ -35,6 +35,7 @@ import {
   Truck,
   Archive,
   Calendar,
+  Building2,
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useAuth } from '@/contexts/auth-context';
@@ -55,6 +56,7 @@ const accountingNavItems = [
 
 const logisticsNavItems = [
     { href: '/inventory', label: 'Inventory', icon: Package },
+    { href: '/warehouses', label: 'Warehouses', icon: Building2 },
     { href: '/purchase-orders', label: 'Purchase Orders', icon: ClipboardList },
     { href: '/suppliers', label: 'Suppliers', icon: Truck },
     { href: '/assets', label: 'Assets', icon: Archive },

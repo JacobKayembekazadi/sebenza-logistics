@@ -133,6 +133,12 @@ export type StockItem = {
   entryDate: string;
 };
 
+export type Warehouse = {
+  id: string;
+  name: string;
+  location: string;
+};
+
 
 export const projects: Project[] = [
   {
@@ -272,4 +278,10 @@ export const stockItems: StockItem[] = [
   { id: 'stk-2', reference: 'SHP-ABC-002', senderName: 'Stellar Goods', receiverName: 'Midwest Logistics', description: 'Apparel Shipment', quantity: 500, weight: 0.8, value: 45.00, status: 'In Transit', entryDate: '2024-10-24' },
   { id: 'stk-3', reference: 'SHP-QRT-003', senderName: 'Quantum Solutions', receiverName: 'West Coast Warehouse', description: 'Industrial Machinery Parts', quantity: 50, weight: 25.0, value: 800.00, status: 'Delivered', entryDate: '2024-10-20' },
   { id: 'stk-4', reference: 'SHP-APX-004', senderName: 'Apex Logistics', receiverName: 'East Coast Hub', description: 'Pharmaceutical Supplies', quantity: 1000, weight: 0.2, value: 20.00, status: 'In Warehouse', entryDate: '2024-10-26' },
+];
+
+export const warehouses: Warehouse[] = [
+  { id: 'wh-1', name: 'Main Warehouse', location: 'Newark, NJ' },
+  { id: 'wh-2', name: 'Chicago Distribution Center', location: 'Chicago, IL' },
+  { id: 'wh-3', name: 'West Coast Hub', location: 'Los Angeles, CA' },
 ];
