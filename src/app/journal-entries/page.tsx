@@ -65,14 +65,16 @@ export default function JournalEntriesPage() {
                 <Accordion type="multiple" className="w-full">
                     {journalEntries.map(entry => (
                         <AccordionItem value={entry.id} key={entry.id}>
-                            <AccordionTrigger className="hover:no-underline [&>svg]:ml-4">
-                                <div className="flex-1 text-left">
-                                    <p className="font-semibold">{entry.date}: {entry.description}</p>
-                                    <p className="text-sm text-muted-foreground">
-                                        {entry.lines.length} lines, Total: ${entry.lines.reduce((sum, line) => sum + line.debit, 0).toFixed(2)}
-                                    </p>
-                                </div>
-                                <div onClick={(e) => e.stopPropagation()} className="pr-4">
+                            <div className="flex items-center w-full">
+                                <AccordionTrigger className="flex-1 text-left hover:no-underline">
+                                    <div>
+                                        <p className="font-semibold">{entry.date}: {entry.description}</p>
+                                        <p className="text-sm text-muted-foreground">
+                                            {entry.lines.length} lines, Total: ${entry.lines.reduce((sum, line) => sum + line.debit, 0).toFixed(2)}
+                                        </p>
+                                    </div>
+                                </AccordionTrigger>
+                                <div className="px-4">
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
                                             <Button variant="ghost" size="icon">
@@ -85,7 +87,7 @@ export default function JournalEntriesPage() {
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </div>
-                            </AccordionTrigger>
+                            </div>
                             <AccordionContent>
                                 <Table>
                                     <TableHeader>
