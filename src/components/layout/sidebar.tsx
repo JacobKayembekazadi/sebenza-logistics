@@ -35,7 +35,7 @@ import { Button } from '../ui/button';
 import { useAuth } from '@/contexts/auth-context';
 
 const mainNavItems = [
-  { href: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/projects', label: 'Projects', icon: FolderKanban },
 ];
 
@@ -69,7 +69,7 @@ export function SiteSidebar() {
   }
 
   const isActive = (path: string) => {
-    if (path === '/') return pathname === '/';
+    if (path === '/dashboard') return pathname === '/dashboard';
     return pathname.startsWith(path);
   }
 
@@ -77,7 +77,7 @@ export function SiteSidebar() {
     <Sidebar collapsible="icon" className="border-r">
       <SidebarHeader>
         <Button variant="ghost" className="w-full justify-start gap-2 px-2 text-lg h-12" asChild>
-          <Link href="/">
+          <Link href="/dashboard">
             <Warehouse className="size-6 text-primary" />
             <span className="font-bold">WareFlow</span>
           </Link>

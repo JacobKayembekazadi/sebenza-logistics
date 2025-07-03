@@ -11,22 +11,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LogIn, Search } from 'lucide-react';
+import { LogIn, Search, UserPlus } from 'lucide-react';
 import { Input } from '../ui/input';
 import { useAuth } from '@/contexts/auth-context';
-import type { User } from '@/contexts/auth-context';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-const defaultAdminUser: User = {
-  name: 'Admin User',
-  email: 'admin@wareflow.com',
-  avatar: 'https://placehold.co/100x100.png',
-  role: 'admin',
-};
-
 export function SiteHeader() {
-  const { user, login, logout } = useAuth();
+  const { user, logout } = useAuth();
   const router = useRouter();
 
   const handleLogout = () => {
@@ -82,10 +74,20 @@ export function SiteHeader() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-             <Button onClick={() => login(defaultAdminUser)}>
-                <LogIn className="mr-2 h-4 w-4" />
-                Log In
-             </Button>
+             <div className="flex items-center gap-2">
+                <Button variant="outline" asChild>
+                    <Link href="/login">
+                        <LogIn className="mr-2 h-4 w-4" />
+                        Log In
+                    </Link>
+                </Button>
+                <Button asChild>
+                    <Link href="/signup">
+                        <UserPlus className="mr-2 h-4 w-4" />
+                        Sign Up
+                    </Link>
+                </Button>
+             </div>
           )}
         </div>
       </div>

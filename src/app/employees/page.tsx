@@ -1,10 +1,10 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, PlusCircle, ShieldAlert } from 'lucide-react';
+import { CheckCircle, MoreHorizontal, PlusCircle, ShieldAlert, XCircle } from 'lucide-react';
 import { useData } from '@/contexts/data-context';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -13,15 +13,23 @@ import { EmployeeFormDialog } from '@/components/employees/employee-form-dialog'
 import { DeleteConfirmationDialog } from '@/components/common/delete-confirmation-dialog';
 import type { Employee } from '@/lib/data';
 import { useAuth } from '@/contexts/auth-context';
+import { useRouter } from 'next/navigation';
 
 export default function EmployeesPage() {
   const { employees, deleteEmployee } = useData();
   const { user } = useAuth();
+  const router = useRouter();
   const [isFormOpen, setFormOpen] = useState(false);
   const [isConfirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | undefined>(undefined);
 
-  if (user?.role !== 'admin') {
+  useEffect(() => {
+    if (!user) {
+      router.push('/login');
+    }
+  }, [user, router]);
+
+  if (!user || user.role !== 'admin') {
     return (
         <div className="flex flex-col items-center justify-center h-full gap-4 text-center">
             <ShieldAlert className="w-16 h-16 text-destructive" />
@@ -76,7 +84,8 @@ export default function EmployeesPage() {
                 <TableRow>
                   <TableHead>Employee</TableHead>
                   <TableHead>Role</TableHead>
-                  <TableHead>Department</TableHead>
+                  <TableHead>Timesheet</TableHead>
+                  <TableHead>Payroll</TableHead>
                   <TableHead><span className="sr-only">Actions</span></TableHead>
                 </TableRow>
               </TableHeader>
@@ -96,7 +105,12 @@ export default function EmployeesPage() {
                       </div>
                     </TableCell>
                     <TableCell>{employee.role}</TableCell>
-                    <TableCell>{employee.department}</TableCell>
+                    <TableCell>
+                        {employee.timesheetEnabled ? <CheckCircle className="w-5 h-5 text-green-500" /> : <XCircle className="w-5 h-5 text-muted-foreground" />}
+                    </TableCell>
+                    <TableCell>
+                        {employee.payrollManaged ? <CheckCircle className="w-5 h-5 text-green-500" /> : <XCircle className="w-5 h-5 text-muted-foreground" />}
+                    </TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>

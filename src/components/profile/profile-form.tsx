@@ -28,12 +28,8 @@ export function ProfileForm() {
   }, [user]);
 
   if (!user) {
-    return (
-      <div className="flex flex-col items-center justify-center h-40 gap-4 text-center">
-        <p>You must be logged in to view your profile.</p>
-        <Button onClick={() => router.push('/')}>Go to Homepage</Button>
-      </div>
-    )
+    // This case should ideally be handled by the page component redirecting.
+    return null;
   }
 
   const handleLogout = () => {

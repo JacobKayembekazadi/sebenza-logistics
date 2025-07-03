@@ -31,6 +31,8 @@ export type Employee = {
   department: string;
   email: string;
   avatar: string;
+  timesheetEnabled: boolean;
+  payrollManaged: boolean;
 };
 
 export type JobPosting = {
@@ -141,10 +143,10 @@ export const invoices: Invoice[] = [
 ];
 
 export const employees: Employee[] = [
-  { id: 'emp-1', name: 'Alice Johnson', role: 'Logistics Manager', department: 'Operations', email: 'alice.j@wareflow.com', avatar: 'https://placehold.co/100x100.png' },
-  { id: 'emp-2', name: 'Bob Williams', role: 'Warehouse Supervisor', department: 'Operations', email: 'bob.w@wareflow.com', avatar: 'https://placehold.co/100x100.png' },
-  { id: 'emp-3', name: 'Charlie Brown', role: 'Accountant', department: 'Finance', email: 'charlie.b@wareflow.com', avatar: 'https://placehold.co/100x100.png' },
-  { id: 'emp-4', name: 'Diana Prince', role: 'HR Manager', department: 'Human Resources', email: 'diana.p@wareflow.com', avatar: 'https://placehold.co/100x100.png' },
+  { id: 'emp-1', name: 'Alice Johnson', role: 'Logistics Manager', department: 'Operations', email: 'alice.j@wareflow.com', avatar: 'https://placehold.co/100x100.png', timesheetEnabled: true, payrollManaged: true },
+  { id: 'emp-2', name: 'Bob Williams', role: 'Warehouse Supervisor', department: 'Operations', email: 'bob.w@wareflow.com', avatar: 'https://placehold.co/100x100.png', timesheetEnabled: true, payrollManaged: false },
+  { id: 'emp-3', name: 'Charlie Brown', role: 'Accountant', department: 'Finance', email: 'charlie.b@wareflow.com', avatar: 'https://placehold.co/100x100.png', timesheetEnabled: false, payrollManaged: true },
+  { id: 'emp-4', name: 'Diana Prince', role: 'HR Manager', department: 'Human Resources', email: 'diana.p@wareflow.com', avatar: 'https://placehold.co/100x100.png', timesheetEnabled: true, payrollManaged: true },
 ];
 
 export const jobPostings: JobPosting[] = [

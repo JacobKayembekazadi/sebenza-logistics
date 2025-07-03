@@ -2,51 +2,86 @@
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
+import { v4 as uuidv4 } from 'uuid';
 
-type UserRole = 'admin' | 'user';
+export type UserRole = 'admin' | 'user';
 
 export type User = {
+  id: string;
   name: string;
   email: string;
   avatar: string;
   role: UserRole;
 };
 
+export type Company = {
+    name: string;
+    userCount: number;
+};
+
 type AuthContextType = {
   user: User | null;
-  login: (user: User) => void;
+  company: Company | null;
+  login: (email: string, pass: string) => boolean;
   logout: () => void;
-  updateUser: (data: Partial<Omit<User, 'role'>>) => void;
+  updateUser: (data: Partial<Omit<User, 'role' | 'id'>>) => void;
+  signup: (companyData: Company, userData: Omit<User, 'id' | 'avatar' | 'role'>) => void;
+  updateCompany: (data: Partial<Company>) => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Default user for demonstration purposes
-const defaultAdminUser: User = {
-  name: 'Admin User',
-  email: 'admin@wareflow.com',
-  avatar: 'https://placehold.co/100x100.png',
-  role: 'admin',
-};
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(defaultAdminUser);
+  const [user, setUser] = useState<User | null>(null);
+  const [company, setCompany] = useState<Company | null>(null);
   
-  const login = (userData: User) => {
-    setUser(userData);
+  const login = (email: string, pass: string): boolean => {
+    // Mock login. In a real app, this would be an API call.
+    if (email === 'admin@wareflow.com' && pass === 'password') {
+        const loggedInUser: User = {
+            id: 'admin-user-id',
+            name: 'Admin User',
+            email: 'admin@wareflow.com',
+            avatar: 'https://placehold.co/100x100.png',
+            role: 'admin',
+        };
+        const loggedInCompany: Company = {
+            name: 'Default Corp',
+            userCount: 5,
+        };
+        setUser(loggedInUser);
+        setCompany(loggedInCompany);
+        return true;
+    }
+    return false;
+  };
+
+  const signup = (companyData: Company, userData: Omit<User, 'id'|'avatar'|'role'>) => {
+    const newUser: User = {
+        id: uuidv4(),
+        ...userData,
+        role: 'admin',
+        avatar: `https://placehold.co/100x100.png`,
+    };
+    setUser(newUser);
+    setCompany(companyData);
   };
 
   const logout = () => {
     setUser(null);
+    setCompany(null);
   };
 
-  const updateUser = (data: Partial<Omit<User, 'role'>>) => {
+  const updateUser = (data: Partial<Omit<User, 'role' | 'id'>>) => {
     setUser(currentUser => currentUser ? { ...currentUser, ...data } : null);
   };
 
+  const updateCompany = (data: Partial<Company>) => {
+    setCompany(currentCompany => currentCompany ? { ...currentCompany, ...data } : null);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, updateUser }}>
+    <AuthContext.Provider value={{ user, company, login, logout, updateUser, signup, updateCompany }}>
       {children}
     </AuthContext.Provider>
   );

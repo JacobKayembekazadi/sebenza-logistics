@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { useData } from "@/contexts/data-context";
 import type { Employee } from "@/lib/data";
 import { useEffect, useState } from "react";
@@ -28,6 +29,8 @@ export function EmployeeFormDialog({ open, onOpenChange, employee }: EmployeeFor
   const [role, setRole] = useState('');
   const [department, setDepartment] = useState('');
   const [email, setEmail] = useState('');
+  const [timesheetEnabled, setTimesheetEnabled] = useState(true);
+  const [payrollManaged, setPayrollManaged] = useState(true);
   
   const isEditMode = !!employee;
 
@@ -37,16 +40,20 @@ export function EmployeeFormDialog({ open, onOpenChange, employee }: EmployeeFor
       setRole(employee.role);
       setDepartment(employee.department);
       setEmail(employee.email);
+      setTimesheetEnabled(employee.timesheetEnabled);
+      setPayrollManaged(employee.payrollManaged);
     } else {
       setName('');
       setRole('');
       setDepartment('');
       setEmail('');
+      setTimesheetEnabled(true);
+      setPayrollManaged(true);
     }
   }, [employee, open]);
 
   const handleSubmit = () => {
-    const employeeData = { name, role, department, email, avatar: 'https://placehold.co/100x100.png' };
+    const employeeData = { name, role, department, email, avatar: 'https://placehold.co/100x100.png', timesheetEnabled, payrollManaged };
     
     if (isEditMode && employee) {
       updateEmployee({ ...employee, ...employeeData });
@@ -58,7 +65,7 @@ export function EmployeeFormDialog({ open, onOpenChange, employee }: EmployeeFor
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[480px]">
         <DialogHeader>
           <DialogTitle>{isEditMode ? 'Edit Employee' : 'Add New Employee'}</DialogTitle>
           <DialogDescription>
@@ -81,6 +88,20 @@ export function EmployeeFormDialog({ open, onOpenChange, employee }: EmployeeFor
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="department" className="text-right">Department</Label>
             <Input id="department" value={department} onChange={(e) => setDepartment(e.target.value)} className="col-span-3" />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="timesheet" className="text-right">Timesheet</Label>
+            <div className="col-span-3 flex items-center gap-2">
+                <Switch id="timesheet" checked={timesheetEnabled} onCheckedChange={setTimesheetEnabled} />
+                <span className="text-sm text-muted-foreground">Enable Timesheet</span>
+            </div>
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="payroll" className="text-right">Payroll</Label>
+             <div className="col-span-3 flex items-center gap-2">
+                <Switch id="payroll" checked={payrollManaged} onCheckedChange={setPayrollManaged} />
+                <span className="text-sm text-muted-foreground">Manage Payroll</span>
+            </div>
           </div>
         </div>
         <DialogFooter>

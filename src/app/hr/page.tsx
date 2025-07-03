@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal, PlusCircle, ShieldAlert } from 'lucide-react';
@@ -13,15 +13,23 @@ import { Badge } from '@/components/ui/badge';
 import { JobFormDialog } from '@/components/hr/job-form-dialog';
 import { DeleteConfirmationDialog } from '@/components/common/delete-confirmation-dialog';
 import { useAuth } from '@/contexts/auth-context';
+import { useRouter } from 'next/navigation';
 
 export default function HRPage() {
   const { jobPostings, deleteJobPosting } = useData();
   const { user } = useAuth();
+  const router = useRouter();
   const [isFormOpen, setFormOpen] = useState(false);
   const [isConfirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<JobPosting | undefined>(undefined);
 
-  if (user?.role !== 'admin') {
+  useEffect(() => {
+    if (!user) {
+      router.push('/login');
+    }
+  }, [user, router]);
+
+  if (!user || user.role !== 'admin') {
     return (
         <div className="flex flex-col items-center justify-center h-full gap-4 text-center">
             <ShieldAlert className="w-16 h-16 text-destructive" />
