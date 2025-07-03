@@ -1,10 +1,9 @@
-
 'use client';
 
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, PlusCircle } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Upload, Download } from 'lucide-react';
 import { useData } from '@/contexts/data-context';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -53,10 +52,20 @@ export default function ClientsPage() {
               <CardTitle>All Clients</CardTitle>
               <CardDescription>Manage your client information.</CardDescription>
             </div>
-            <Button size="sm" onClick={openAddDialog}>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Add Client
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button size="sm" variant="outline">
+                <Upload className="mr-2 h-4 w-4" />
+                Import Clients
+              </Button>
+              <Button size="sm" variant="outline">
+                <Download className="mr-2 h-4 w-4" />
+                Export Clients
+              </Button>
+              <Button size="sm" onClick={openAddDialog}>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Add Client
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <Table>
