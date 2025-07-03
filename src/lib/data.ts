@@ -169,7 +169,7 @@ export const invoices: Invoice[] = [
   { id: 'INV-001', client: 'Nexus Corp', amount: 2500.00, status: 'Paid', date: '2023-10-15', projectId: 'proj-1' },
   { id: 'INV-002', client: 'Quantum Solutions', amount: 1200.50, status: 'Pending', date: '2023-10-22' },
   { id: 'INV-003', client: 'Stellar Goods', amount: 850.00, status: 'Paid', date: '2023-09-30' },
-  { id: 'INV-004', client: 'Apex Logistics', amount: 3400.00, status: 'Overdue', date: '2023-09-01', projectId: 'proj-2' },
+  { id: 'INV-004', client: 'Apex Logistics', amount: 3400.00, status: 'Pending', date: '2023-09-01', projectId: 'proj-2' },
 ];
 
 export const employees: Employee[] = [
