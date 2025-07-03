@@ -1,18 +1,43 @@
 
 'use client';
 
+import { useAuth } from "@/contexts/auth-context";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "../ui/separator";
+import { useEffect, useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Textarea } from "../ui/textarea";
 
 export function SettingsForm() {
   const { toast } = useToast();
+  const { company, updateCompany } = useAuth();
+  
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
+  const [logo, setLogo] = useState('');
+  
+  useEffect(() => {
+    if (company) {
+      setName(company.name || '');
+      setEmail(company.email || '');
+      setPhone(company.phone || '');
+      setAddress(company.address || '');
+      setLogo(company.logo || '');
+    }
+  }, [company]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if(company) {
+        updateCompany({ ...company, name, email, phone, address, logo });
+    }
     toast({
       title: "Settings Saved",
       description: "Your new settings have been applied.",
@@ -21,6 +46,42 @@ export function SettingsForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
+      <div className="space-y-4">
+        <h3 className="text-lg font-medium">Company Profile</h3>
+        <div className="space-y-4">
+          <div className="flex items-center gap-6">
+            <Avatar className="h-20 w-20 rounded-md">
+              <AvatarImage src={logo} data-ai-hint="logo company" />
+              <AvatarFallback>
+                {name.charAt(0).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-grow space-y-2">
+                <Label htmlFor="logo">Logo URL</Label>
+                <Input id="logo" value={logo} onChange={(e) => setLogo(e.target.value)} />
+            </div>
+          </div>
+          <div className="space-y-2">
+              <Label htmlFor="companyName">Company Name</Label>
+              <Input id="companyName" value={name} onChange={(e) => setName(e.target.value)} />
+          </div>
+          <div className="space-y-2">
+              <Label htmlFor="companyEmail">Contact Email</Label>
+              <Input id="companyEmail" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          </div>
+          <div className="space-y-2">
+              <Label htmlFor="companyPhone">Phone Number</Label>
+              <Input id="companyPhone" value={phone} onChange={(e) => setPhone(e.target.value)} />
+          </div>
+          <div className="space-y-2">
+              <Label htmlFor="companyAddress">Address</Label>
+              <Textarea id="companyAddress" value={address} onChange={(e) => setAddress(e.target.value)} />
+          </div>
+        </div>
+      </div>
+      
+      <Separator />
+
       <div className="space-y-4">
         <h3 className="text-lg font-medium">General</h3>
         <div className="space-y-2">

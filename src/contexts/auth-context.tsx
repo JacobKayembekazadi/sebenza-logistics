@@ -17,6 +17,10 @@ export type User = {
 export type Company = {
     name: string;
     userCount: number;
+    logo: string;
+    address: string;
+    phone: string;
+    email: string;
 };
 
 type AuthContextType = {
@@ -25,7 +29,7 @@ type AuthContextType = {
   login: (email: string, pass: string) => boolean;
   logout: () => void;
   updateUser: (data: Partial<Omit<User, 'role' | 'id'>>) => void;
-  signup: (companyData: Company, userData: Omit<User, 'id' | 'avatar' | 'role'>) => void;
+  signup: (companyData: Pick<Company, 'name' | 'userCount'>, userData: Omit<User, 'id' | 'avatar' | 'role'>) => void;
   updateCompany: (data: Partial<Company>) => void;
 };
 
@@ -48,6 +52,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const loggedInCompany: Company = {
             name: 'Default Corp',
             userCount: 5,
+            logo: 'https://placehold.co/100x100/4338CA/FFFFFF.png',
+            address: '123 Business Rd, Suite 456, Big City, USA',
+            phone: '555-0199',
+            email: 'contact@defaultcorp.com'
         };
         setUser(loggedInUser);
         setCompany(loggedInCompany);
@@ -56,15 +64,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return false;
   };
 
-  const signup = (companyData: Company, userData: Omit<User, 'id'|'avatar'|'role'>) => {
+  const signup = (companyData: Pick<Company, 'name' | 'userCount'>, userData: Omit<User, 'id'|'avatar'|'role'>) => {
     const newUser: User = {
         id: uuidv4(),
         ...userData,
         role: 'admin',
         avatar: `https://placehold.co/100x100.png`,
     };
+    const newCompany: Company = {
+        ...companyData,
+        logo: 'https://placehold.co/100x100.png',
+        address: '',
+        phone: '',
+        email: userData.email,
+    };
     setUser(newUser);
-    setCompany(companyData);
+    setCompany(newCompany);
   };
 
   const logout = () => {
