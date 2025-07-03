@@ -202,6 +202,31 @@ export type MoneyTransfer = {
   date: string;
 };
 
+export const accountTypes = ['Asset', 'Liability', 'Equity', 'Revenue', 'Expense'] as const;
+export type AccountType = (typeof accountTypes)[number];
+
+export type Account = {
+  id: string;
+  accountNumber: string;
+  name: string;
+  description: string;
+  type: AccountType;
+};
+
+export type JournalEntryLine = {
+    accountId: string;
+    accountName: string;
+    debit: number;
+    credit: number;
+}
+
+export type JournalEntry = {
+  id: string;
+  date: string;
+  description: string;
+  lines: JournalEntryLine[];
+};
+
 
 export const projects: Project[] = [
   {
@@ -355,6 +380,40 @@ export const stockTransferLogs: StockTransferLog[] = [
 ];
 
 export const moneyTransfers: MoneyTransfer[] = [
-    { id: 'mt-1', fromLocation: 'USA', toLocation: 'Mexico', senderName: 'John Doe', receiverName: 'Maria Garcia', amountSent: 500, exchangeRate: 17.5, amountToCollect: 8750, status: 'Collected', date: '2024-10-28' },
+    { id: 'mt-1', fromLocation: 'USA', toLocation: 'Mexico', senderName: 'John Doe', receiverName: 'Maria Garcia', amountSent: 500, exchangeRate: 17.5, amountToCollect: 8750, status: 'Collected', date: '2024-10-28', referenceCode: 'MT12345' },
     { id: 'mt-2', fromLocation: 'Canada', toLocation: 'USA', senderName: 'Pierre Dubois', receiverName: 'Jane Smith', amountSent: 1000, exchangeRate: 0.75, amountToCollect: 750, referenceCode: 'MT67890', status: 'Pending Collection', date: '2024-11-01' },
+];
+
+export const chartOfAccounts: Account[] = [
+    // Assets
+    { id: 'acc-1', accountNumber: '1010', name: 'Cash', description: 'Cash in hand and in bank accounts.', type: 'Asset' },
+    { id: 'acc-2', accountNumber: '1200', name: 'Accounts Receivable', description: 'Amounts owed by customers.', type: 'Asset' },
+    { id: 'acc-3', accountNumber: '1500', name: 'Inventory', description: 'Goods available for sale.', type: 'Asset' },
+    { id: 'acc-4', accountNumber: '1700', name: 'Fixed Assets', description: 'Long-term assets like equipment.', type: 'Asset' },
+    // Liabilities
+    { id: 'acc-5', accountNumber: '2010', name: 'Accounts Payable', description: 'Amounts owed to suppliers.', type: 'Liability' },
+    { id: 'acc-6', accountNumber: '2200', name: 'Sales Tax Payable', description: 'Sales tax collected but not yet remitted.', type: 'Liability' },
+    // Equity
+    { id: 'acc-7', accountNumber: '3010', name: "Owner's Equity", description: "Owner's stake in the company.", type: 'Equity' },
+    { id: 'acc-8', accountNumber: '3200', name: 'Retained Earnings', description: 'Net income retained in the business.', type: 'Equity' },
+    // Revenue
+    { id: 'acc-9', accountNumber: '4010', name: 'Sales Revenue', description: 'Revenue from sales of goods/services.', type: 'Revenue' },
+    { id: 'acc-10', accountNumber: '4020', name: 'Shipping & Delivery Income', description: 'Revenue from shipping charges.', type: 'Revenue' },
+    // Expenses
+    { id: 'acc-11', accountNumber: '5010', name: 'Cost of Goods Sold', description: 'Direct costs of goods sold.', type: 'Expense' },
+    { id: 'acc-12', accountNumber: '5200', name: 'Salaries and Wages', description: 'Employee salaries.', type: 'Expense' },
+    { id: 'acc-13', accountNumber: '5300', name: 'Rent Expense', description: 'Rent for facilities.', type: 'Expense' },
+    { id: 'acc-14', accountNumber: '5400', name: 'Utilities', description: 'Electricity, water, etc.', type: 'Expense' },
+];
+
+export const journalEntries: JournalEntry[] = [
+    {
+        id: 'je-1',
+        date: '2024-10-31',
+        description: 'To record October salaries.',
+        lines: [
+            { accountId: 'acc-12', accountName: 'Salaries and Wages', debit: 5000.00, credit: 0 },
+            { accountId: 'acc-1', accountName: 'Cash', debit: 0, credit: 5000.00 },
+        ]
+    }
 ];

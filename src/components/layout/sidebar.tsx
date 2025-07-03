@@ -43,6 +43,8 @@ import {
   Wallet,
   BarChart,
   Scale,
+  Library,
+  BookText,
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useAuth } from '@/contexts/auth-context';
@@ -62,6 +64,8 @@ const accountingNavItems = [
   { href: '/reconciliation', label: 'Reconciliation', icon: Scale },
   { href: '/accounting', label: 'Financial Reports', icon: LineChart },
   { href: '/reporting', label: 'Analytics', icon: BarChart },
+  { href: '/chart-of-accounts', label: 'Chart of Accounts', icon: Library },
+  { href: '/journal-entries', label: 'Journal Entries', icon: BookText },
 ];
 
 const logisticsNavItems = [

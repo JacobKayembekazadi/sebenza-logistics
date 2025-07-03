@@ -23,8 +23,10 @@ import {
   stockTransferLogs as initialStockTransferLogs,
   moneyTransfers as initialMoneyTransfers,
   payments as initialPayments,
+  chartOfAccounts as initialChartOfAccounts,
+  journalEntries as initialJournalEntries,
   Project, Task, Invoice, Employee, JobPosting, Expense, Client, Estimate, Document, Service, Supplier, PurchaseOrder, Asset, StockItem, Warehouse, StockTransferLog, MoneyTransfer,
-  Payment
+  Payment, Account, JournalEntry
 } from '@/lib/data';
 
 type DataContextType = {
@@ -116,6 +118,16 @@ type DataContextType = {
   addMoneyTransfer: (transfer: Omit<MoneyTransfer, 'id' | 'amountToCollect'>) => void;
   updateMoneyTransfer: (transfer: MoneyTransfer) => void;
   deleteMoneyTransfer: (transferId: string) => void;
+
+  chartOfAccounts: Account[];
+  addAccount: (account: Omit<Account, 'id'>) => void;
+  updateAccount: (account: Account) => void;
+  deleteAccount: (accountId: string) => void;
+
+  journalEntries: JournalEntry[];
+  addJournalEntry: (entry: Omit<JournalEntry, 'id'>) => void;
+  updateJournalEntry: (entry: JournalEntry) => void;
+  deleteJournalEntry: (entryId: string) => void;
 };
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -139,6 +151,9 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [warehouses, setWarehouses] = useState<Warehouse[]>(initialWarehouses);
   const [stockTransferLogs, setStockTransferLogs] = useState<StockTransferLog[]>(initialStockTransferLogs);
   const [moneyTransfers, setMoneyTransfers] = useState<MoneyTransfer[]>(initialMoneyTransfers);
+  const [chartOfAccounts, setChartOfAccounts] = useState<Account[]>(initialChartOfAccounts);
+  const [journalEntries, setJournalEntries] = useState<JournalEntry[]>(initialJournalEntries);
+
 
   // Projects
   const addProject = (project: Omit<Project, 'id' | 'status' | 'progress'>) => {
@@ -462,6 +477,30 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     setMoneyTransfers(prev => prev.filter(t => t.id !== transferId));
   };
 
+  // Chart of Accounts
+  const addAccount = (account: Omit<Account, 'id'>) => {
+    const newAccount: Account = { ...account, id: uuidv4() };
+    setChartOfAccounts(prev => [...prev, newAccount].sort((a,b) => a.accountNumber.localeCompare(b.accountNumber)));
+  };
+  const updateAccount = (updatedAccount: Account) => {
+    setChartOfAccounts(prev => prev.map(a => a.id === updatedAccount.id ? updatedAccount : a));
+  };
+  const deleteAccount = (accountId: string) => {
+    setChartOfAccounts(prev => prev.filter(a => a.id !== accountId));
+  };
+
+  // Journal Entries
+  const addJournalEntry = (entry: Omit<JournalEntry, 'id'>) => {
+    const newEntry: JournalEntry = { ...entry, id: uuidv4() };
+    setJournalEntries(prev => [newEntry, ...prev]);
+  };
+  const updateJournalEntry = (updatedEntry: JournalEntry) => {
+    setJournalEntries(prev => prev.map(e => e.id === updatedEntry.id ? updatedEntry : e));
+  };
+  const deleteJournalEntry = (entryId: string) => {
+    setJournalEntries(prev => prev.filter(e => e.id !== entryId));
+  };
+
   return (
     <DataContext.Provider value={{
       projects, addProject, updateProject, deleteProject,
@@ -481,7 +520,9 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       stockItems, addStockItem, updateStockItem, deleteStockItem,
       warehouses, addWarehouse, updateWarehouse, deleteWarehouse,
       stockTransferLogs, transferStockItem,
-      moneyTransfers, addMoneyTransfer, updateMoneyTransfer, deleteMoneyTransfer
+      moneyTransfers, addMoneyTransfer, updateMoneyTransfer, deleteMoneyTransfer,
+      chartOfAccounts, addAccount, updateAccount, deleteAccount,
+      journalEntries, addJournalEntry, updateJournalEntry, deleteJournalEntry
     }}>
       {children}
     </DataContext.Provider>
