@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import Link from 'next/link';
@@ -48,6 +47,7 @@ import {
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useAuth } from '@/contexts/auth-context';
+import { useState, useEffect } from 'react';
 
 const mainNavItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -98,6 +98,11 @@ export function SiteSidebar() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const router = useRouter();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -130,7 +135,7 @@ export function SiteSidebar() {
               >
                 <Link href={item.href}>
                   <item.icon />
-                  <span>{item.label}</span>
+                  {isClient && <span>{item.label}</span>}
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -148,7 +153,7 @@ export function SiteSidebar() {
                 >
                   <Link href={item.href}>
                     <item.icon />
-                    <span>{item.label}</span>
+                    {isClient && <span>{item.label}</span>}
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -167,7 +172,7 @@ export function SiteSidebar() {
                 >
                   <Link href={item.href}>
                     <item.icon />
-                    <span>{item.label}</span>
+                    {isClient && <span>{item.label}</span>}
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -186,7 +191,7 @@ export function SiteSidebar() {
                 >
                   <Link href={item.href}>
                     <item.icon />
-                    <span>{item.label}</span>
+                    {isClient && <span>{item.label}</span>}
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -203,7 +208,7 @@ export function SiteSidebar() {
               >
                 <Link href={item.href}>
                   <item.icon />
-                  <span>{item.label}</span>
+                  {isClient && <span>{item.label}</span>}
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -223,7 +228,7 @@ export function SiteSidebar() {
                   >
                     <Link href={item.href}>
                       <item.icon />
-                      <span>{item.label}</span>
+                      {isClient && <span>{item.label}</span>}
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -238,7 +243,7 @@ export function SiteSidebar() {
             <SidebarMenuButton asChild tooltip={{ children: 'Settings', side: 'right' }}>
               <Link href="/settings">
                 <Settings />
-                <span>Settings</span>
+                {isClient && <span>Settings</span>}
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -246,7 +251,7 @@ export function SiteSidebar() {
             <SidebarMenuItem>
               <SidebarMenuButton onClick={handleLogout} tooltip={{ children: 'Logout', side: 'right' }}>
                 <LogOut />
-                <span>Logout</span>
+                {isClient && <span>Logout</span>}
               </SidebarMenuButton>
             </SidebarMenuItem>
           )}
