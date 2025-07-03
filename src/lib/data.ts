@@ -62,6 +62,10 @@ export type Expense = {
   description: string;
   amount: number;
   date: string;
+  clientId?: string;
+  projectId?: string;
+  isBillable?: boolean;
+  receiptUrl?: string;
 };
 
 export type Client = {
@@ -268,9 +272,9 @@ export const jobPostings: JobPosting[] = [
 ];
 
 export const expenses: Expense[] = [
-  { id: 'exp-1', category: 'Office Supplies', description: 'Printer paper and ink', amount: 75.50, date: '2024-10-20' },
-  { id: 'exp-2', category: 'Software', description: 'Subscription for project management tool', amount: 200.00, date: '2024-10-01' },
-  { id: 'exp-3', category: 'Travel', description: 'Client meeting in Chicago', amount: 450.00, date: '2024-09-15' },
+  { id: 'exp-1', category: 'Office Supplies', description: 'Printer paper and ink', amount: 75.50, date: '2024-10-20', isBillable: false },
+  { id: 'exp-2', category: 'Software', description: 'Subscription for project management tool', amount: 200.00, date: '2024-10-01', projectId: 'proj-2', isBillable: true },
+  { id: 'exp-3', category: 'Travel', description: 'Client meeting in Chicago', amount: 450.00, date: '2024-09-15', clientId: 'client-2', isBillable: true },
 ];
 
 export const clients: Client[] = [

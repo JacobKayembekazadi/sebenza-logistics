@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { useData } from "@/contexts/data-context";
 import type { Expense } from "@/lib/data";
 import { useEffect, useState } from "react";
@@ -24,14 +25,17 @@ interface ExpenseFormDialogProps {
   expense?: Expense;
 }
 
-const expenseCategories = ['Office Supplies', 'Software', 'Travel', 'Utilities', 'Marketing', 'Other'];
+const expenseCategories = ['Office Supplies', 'Software', 'Travel', 'Utilities', 'Marketing', 'Other', 'Materials', 'Subcontractor'];
 
 export function ExpenseFormDialog({ open, onOpenChange, expense }: ExpenseFormDialogProps) {
-  const { addExpense, updateExpense } = useData();
+  const { addExpense, updateExpense, clients, projects } = useData();
   const [category, setCategory] = useState(expenseCategories[0]);
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
   const [date, setDate] = useState('');
+  const [clientId, setClientId] = useState<string | undefined>('');
+  const [projectId, setProjectId] = useState<string | undefined>('');
+  const [isBillable, setIsBillable] = useState(false);
   
   const isEditMode = !!expense;
 
@@ -41,11 +45,17 @@ export function ExpenseFormDialog({ open, onOpenChange, expense }: ExpenseFormDi
       setDescription(expense.description);
       setAmount(expense.amount.toString());
       setDate(expense.date);
+      setClientId(expense.clientId || '');
+      setProjectId(expense.projectId || '');
+      setIsBillable(expense.isBillable || false);
     } else {
       setCategory(expenseCategories[0]);
       setDescription('');
       setAmount('');
       setDate(new Date().toISOString().split('T')[0]);
+      setClientId('');
+      setProjectId('');
+      setIsBillable(false);
     }
   }, [expense, open]);
 
@@ -54,7 +64,10 @@ export function ExpenseFormDialog({ open, onOpenChange, expense }: ExpenseFormDi
       category,
       description, 
       amount: parseFloat(amount),
-      date 
+      date,
+      clientId: clientId || undefined,
+      projectId: projectId || undefined,
+      isBillable
     };
 
     if (isEditMode && expense) {
@@ -67,14 +80,14 @@ export function ExpenseFormDialog({ open, onOpenChange, expense }: ExpenseFormDi
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[525px]">
         <DialogHeader>
           <DialogTitle>{isEditMode ? 'Edit Expense' : 'Add New Expense'}</DialogTitle>
           <DialogDescription>
             {isEditMode ? 'Update the details of the expense below.' : 'Fill in the details below to add a new expense.'}
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
+        <div className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto px-2">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="category" className="text-right">Category</Label>
             <Select onValueChange={setCategory} value={category}>
@@ -97,6 +110,40 @@ export function ExpenseFormDialog({ open, onOpenChange, expense }: ExpenseFormDi
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="date" className="text-right">Date</Label>
             <Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} className="col-span-3" />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="client" className="text-right">Client</Label>
+            <Select onValueChange={value => setClientId(value === 'none' ? '' : value)} value={clientId || 'none'}>
+              <SelectTrigger className="col-span-3">
+                <SelectValue placeholder="Assign to client" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">(None)</SelectItem>
+                {clients.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="project" className="text-right">Project</Label>
+            <Select onValueChange={value => setProjectId(value === 'none' ? '' : value)} value={projectId || 'none'}>
+              <SelectTrigger className="col-span-3">
+                <SelectValue placeholder="Assign to project" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">(None)</SelectItem>
+                {projects.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="receipt" className="text-right">Receipt</Label>
+            <Input id="receipt" type="file" className="col-span-3" />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label className="text-right">Billable</Label>
+            <div className="col-span-3 flex items-center">
+              <Switch id="isBillable" checked={isBillable} onCheckedChange={setIsBillable} />
+            </div>
           </div>
         </div>
         <DialogFooter>
