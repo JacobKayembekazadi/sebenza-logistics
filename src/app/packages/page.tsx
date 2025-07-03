@@ -28,9 +28,9 @@ const plans = [
 ];
 
 export default function PackagesPage() {
-  const { userRole } = useAuth();
+  const { user } = useAuth();
 
-  if (userRole !== 'admin') {
+  if (user?.role !== 'admin') {
     return (
         <div className="flex flex-col items-center justify-center h-full gap-4 text-center">
             <ShieldAlert className="w-16 h-16 text-destructive" />

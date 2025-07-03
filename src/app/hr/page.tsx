@@ -16,12 +16,12 @@ import { useAuth } from '@/contexts/auth-context';
 
 export default function HRPage() {
   const { jobPostings, deleteJobPosting } = useData();
-  const { userRole } = useAuth();
+  const { user } = useAuth();
   const [isFormOpen, setFormOpen] = useState(false);
   const [isConfirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<JobPosting | undefined>(undefined);
 
-  if (userRole !== 'admin') {
+  if (user?.role !== 'admin') {
     return (
         <div className="flex flex-col items-center justify-center h-full gap-4 text-center">
             <ShieldAlert className="w-16 h-16 text-destructive" />

@@ -2,7 +2,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   Sidebar,
   SidebarHeader,
@@ -60,7 +60,13 @@ const adminNavItems = [
 
 export function SiteSidebar() {
   const pathname = usePathname();
-  const { userRole } = useAuth();
+  const { user, logout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    logout();
+    router.push('/');
+  }
 
   const isActive = (path: string) => {
     if (path === '/') return pathname === '/';
@@ -130,7 +136,7 @@ export function SiteSidebar() {
           ))}
         </SidebarMenu>
 
-        {userRole === 'admin' && (
+        {user?.role === 'admin' && (
           <SidebarGroup>
             <SidebarGroupLabel>Admin</SidebarGroupLabel>
             <SidebarMenu>
@@ -155,17 +161,21 @@ export function SiteSidebar() {
       <SidebarFooter className="p-2">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton tooltip={{ children: 'Settings', side: 'right' }}>
-              <Settings />
-              <span>Settings</span>
+            <SidebarMenuButton asChild tooltip={{ children: 'Settings', side: 'right' }}>
+              <Link href="/settings">
+                <Settings />
+                <span>Settings</span>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton tooltip={{ children: 'Logout', side: 'right' }}>
-              <LogOut />
-              <span>Logout</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          {user && (
+            <SidebarMenuItem>
+              <SidebarMenuButton onClick={handleLogout} tooltip={{ children: 'Logout', side: 'right' }}>
+                <LogOut />
+                <span>Logout</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )}
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
