@@ -17,7 +17,8 @@ import {
   suppliers as initialSuppliers,
   purchaseOrders as initialPurchaseOrders,
   assets as initialAssets,
-  Project, Task, Invoice, Employee, JobPosting, Expense, Client, Estimate, Document, Service, Supplier, PurchaseOrder, Asset
+  stockItems as initialStockItems,
+  Project, Task, Invoice, Employee, JobPosting, Expense, Client, Estimate, Document, Service, Supplier, PurchaseOrder, Asset, StockItem
 } from '@/lib/data';
 
 type DataContextType = {
@@ -86,6 +87,11 @@ type DataContextType = {
   addAsset: (asset: Omit<Asset, 'id'>) => void;
   updateAsset: (asset: Asset) => void;
   deleteAsset: (assetId: string) => void;
+
+  stockItems: StockItem[];
+  addStockItem: (item: Omit<StockItem, 'id'>) => void;
+  updateStockItem: (item: StockItem) => void;
+  deleteStockItem: (itemId: string) => void;
 };
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -104,6 +110,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [suppliers, setSuppliers] = useState<Supplier[]>(initialSuppliers);
   const [purchaseOrders, setPurchaseOrders] = useState<PurchaseOrder[]>(initialPurchaseOrders);
   const [assets, setAssets] = useState<Asset[]>(initialAssets);
+  const [stockItems, setStockItems] = useState<StockItem[]>(initialStockItems);
 
   // Projects
   const addProject = (project: Omit<Project, 'id' | 'status' | 'progress'>) => {
@@ -263,6 +270,18 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     setAssets(prev => prev.filter(a => a.id !== assetId));
   };
 
+  // Stock Items
+  const addStockItem = (item: Omit<StockItem, 'id'>) => {
+    const newItem: StockItem = { ...item, id: uuidv4() };
+    setStockItems(prev => [newItem, ...prev]);
+  };
+  const updateStockItem = (updatedItem: StockItem) => {
+    setStockItems(prev => prev.map(i => i.id === updatedItem.id ? updatedItem : i));
+  };
+  const deleteStockItem = (itemId: string) => {
+    setStockItems(prev => prev.filter(i => i.id !== itemId));
+  };
+
   return (
     <DataContext.Provider value={{
       projects, addProject, updateProject, deleteProject,
@@ -277,7 +296,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       services, addService, updateService, deleteService,
       suppliers, addSupplier, updateSupplier, deleteSupplier,
       purchaseOrders, addPurchaseOrder, updatePurchaseOrder, deletePurchaseOrder,
-      assets, addAsset, updateAsset, deleteAsset
+      assets, addAsset, updateAsset, deleteAsset,
+      stockItems, addStockItem, updateStockItem, deleteStockItem
     }}>
       {children}
     </DataContext.Provider>

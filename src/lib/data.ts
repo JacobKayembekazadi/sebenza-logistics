@@ -118,6 +118,19 @@ export type Asset = {
   receiptUrl?: string;
 };
 
+export type StockItem = {
+  id: string;
+  reference: string;
+  senderName: string;
+  receiverName: string;
+  description: string;
+  quantity: number;
+  weight: number; // in kg
+  value: number; // per item
+  status: 'In Warehouse' | 'In Transit' | 'Delivered';
+  entryDate: string;
+};
+
 
 export const projects: Project[] = [
   {
@@ -213,7 +226,7 @@ export const clients: Client[] = [
 export const estimates: Estimate[] = [
   { id: 'est-1', client: 'Nexus Corp', estimateNumber: 'EST-001', amount: 5000.00, status: 'Sent', date: '2023-10-18' },
   { id: 'est-2', client: 'Quantum Solutions', estimateNumber: 'EST-002', amount: 7500.00, status: 'Accepted', date: '2023-10-12' },
-  { id: 'est-3', client: 'Stellar Goods', estimateNumber: 'EST-003', amount: 3200.00, status: 'Draft', date: '2023-10-25' },
+  { id: 'est-3', client: 'Stellar Goods', estimateNumber: 'EST-003', amount: 'Draft', date: '2023-10-25' },
 ];
 
 export const documents: Document[] = [
@@ -245,4 +258,11 @@ export const assets: Asset[] = [
   { id: 'asset-1', name: 'Dell Latitude 7420 Laptop', description: 'Laptop for office admin', quantity: 1, purchaseDate: '2023-05-10', value: 1450.00 },
   { id: 'asset-2', name: 'Zebra ZD421 Label Printer', description: 'For printing shipping labels in warehouse A', quantity: 3, purchaseDate: '2023-08-22', value: 450.00 },
   { id: 'asset-3', name: 'Hyster Forklift E50XN', description: 'Primary forklift for heavy lifting', quantity: 1, purchaseDate: '2022-11-01', value: 25000.00 },
+];
+
+export const stockItems: StockItem[] = [
+  { id: 'stk-1', reference: 'SHP-XYZ-001', senderName: 'Nexus Corp', receiverName: 'East Coast Hub', description: 'Electronics Components', quantity: 200, weight: 5.5, value: 150.00, status: 'In Warehouse', entryDate: '2023-10-25' },
+  { id: 'stk-2', reference: 'SHP-ABC-002', senderName: 'Stellar Goods', receiverName: 'Midwest Logistics', description: 'Apparel Shipment', quantity: 500, weight: 0.8, value: 45.00, status: 'In Transit', entryDate: '2023-10-24' },
+  { id: 'stk-3', reference: 'SHP-QRT-003', senderName: 'Quantum Solutions', receiverName: 'West Coast Warehouse', description: 'Industrial Machinery Parts', quantity: 50, weight: 25.0, value: 800.00, status: 'Delivered', entryDate: '2023-10-20' },
+  { id: 'stk-4', reference: 'SHP-APX-004', senderName: 'Apex Logistics', receiverName: 'East Coast Hub', description: 'Pharmaceutical Supplies', quantity: 1000, weight: 0.2, value: 20.00, status: 'In Warehouse', entryDate: '2023-10-26' },
 ];
