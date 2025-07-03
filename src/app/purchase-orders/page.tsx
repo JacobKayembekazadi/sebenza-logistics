@@ -2,19 +2,23 @@
 'use client';
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, PlusCircle } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { MoreHorizontal, PlusCircle, Printer, FileDown, Receipt } from "lucide-react";
 import { useData } from "@/contexts/data-context";
 import type { PurchaseOrder } from "@/lib/data";
 import { DeleteConfirmationDialog } from "@/components/common/delete-confirmation-dialog";
 import { PurchaseOrderFormDialog } from "@/components/purchase-orders/po-form-dialog";
 
 export default function PurchaseOrdersPage() {
-  const { purchaseOrders, deletePurchaseOrder } = useData();
+  const { purchaseOrders, deletePurchaseOrder, addExpense, addInvoice } = useData();
+  const router = useRouter();
+  const { toast } = useToast();
   const [isFormOpen, setFormOpen] = useState(false);
   const [isConfirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [selectedPO, setSelectedPO] = useState<PurchaseOrder | undefined>(undefined);
@@ -42,6 +46,34 @@ export default function PurchaseOrdersPage() {
     setFormOpen(true);
   };
 
+  const handleConvertToExpense = (po: PurchaseOrder) => {
+    addExpense({
+      category: 'Supplier Cost',
+      description: `Payment for PO #${po.poNumber} to ${po.supplierName}`,
+      amount: po.amount,
+      date: new Date().toISOString().split('T')[0],
+    });
+    toast({
+      title: "Expense Created",
+      description: `PO ${po.poNumber} has been converted to a new expense.`,
+    });
+    router.push('/expenses');
+  };
+
+  const handleConvertToInvoice = (po: PurchaseOrder) => {
+    addInvoice({
+      client: po.supplierName, // As a placeholder, user should edit this
+      amount: po.amount,
+      status: 'Pending',
+      date: new Date().toISOString().split('T')[0],
+    });
+    toast({
+      title: "Invoice Created",
+      description: `An invoice has been drafted based on PO ${po.poNumber}. Please review and edit.`,
+    });
+    router.push('/invoices');
+  };
+
   const statusVariant: { [key: string]: "default" | "secondary" | "destructive" | "outline" } = {
     'Draft': 'secondary',
     'Sent': 'default',
@@ -64,10 +96,16 @@ export default function PurchaseOrdersPage() {
               <CardTitle>All Purchase Orders</CardTitle>
               <CardDescription>Create and manage purchase orders to suppliers.</CardDescription>
             </div>
-            <Button size="sm" onClick={openAddDialog}>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Add PO
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button size="sm" variant="outline" onClick={() => window.print()}>
+                <Printer className="mr-2 h-4 w-4" />
+                Print / Export
+              </Button>
+              <Button size="sm" onClick={openAddDialog}>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Add PO
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <Table>
@@ -103,6 +141,16 @@ export default function PurchaseOrdersPage() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => handleEdit(po)}>Edit</DropdownMenuItem>
                           <DropdownMenuItem>Send to Supplier</DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onClick={() => handleConvertToExpense(po)}>
+                             <FileDown className="mr-2 h-4 w-4" />
+                            Convert to Expense
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleConvertToInvoice(po)}>
+                            <Receipt className="mr-2 h-4 w-4" />
+                            Convert to Invoice
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
                           <DropdownMenuItem onClick={() => handleDelete(po)} className="text-destructive">Delete</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
