@@ -41,6 +41,7 @@ import {
   Send,
   HandCoins,
   Wallet,
+  BarChart,
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useAuth } from '@/contexts/auth-context';
@@ -57,7 +58,8 @@ const accountingNavItems = [
   { href: '/payments', label: 'Payments', icon: Wallet },
   { href: '/expenses', label: 'Expenses', icon: CreditCard },
   { href: '/clients', label: 'Clients', icon: Contact },
-  { href: '/reporting', label: 'Reporting', icon: LineChart },
+  { href: '/accounting', label: 'Financial Reports', icon: LineChart },
+  { href: '/reporting', label: 'Analytics', icon: BarChart },
 ];
 
 const logisticsNavItems = [
