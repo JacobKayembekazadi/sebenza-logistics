@@ -1,3 +1,4 @@
+
 export type Project = {
   id: string;
   name: string;
@@ -86,6 +87,24 @@ export type Service = {
   name: string;
   description: string;
   price: number;
+};
+
+export type Supplier = {
+  id: string;
+  name: string;
+  contactPerson: string;
+  email: string;
+  phone: string;
+};
+
+export type PurchaseOrder = {
+  id: string;
+  poNumber: string;
+  supplierId: string;
+  supplierName: string; 
+  date: string;
+  amount: number;
+  status: 'Draft' | 'Sent' | 'Fulfilled' | 'Cancelled';
 };
 
 export const projects: Project[] = [
@@ -196,4 +215,16 @@ export const services: Service[] = [
   { id: 'svc-2', name: 'Order Fulfillment', description: 'Pick, pack, and ship per order.', price: 3.50 },
   { id: 'svc-3', name: 'Cross-Docking', description: 'Unload, sort, and reload per shipment.', price: 250.00 },
   { id: 'svc-4', name: 'Local Delivery', description: 'Per delivery within a 50-mile radius.', price: 75.00 },
+];
+
+export const suppliers: Supplier[] = [
+    { id: 'sup-1', name: 'Global Shipping Supply', contactPerson: 'Mark Johnson', email: 'mark.j@gss.com', phone: '555-0201' },
+    { id: 'sup-2', name: 'Packaging Pros Inc.', contactPerson: 'Susan Chen', email: 's.chen@packagingpros.com', phone: '555-0202' },
+    { id: 'sup-3', name: 'Fleet Maintenance Co.', contactPerson: 'David Rodriguez', email: 'dave@fleetmc.com', phone: '555-0203' },
+];
+
+export const purchaseOrders: PurchaseOrder[] = [
+    { id: 'po-1', poNumber: 'PO-1001', supplierId: 'sup-1', supplierName: 'Global Shipping Supply', date: '2023-10-20', amount: 1500.00, status: 'Sent' },
+    { id: 'po-2', poNumber: 'PO-1002', supplierId: 'sup-2', supplierName: 'Packaging Pros Inc.', date: '2023-10-22', amount: 450.75, status: 'Fulfilled' },
+    { id: 'po-3', poNumber: 'PO-1003', supplierId: 'sup-1', supplierName: 'Global Shipping Supply', date: '2023-10-25', amount: 2500.00, status: 'Draft' },
 ];

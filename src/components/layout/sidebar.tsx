@@ -31,6 +31,8 @@ import {
   Folder,
   Briefcase,
   LineChart,
+  ClipboardList,
+  Truck
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useAuth } from '@/contexts/auth-context';
@@ -46,6 +48,11 @@ const accountingNavItems = [
   { href: '/expenses', label: 'Expenses', icon: CreditCard },
   { href: '/clients', label: 'Clients', icon: Contact },
   { href: '/reporting', label: 'Reporting', icon: LineChart },
+];
+
+const logisticsNavItems = [
+    { href: '/suppliers', label: 'Suppliers', icon: Truck },
+    { href: '/purchase-orders', label: 'Purchase Orders', icon: ClipboardList },
 ];
 
 const businessNavItems = [
@@ -109,6 +116,25 @@ export function SiteSidebar() {
            <SidebarGroupLabel>Accounting</SidebarGroupLabel>
            <SidebarMenu>
              {accountingNavItems.map((item) => (
+              <SidebarMenuItem key={item.href}>
+                <SidebarMenuButton
+                  asChild
+                  isActive={isActive(item.href)}
+                  tooltip={{ children: item.label, side: 'right' }}
+                >
+                  <Link href={item.href}>
+                    <item.icon />
+                    <span>{item.label}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+           </SidebarMenu>
+        </SidebarGroup>
+         <SidebarGroup>
+           <SidebarGroupLabel>Logistics</SidebarGroupLabel>
+           <SidebarMenu>
+             {logisticsNavItems.map((item) => (
               <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton
                   asChild

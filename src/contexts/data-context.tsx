@@ -14,7 +14,9 @@ import {
   estimates as initialEstimates,
   documents as initialDocuments,
   services as initialServices,
-  Project, Task, Invoice, Employee, JobPosting, Expense, Client, Estimate, Document, Service
+  suppliers as initialSuppliers,
+  purchaseOrders as initialPurchaseOrders,
+  Project, Task, Invoice, Employee, JobPosting, Expense, Client, Estimate, Document, Service, Supplier, PurchaseOrder
 } from '@/lib/data';
 
 type DataContextType = {
@@ -68,6 +70,16 @@ type DataContextType = {
   addService: (service: Omit<Service, 'id'>) => void;
   updateService: (service: Service) => void;
   deleteService: (serviceId: string) => void;
+
+  suppliers: Supplier[];
+  addSupplier: (supplier: Omit<Supplier, 'id'>) => void;
+  updateSupplier: (supplier: Supplier) => void;
+  deleteSupplier: (supplierId: string) => void;
+
+  purchaseOrders: PurchaseOrder[];
+  addPurchaseOrder: (po: Omit<PurchaseOrder, 'id' | 'poNumber'>) => void;
+  updatePurchaseOrder: (po: PurchaseOrder) => void;
+  deletePurchaseOrder: (poId: string) => void;
 };
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -83,6 +95,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [estimates, setEstimates] = useState<Estimate[]>(initialEstimates);
   const [documents, setDocuments] = useState<Document[]>(initialDocuments);
   const [services, setServices] = useState<Service[]>(initialServices);
+  const [suppliers, setSuppliers] = useState<Supplier[]>(initialSuppliers);
+  const [purchaseOrders, setPurchaseOrders] = useState<PurchaseOrder[]>(initialPurchaseOrders);
 
   // Projects
   const addProject = (project: Omit<Project, 'id' | 'status' | 'progress'>) => {
@@ -206,6 +220,30 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     setServices(prev => prev.filter(s => s.id !== serviceId));
   };
 
+  // Suppliers
+  const addSupplier = (supplier: Omit<Supplier, 'id'>) => {
+    const newSupplier: Supplier = { ...supplier, id: uuidv4() };
+    setSuppliers(prev => [newSupplier, ...prev]);
+  };
+  const updateSupplier = (updatedSupplier: Supplier) => {
+    setSuppliers(prev => prev.map(s => s.id === updatedSupplier.id ? updatedSupplier : s));
+  };
+  const deleteSupplier = (supplierId: string) => {
+    setSuppliers(prev => prev.filter(s => s.id !== supplierId));
+  };
+
+  // Purchase Orders
+  const addPurchaseOrder = (po: Omit<PurchaseOrder, 'id' | 'poNumber'>) => {
+    const newPO: PurchaseOrder = { ...po, id: uuidv4(), poNumber: `PO-${(purchaseOrders.length + 1001)}` };
+    setPurchaseOrders(prev => [newPO, ...prev]);
+  };
+  const updatePurchaseOrder = (updatedPO: PurchaseOrder) => {
+    setPurchaseOrders(prev => prev.map(po => po.id === updatedPO.id ? updatedPO : po));
+  };
+  const deletePurchaseOrder = (poId: string) => {
+    setPurchaseOrders(prev => prev.filter(po => po.id !== poId));
+  };
+
   return (
     <DataContext.Provider value={{
       projects, addProject, updateProject, deleteProject,
@@ -217,7 +255,9 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       clients, addClient, updateClient, deleteClient,
       estimates, addEstimate, updateEstimate, deleteEstimate,
       documents, addDocument, updateDocument, deleteDocument,
-      services, addService, updateService, deleteService
+      services, addService, updateService, deleteService,
+      suppliers, addSupplier, updateSupplier, deleteSupplier,
+      purchaseOrders, addPurchaseOrder, updatePurchaseOrder, deletePurchaseOrder
     }}>
       {children}
     </DataContext.Provider>
