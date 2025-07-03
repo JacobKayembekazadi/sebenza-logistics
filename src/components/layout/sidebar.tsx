@@ -122,7 +122,7 @@ export function SiteSidebar() {
       <SidebarContent className="p-2">
         <SidebarMenu>
           {mainNavItems.map((item) => (
-            <SidebarMenuItem key={item.href}>
+            <SidebarMenuItem key={item.href + item.label}>
               <SidebarMenuButton
                 asChild
                 isActive={isActive(item.href)}
@@ -140,7 +140,7 @@ export function SiteSidebar() {
            <SidebarGroupLabel>Accounting</SidebarGroupLabel>
            <SidebarMenu>
              {accountingNavItems.map((item) => (
-              <SidebarMenuItem key={item.href}>
+              <SidebarMenuItem key={item.href + item.label}>
                 <SidebarMenuButton
                   asChild
                   isActive={isActive(item.href)}
@@ -159,7 +159,7 @@ export function SiteSidebar() {
            <SidebarGroupLabel>Logistics</SidebarGroupLabel>
            <SidebarMenu>
              {logisticsNavItems.map((item) => (
-              <SidebarMenuItem key={item.href}>
+              <SidebarMenuItem key={item.href + item.label}>
                 <SidebarMenuButton
                   asChild
                   isActive={isActive(item.href)}
@@ -178,7 +178,7 @@ export function SiteSidebar() {
            <SidebarGroupLabel>Business</SidebarGroupLabel>
            <SidebarMenu>
              {businessNavItems.map((item) => (
-              <SidebarMenuItem key={item.href}>
+              <SidebarMenuItem key={item.href + item.label}>
                 <SidebarMenuButton
                   asChild
                   isActive={isActive(item.href)}
@@ -195,7 +195,7 @@ export function SiteSidebar() {
         </SidebarGroup>
          <SidebarMenu>
           {secondaryNavItems.map((item) => (
-            <SidebarMenuItem key={item.href}>
+            <SidebarMenuItem key={item.href + item.label}>
               <SidebarMenuButton
                 asChild
                 isActive={isActive(item.href)}
@@ -215,7 +215,7 @@ export function SiteSidebar() {
             <SidebarGroupLabel>Admin</SidebarGroupLabel>
             <SidebarMenu>
               {adminNavItems.map((item) => (
-                <SidebarMenuItem key={item.href}>
+                <SidebarMenuItem key={item.href + item.label}>
                   <SidebarMenuButton
                     asChild
                     isActive={isActive(item.href)}
