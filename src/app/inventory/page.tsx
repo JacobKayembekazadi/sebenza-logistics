@@ -74,6 +74,7 @@ export default function InventoryPage() {
                 <TableRow>
                   <TableHead>Reference</TableHead>
                   <TableHead>Description</TableHead>
+                  <TableHead>Warehouse</TableHead>
                   <TableHead>Sender</TableHead>
                   <TableHead>Receiver</TableHead>
                   <TableHead>Qty</TableHead>
@@ -86,6 +87,7 @@ export default function InventoryPage() {
                   <TableRow key={item.id}>
                     <TableCell className="font-medium">{item.reference}</TableCell>
                     <TableCell>{item.description}</TableCell>
+                    <TableCell>{item.warehouseName || 'N/A'}</TableCell>
                     <TableCell>{item.senderName}</TableCell>
                     <TableCell>{item.receiverName}</TableCell>
                     <TableCell>{item.quantity}</TableCell>

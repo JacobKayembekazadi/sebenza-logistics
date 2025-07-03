@@ -25,7 +25,7 @@ interface InventoryFormDialogProps {
 }
 
 export function InventoryFormDialog({ open, onOpenChange, item }: InventoryFormDialogProps) {
-  const { addStockItem, updateStockItem } = useData();
+  const { addStockItem, updateStockItem, warehouses } = useData();
   
   const [reference, setReference] = useState('');
   const [senderName, setSenderName] = useState('');
@@ -36,6 +36,7 @@ export function InventoryFormDialog({ open, onOpenChange, item }: InventoryFormD
   const [value, setValue] = useState('');
   const [status, setStatus] = useState<StockItem['status']>('In Warehouse');
   const [entryDate, setEntryDate] = useState('');
+  const [warehouseId, setWarehouseId] = useState<string | undefined>('');
   
   const isEditMode = !!item;
 
@@ -50,6 +51,7 @@ export function InventoryFormDialog({ open, onOpenChange, item }: InventoryFormD
       setValue(item.value.toString());
       setStatus(item.status);
       setEntryDate(item.entryDate);
+      setWarehouseId(item.warehouseId || '');
     } else {
       setReference('');
       setSenderName('');
@@ -60,11 +62,14 @@ export function InventoryFormDialog({ open, onOpenChange, item }: InventoryFormD
       setValue('');
       setStatus('In Warehouse');
       setEntryDate(new Date().toISOString().split('T')[0]);
+      setWarehouseId(warehouses[0]?.id || '');
     }
-  }, [item, open]);
+  }, [item, open, warehouses]);
 
   const handleSubmit = () => {
-    const itemData = { 
+    const selectedWarehouse = warehouses.find(w => w.id === warehouseId);
+    
+    const itemData: Omit<StockItem, 'id'> = { 
       reference,
       senderName,
       receiverName,
@@ -74,6 +79,8 @@ export function InventoryFormDialog({ open, onOpenChange, item }: InventoryFormD
       value: parseFloat(value),
       status,
       entryDate,
+      warehouseId,
+      warehouseName: selectedWarehouse?.name,
     };
 
     if (isEditMode && item) {
@@ -109,6 +116,17 @@ export function InventoryFormDialog({ open, onOpenChange, item }: InventoryFormD
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="receiverName" className="text-right">Receiver</Label>
             <Input id="receiverName" value={receiverName} onChange={(e) => setReceiverName(e.target.value)} className="col-span-3" />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="warehouse" className="text-right">Warehouse</Label>
+            <Select onValueChange={(value) => setWarehouseId(value)} value={warehouseId || ''}>
+              <SelectTrigger className="col-span-3">
+                <SelectValue placeholder="Select a warehouse" />
+              </SelectTrigger>
+              <SelectContent>
+                {warehouses.map(w => <SelectItem key={w.id} value={w.id}>{w.name}</SelectItem>)}
+              </SelectContent>
+            </Select>
           </div>
            <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="quantity" className="text-right">Quantity</Label>
