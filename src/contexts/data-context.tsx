@@ -19,7 +19,8 @@ import {
   assets as initialAssets,
   stockItems as initialStockItems,
   warehouses as initialWarehouses,
-  Project, Task, Invoice, Employee, JobPosting, Expense, Client, Estimate, Document, Service, Supplier, PurchaseOrder, Asset, StockItem, Warehouse
+  stockTransferLogs as initialStockTransferLogs,
+  Project, Task, Invoice, Employee, JobPosting, Expense, Client, Estimate, Document, Service, Supplier, PurchaseOrder, Asset, StockItem, Warehouse, StockTransferLog
 } from '@/lib/data';
 
 type DataContextType = {
@@ -98,6 +99,9 @@ type DataContextType = {
   addWarehouse: (warehouse: Omit<Warehouse, 'id'>) => void;
   updateWarehouse: (warehouse: Warehouse) => void;
   deleteWarehouse: (warehouseId: string) => void;
+
+  stockTransferLogs: StockTransferLog[];
+  transferStockItem: (itemId: string, toWarehouseId: string) => void;
 };
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -118,6 +122,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [assets, setAssets] = useState<Asset[]>(initialAssets);
   const [stockItems, setStockItems] = useState<StockItem[]>(initialStockItems);
   const [warehouses, setWarehouses] = useState<Warehouse[]>(initialWarehouses);
+  const [stockTransferLogs, setStockTransferLogs] = useState<StockTransferLog[]>(initialStockTransferLogs);
 
   // Projects
   const addProject = (project: Omit<Project, 'id' | 'status' | 'progress'>) => {
@@ -301,6 +306,35 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     setWarehouses(prev => prev.filter(w => w.id !== warehouseId));
   };
 
+  // Stock Transfers
+  const transferStockItem = (itemId: string, toWarehouseId: string) => {
+    const itemToTransfer = stockItems.find(i => i.id === itemId);
+    const fromWarehouse = warehouses.find(w => w.id === itemToTransfer?.warehouseId);
+    const toWarehouse = warehouses.find(w => w.id === toWarehouseId);
+
+    if (itemToTransfer && toWarehouse) {
+      // Update the item
+      const updatedItem = {
+        ...itemToTransfer,
+        warehouseId: toWarehouse.id,
+        warehouseName: toWarehouse.name,
+      };
+      updateStockItem(updatedItem);
+
+      // Create audit log
+      const newLog: StockTransferLog = {
+        id: uuidv4(),
+        itemId: itemToTransfer.id,
+        itemName: itemToTransfer.description,
+        fromWarehouseName: fromWarehouse?.name || 'No Warehouse',
+        toWarehouseName: toWarehouse.name,
+        quantity: itemToTransfer.quantity,
+        date: new Date().toISOString().split('T')[0],
+      };
+      setStockTransferLogs(prev => [newLog, ...prev]);
+    }
+  };
+
   return (
     <DataContext.Provider value={{
       projects, addProject, updateProject, deleteProject,
@@ -317,7 +351,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       purchaseOrders, addPurchaseOrder, updatePurchaseOrder, deletePurchaseOrder,
       assets, addAsset, updateAsset, deleteAsset,
       stockItems, addStockItem, updateStockItem, deleteStockItem,
-      warehouses, addWarehouse, updateWarehouse, deleteWarehouse
+      warehouses, addWarehouse, updateWarehouse, deleteWarehouse,
+      stockTransferLogs, transferStockItem
     }}>
       {children}
     </DataContext.Provider>

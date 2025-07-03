@@ -4,19 +4,21 @@
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, PlusCircle } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Repeat } from 'lucide-react';
 import { useData } from '@/contexts/data-context';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import type { StockItem } from '@/lib/data';
 import { DeleteConfirmationDialog } from '@/components/common/delete-confirmation-dialog';
 import { InventoryFormDialog } from '@/components/inventory/inventory-form-dialog';
 import { Badge } from '@/components/ui/badge';
+import { TransferStockDialog } from '@/components/inventory/transfer-stock-dialog';
 
 export default function InventoryPage() {
   const { stockItems, deleteStockItem } = useData();
   const [isFormOpen, setFormOpen] = useState(false);
   const [isConfirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [isTransferOpen, setTransferOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<StockItem | undefined>(undefined);
 
   const handleEdit = (item: StockItem) => {
@@ -28,6 +30,11 @@ export default function InventoryPage() {
     setSelectedItem(item);
     setConfirmDeleteOpen(true);
   };
+
+  const handleTransfer = (item: StockItem) => {
+    setSelectedItem(item);
+    setTransferOpen(true);
+  }
 
   const confirmDelete = () => {
     if (selectedItem) {
@@ -105,6 +112,11 @@ export default function InventoryPage() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => handleEdit(item)}>Edit</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleTransfer(item)}>
+                            <Repeat className="mr-2 h-4 w-4" />
+                            Transfer Stock
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
                           <DropdownMenuItem onClick={() => handleDelete(item)} className="text-destructive">Delete</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -120,6 +132,11 @@ export default function InventoryPage() {
       <InventoryFormDialog
         open={isFormOpen}
         onOpenChange={setFormOpen}
+        item={selectedItem}
+      />
+      <TransferStockDialog
+        open={isTransferOpen}
+        onOpenChange={setTransferOpen}
         item={selectedItem}
       />
       <DeleteConfirmationDialog

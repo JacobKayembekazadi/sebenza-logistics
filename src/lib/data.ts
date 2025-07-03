@@ -1,5 +1,6 @@
 
 
+
 export type Project = {
   id: string;
   name: string;
@@ -139,6 +140,16 @@ export type Warehouse = {
   id: string;
   name: string;
   location: string;
+};
+
+export type StockTransferLog = {
+  id: string;
+  itemId: string;
+  itemName: string;
+  fromWarehouseName: string;
+  toWarehouseName: string;
+  quantity: number;
+  date: string;
 };
 
 
@@ -287,3 +298,5 @@ export const stockItems: StockItem[] = [
   { id: 'stk-3', reference: 'SHP-QRT-003', senderName: 'Quantum Solutions', receiverName: 'West Coast Warehouse', description: 'Industrial Machinery Parts', quantity: 50, weight: 25.0, value: 800.00, status: 'Delivered', entryDate: '2024-10-20', warehouseId: 'wh-3', warehouseName: 'West Coast Hub' },
   { id: 'stk-4', reference: 'SHP-APX-004', senderName: 'Apex Logistics', receiverName: 'East Coast Hub', description: 'Pharmaceutical Supplies', quantity: 1000, weight: 0.2, value: 20.00, status: 'In Warehouse', entryDate: '2024-10-26', warehouseId: 'wh-1', warehouseName: 'Main Warehouse' },
 ];
+
+export const stockTransferLogs: StockTransferLog[] = [];
