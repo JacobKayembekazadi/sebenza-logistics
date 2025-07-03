@@ -42,6 +42,22 @@ export default function InvoicesPage() {
     setFormOpen(true);
   };
 
+  const getEffectiveStatus = (invoice: Invoice): Invoice['status'] => {
+    if (invoice.status !== 'Pending') {
+      return invoice.status;
+    }
+    // Create a date for today at midnight for comparison
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    // Assumes date string is in a format that new Date() can parse correctly, like YYYY-MM-DD
+    const dueDate = new Date(invoice.date);
+
+    if (dueDate < today) {
+      return 'Overdue';
+    }
+    return invoice.status;
+  };
+
   return (
     <>
       <div className="flex flex-col gap-8">
@@ -71,34 +87,37 @@ export default function InvoicesPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {invoices.map((invoice) => (
-                  <TableRow key={invoice.id}>
-                    <TableCell className="font-medium">{invoice.id}</TableCell>
-                    <TableCell>{invoice.client}</TableCell>
-                    <TableCell>{invoice.date}</TableCell>
-                    <TableCell>
-                      <Badge variant={
-                        invoice.status === 'Paid' ? 'outline' : invoice.status === 'Pending' ? 'default' : 'destructive'
-                      } className={invoice.status === 'Paid' ? 'bg-accent text-accent-foreground' : ''}>
-                        {invoice.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">${invoice.amount.toFixed(2)}</TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleEdit(invoice)}>Edit</DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleDelete(invoice)} className="text-destructive">Delete</DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {invoices.map((invoice) => {
+                  const effectiveStatus = getEffectiveStatus(invoice);
+                  return (
+                    <TableRow key={invoice.id}>
+                      <TableCell className="font-medium">{invoice.id}</TableCell>
+                      <TableCell>{invoice.client}</TableCell>
+                      <TableCell>{invoice.date}</TableCell>
+                      <TableCell>
+                        <Badge variant={
+                          effectiveStatus === 'Paid' ? 'outline' : effectiveStatus === 'Pending' ? 'default' : 'destructive'
+                        } className={effectiveStatus === 'Paid' ? 'bg-accent text-accent-foreground' : ''}>
+                          {effectiveStatus}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">${invoice.amount.toFixed(2)}</TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleEdit(invoice)}>Edit</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleDelete(invoice)} className="text-destructive">Delete</DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </CardContent>
