@@ -41,11 +41,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   
   const login = (email: string, pass: string): boolean => {
     // Mock login. In a real app, this would be an API call.
-    if (email === 'admin@wareflow.com' && pass === 'password') {
+    if (email === 'admin@sebenza.com' && pass === 'password') {
         const loggedInUser: User = {
             id: 'admin-user-id',
             name: 'Admin User',
-            email: 'admin@wareflow.com',
+            email: 'admin@sebenza.com',
             avatar: 'https://placehold.co/100x100.png',
             role: 'admin',
         };

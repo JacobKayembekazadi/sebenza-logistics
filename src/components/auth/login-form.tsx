@@ -11,7 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 
 export function LoginForm() {
-  const [email, setEmail] = useState('admin@wareflow.com');
+  const [email, setEmail] = useState('admin@sebenza.com');
   const [password, setPassword] = useState('password');
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
