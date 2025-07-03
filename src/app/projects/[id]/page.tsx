@@ -11,11 +11,14 @@ import { Button } from '@/components/ui/button';
 import { Pencil, Trash2 } from 'lucide-react';
 import { ProjectFormDialog } from '@/components/projects/project-form-dialog';
 import { DeleteConfirmationDialog } from '@/components/common/delete-confirmation-dialog';
-import type { Project } from '@/lib/data';
+import type { Project, Invoice } from '@/lib/data';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import Link from 'next/link';
 
 export default function ProjectDetailPage() {
   const params = useParams();
-  const { projects, deleteProject } = useData();
+  const { projects, deleteProject, invoices } = useData();
   const router = useRouter();
 
   const [isFormOpen, setFormOpen] = useState(false);
@@ -35,6 +38,24 @@ export default function ProjectDetailPage() {
   const handleDelete = () => {
     deleteProject(project.id);
     router.push('/projects');
+  };
+
+  const projectInvoices = invoices.filter(inv => inv.projectId === project.id);
+
+  const getEffectiveStatus = (invoice: Invoice): Invoice['status'] => {
+    if (invoice.status !== 'Pending') {
+      return invoice.status;
+    }
+    // Create a date for today at midnight for comparison
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    // Assumes date string is in a format that new Date() can parse correctly, like YYYY-MM-DD
+    const dueDate = new Date(invoice.date);
+
+    if (dueDate < today) {
+      return 'Overdue';
+    }
+    return invoice.status;
   };
 
   return (
@@ -72,6 +93,55 @@ export default function ProjectDetailPage() {
         </Card>
         
         <TaskList projectId={project.id} />
+
+        <Card>
+            <CardHeader>
+                <CardTitle>Associated Invoices</CardTitle>
+                <CardDescription>Invoices linked to this project.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                {projectInvoices.length > 0 ? (
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Invoice ID</TableHead>
+                                <TableHead>Date</TableHead>
+                                <TableHead>Status</TableHead>
+                                <TableHead className="text-right">Amount</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {projectInvoices.map((invoice) => {
+                                const effectiveStatus = getEffectiveStatus(invoice);
+                                return (
+                                    <TableRow key={invoice.id}>
+                                        <TableCell className="font-medium">
+                                          <Link href={`/invoices`} className="hover:underline">
+                                            {invoice.id}
+                                          </Link>
+                                        </TableCell>
+                                        <TableCell>{invoice.date}</TableCell>
+                                        <TableCell>
+                                            <Badge variant={
+                                              effectiveStatus === 'Paid' ? 'outline' : effectiveStatus === 'Pending' ? 'default' : 'destructive'
+                                            } className={effectiveStatus === 'Paid' ? 'bg-accent text-accent-foreground' : ''}>
+                                              {effectiveStatus}
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell className="text-right">${invoice.amount.toFixed(2)}</TableCell>
+                                    </TableRow>
+                                );
+                            })}
+                        </TableBody>
+                    </Table>
+                ) : (
+                    <p className="text-sm text-muted-foreground text-center py-4">
+                        No invoices have been associated with this project.
+                    </p>
+                )}
+            </CardContent>
+        </Card>
+
       </div>
 
       <ProjectFormDialog
