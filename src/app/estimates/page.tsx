@@ -2,19 +2,23 @@
 'use client';
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal, PlusCircle } from "lucide-react";
 import { useData } from "@/contexts/data-context";
 import type { Estimate } from "@/lib/data";
 import { DeleteConfirmationDialog } from "@/components/common/delete-confirmation-dialog";
 import { EstimateFormDialog } from "@/components/estimates/estimate-form-dialog";
+import { useToast } from "@/hooks/use-toast";
 
 export default function EstimatesPage() {
-  const { estimates, deleteEstimate } = useData();
+  const { estimates, deleteEstimate, addInvoice } = useData();
+  const router = useRouter();
+  const { toast } = useToast();
   const [isFormOpen, setFormOpen] = useState(false);
   const [isConfirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [selectedEstimate, setSelectedEstimate] = useState<Estimate | undefined>(undefined);
@@ -40,6 +44,20 @@ export default function EstimatesPage() {
   const openAddDialog = () => {
     setSelectedEstimate(undefined);
     setFormOpen(true);
+  };
+
+  const handleConvertToInvoice = (estimate: Estimate) => {
+    addInvoice({
+      client: estimate.client,
+      amount: estimate.amount,
+      status: 'Pending',
+      date: new Date().toISOString().split('T')[0]
+    });
+    toast({
+      title: "Invoice Created",
+      description: `Estimate ${estimate.estimateNumber} has been converted to a new invoice.`
+    });
+    router.push('/invoices');
   };
 
   const statusVariant: { [key: string]: "default" | "secondary" | "destructive" | "outline" } = {
@@ -102,6 +120,13 @@ export default function EstimatesPage() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => handleEdit(estimate)}>Edit</DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={() => handleConvertToInvoice(estimate)}
+                            disabled={estimate.status !== 'Accepted'}
+                          >
+                            Convert to Invoice
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
                           <DropdownMenuItem onClick={() => handleDelete(estimate)} className="text-destructive">Delete</DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
