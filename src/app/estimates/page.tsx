@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, PlusCircle } from "lucide-react";
+import { MoreHorizontal, PlusCircle, FolderKanban, Receipt } from "lucide-react";
 import { useData } from "@/contexts/data-context";
 import type { Estimate } from "@/lib/data";
 import { DeleteConfirmationDialog } from "@/components/common/delete-confirmation-dialog";
@@ -16,7 +16,7 @@ import { EstimateFormDialog } from "@/components/estimates/estimate-form-dialog"
 import { useToast } from "@/hooks/use-toast";
 
 export default function EstimatesPage() {
-  const { estimates, deleteEstimate, addInvoice } = useData();
+  const { estimates, deleteEstimate, addInvoice, addProject } = useData();
   const router = useRouter();
   const { toast } = useToast();
   const [isFormOpen, setFormOpen] = useState(false);
@@ -58,6 +58,20 @@ export default function EstimatesPage() {
       description: `Estimate ${estimate.estimateNumber} has been converted to a new invoice.`
     });
     router.push('/invoices');
+  };
+  
+  const handleConvertToProject = (estimate: Estimate) => {
+    addProject({
+      name: `Project for ${estimate.client} - ${estimate.estimateNumber}`,
+      description: `Project created from estimate #${estimate.estimateNumber} for an amount of $${estimate.amount.toFixed(2)}.`,
+      location: 'To be determined',
+      endDate: new Date(new Date().setMonth(new Date().getMonth() + 3)).toISOString().split('T')[0], // Default end date: 3 months from now
+    });
+    toast({
+      title: "Project Created",
+      description: `A new project has been created from estimate ${estimate.estimateNumber}.`
+    });
+    router.push('/projects');
   };
 
   const statusVariant: { [key: string]: "default" | "secondary" | "destructive" | "outline" } = {
@@ -124,7 +138,15 @@ export default function EstimatesPage() {
                             onClick={() => handleConvertToInvoice(estimate)}
                             disabled={estimate.status !== 'Accepted'}
                           >
+                            <Receipt className="mr-2 h-4 w-4" />
                             Convert to Invoice
+                          </DropdownMenuItem>
+                           <DropdownMenuItem 
+                            onClick={() => handleConvertToProject(estimate)}
+                            disabled={estimate.status !== 'Accepted'}
+                          >
+                            <FolderKanban className="mr-2 h-4 w-4" />
+                            Convert to Project
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem onClick={() => handleDelete(estimate)} className="text-destructive">Delete</DropdownMenuItem>
