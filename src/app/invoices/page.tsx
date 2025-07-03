@@ -8,18 +8,19 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, PlusCircle, Bot, Loader2 } from "lucide-react";
+import { MoreHorizontal, PlusCircle, Bot, Loader2, Paperclip } from "lucide-react";
 import { useData } from "@/contexts/data-context";
 import type { Invoice } from "@/lib/data";
 import { DeleteConfirmationDialog } from "@/components/common/delete-confirmation-dialog";
 import { InvoiceFormDialog } from "@/components/invoices/invoice-form-dialog";
 import { handleCalculateLateFee } from "@/app/actions";
 import { useToast } from "@/hooks/use-toast";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 type EffectiveStatus = Invoice['status'] | 'Overdue';
 
 export default function InvoicesPage() {
-  const { invoices, deleteInvoice, projects, updateInvoice } = useData();
+  const { invoices, deleteInvoice, projects, updateInvoice, documents } = useData();
   const [isFormOpen, setFormOpen] = useState(false);
   const [isConfirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | undefined>(undefined);
@@ -88,6 +89,10 @@ export default function InvoicesPage() {
     setIsApplyingFee(null);
   };
 
+  const getRelatedDocumentsCount = (invoiceId: string) => {
+    return documents.filter(doc => doc.relatedTo === invoiceId).length;
+  };
+
   return (
     <>
       <div className="flex flex-col gap-8">
@@ -113,6 +118,7 @@ export default function InvoicesPage() {
                   <TableHead>Project</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>Attachments</TableHead>
                   <TableHead className="text-right">Original</TableHead>
                   <TableHead className="text-right">Late Fee</TableHead>
                   <TableHead className="text-right">Total</TableHead>
@@ -124,6 +130,7 @@ export default function InvoicesPage() {
                   const effectiveStatus = getEffectiveStatus(invoice);
                   const projectName = invoice.projectId ? projects.find(p => p.id === invoice.projectId)?.name : null;
                   const totalAmount = invoice.amount + (invoice.lateFee || 0);
+                  const attachmentsCount = getRelatedDocumentsCount(invoice.id);
 
                   return (
                     <TableRow key={invoice.id}>
@@ -151,6 +158,23 @@ export default function InvoicesPage() {
                         }>
                           {effectiveStatus}
                         </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {attachmentsCount > 0 && (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Link href="/documents" className="flex items-center gap-1 text-muted-foreground">
+                                  <Paperclip className="h-4 w-4" />
+                                  <span>{attachmentsCount}</span>
+                                </Link>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>{attachmentsCount} document(s) attached.</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        )}
                       </TableCell>
                       <TableCell className="text-right">${invoice.amount.toFixed(2)}</TableCell>
                       <TableCell className="text-right text-destructive">${(invoice.lateFee || 0).toFixed(2)}</TableCell>

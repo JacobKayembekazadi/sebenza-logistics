@@ -24,7 +24,7 @@ interface DocumentFormDialogProps {
 }
 
 export function DocumentFormDialog({ open, onOpenChange, document }: DocumentFormDialogProps) {
-  const { addDocument, updateDocument } = useData();
+  const { addDocument, updateDocument, invoices, projects } = useData();
   const [name, setName] = useState('');
   const [type, setType] = useState('PDF');
   const [relatedTo, setRelatedTo] = useState('');
@@ -60,6 +60,11 @@ export function DocumentFormDialog({ open, onOpenChange, document }: DocumentFor
     onOpenChange(false);
   };
 
+  const relatedOptions = [
+    ...invoices.map(i => ({ value: i.id, label: `Invoice: ${i.id} (${i.client})` })),
+    ...projects.map(p => ({ value: p.id, label: `Project: ${p.name}` }))
+  ];
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
@@ -90,7 +95,17 @@ export function DocumentFormDialog({ open, onOpenChange, document }: DocumentFor
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="relatedTo" className="text-right">Related To</Label>
-            <Input id="relatedTo" value={relatedTo} onChange={(e) => setRelatedTo(e.target.value)} className="col-span-3" placeholder="e.g., INV-005" />
+             <Select onValueChange={(value) => setRelatedTo(value === 'none' ? '' : value)} value={relatedTo || 'none'}>
+                <SelectTrigger className="col-span-3">
+                    <SelectValue placeholder="(Optional) Relate to invoice/project" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="none">(None)</SelectItem>
+                    {relatedOptions.map(opt => (
+                        <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
           </div>
           {!isEditMode && (
              <div className="grid grid-cols-4 items-center gap-4">
