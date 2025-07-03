@@ -22,9 +22,12 @@ type CalendarEvent = {
 export default function CalendarPage() {
   const { projects, tasks, invoices } = useData();
   const [date, setDate] = useState<Date | undefined>(undefined);
+  const [today, setToday] = useState<Date | undefined>(undefined);
 
   useEffect(() => {
-    setDate(new Date());
+    const now = new Date();
+    setDate(now);
+    setToday(now);
   }, []);
 
   const events = useMemo(() => {
@@ -73,6 +76,7 @@ export default function CalendarPage() {
                 modifiersClassNames={{
                   event: 'relative !bg-primary/20 rounded-full',
                 }}
+                today={today}
               />
             </CardContent>
           </Card>
