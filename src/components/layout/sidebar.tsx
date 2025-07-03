@@ -49,7 +49,6 @@ const accountingNavItems = [
 const secondaryNavItems = [
   { href: '/documents', label: 'Documents', icon: Folder },
   { href: '/messaging', label: 'Messaging', icon: MessageSquare },
-  { href: '/accounting', label: 'Old Accounting', icon: CircleDollarSign },
 ];
 
 const adminNavItems = [
