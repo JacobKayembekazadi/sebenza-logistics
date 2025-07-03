@@ -66,6 +66,7 @@ export default function PurchaseOrdersPage() {
       amount: po.amount,
       status: 'Pending',
       date: new Date().toISOString().split('T')[0],
+      type: 'Standard',
     });
     toast({
       title: "Invoice Created",
