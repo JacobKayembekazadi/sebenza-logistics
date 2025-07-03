@@ -234,6 +234,22 @@ export type Meeting = {
   date: string; // ISO date string 'YYYY-MM-DD'
 };
 
+export type Contact = {
+  id: string;
+  name: string;
+  role: string;
+  avatar: string;
+  online: boolean;
+};
+
+export type Message = {
+  id: string;
+  contactId: string;
+  from: 'me' | 'contact';
+  text: string;
+  timestamp: string;
+};
+
 
 export const projects: Project[] = [
   {
@@ -311,10 +327,10 @@ export const payments: Payment[] = [
 ];
 
 export const employees: Employee[] = [
-  { id: 'emp-1', name: 'Alice Johnson', role: 'Manager', department: 'Operations', email: 'alice.j@wareflow.com', avatar: 'https://placehold.co/100x100.png', timesheetEnabled: true, payrollManaged: true },
-  { id: 'emp-2', name: 'Bob Williams', role: 'Warehouse Staff', department: 'Operations', email: 'bob.w@wareflow.com', avatar: 'https://placehold.co/100x100.png', timesheetEnabled: true, payrollManaged: false },
-  { id: 'emp-3', name: 'Charlie Brown', role: 'Accountant', department: 'Finance', email: 'charlie.b@wareflow.com', avatar: 'https://placehold.co/100x100.png', timesheetEnabled: false, payrollManaged: true },
-  { id: 'emp-4', name: 'Diana Prince', role: 'Manager', department: 'Human Resources', email: 'diana.p@wareflow.com', avatar: 'https://placehold.co/100x100.png', timesheetEnabled: true, payrollManaged: true },
+  { id: 'emp-1', name: 'Alice Johnson', role: 'Manager', department: 'Operations', email: 'alice.j@sebenza.com', avatar: 'https://placehold.co/100x100.png', timesheetEnabled: true, payrollManaged: true },
+  { id: 'emp-2', name: 'Bob Williams', role: 'Warehouse Staff', department: 'Operations', email: 'bob.w@sebenza.com', avatar: 'https://placehold.co/100x100.png', timesheetEnabled: true, payrollManaged: false },
+  { id: 'emp-3', name: 'Charlie Brown', role: 'Accountant', department: 'Finance', email: 'charlie.b@sebenza.com', avatar: 'https://placehold.co/100x100.png', timesheetEnabled: false, payrollManaged: true },
+  { id: 'emp-4', name: 'Diana Prince', role: 'Manager', department: 'Human Resources', email: 'diana.p@sebenza.com', avatar: 'https://placehold.co/100x100.png', timesheetEnabled: true, payrollManaged: true },
 ];
 
 export const jobPostings: JobPosting[] = [
@@ -438,4 +454,24 @@ export const meetings: Meeting[] = [
     description: 'Follow-up on the latest invoice and upcoming work.',
     date: '2024-12-02',
   }
+];
+
+export const contacts: Contact[] = [
+  { id: 'contact-1', name: 'Alice Johnson', role: 'Apex Logistics', avatar: 'https://placehold.co/100x100/ffa590/ffffff.png', online: true },
+  { id: 'contact-2', name: 'Bob Williams', role: 'Stellar Goods', avatar: 'https://placehold.co/100x100/90a5ff/ffffff.png', online: false },
+  { id: 'contact-3', name: 'Charlie Brown', role: 'Quantum Solutions', avatar: 'https://placehold.co/100x100/e890ff/ffffff.png', online: true },
+];
+
+export const messages: Message[] = [
+    { id: 'msg-1', contactId: 'contact-1', from: 'contact', text: 'Hello! Let me check on that for you. One moment.', timestamp: new Date(Date.now() - 5 * 60000).toISOString() },
+    { id: 'msg-2', contactId: 'contact-1', from: 'contact', text: 'It looks like it\'s scheduled to arrive tomorrow at 2 PM.', timestamp: new Date(Date.now() - 4 * 60000).toISOString() },
+    { id: 'msg-3', contactId: 'contact-1', from: 'me', text: 'Perfect, thank you for the quick response!', timestamp: new Date(Date.now() - 3 * 60000).toISOString() },
+    { id: 'msg-4', contactId: 'contact-1', from: 'contact', text: 'You\'re welcome! Is there anything else I can help with?', timestamp: new Date(Date.now() - 2 * 60000).toISOString() },
+    { id: 'msg-5', contactId: 'contact-1', from: 'me', text: 'No, that\'s all for now. Have a great day!', timestamp: new Date(Date.now() - 1 * 60000).toISOString() },
+    { id: 'msg-6', contactId: 'contact-1', from: 'contact', text: 'Sure, I will get back to you.', timestamp: new Date().toISOString() },
+    
+    { id: 'msg-7', contactId: 'contact-2', from: 'me', text: 'Hey Bob, do you have the tracking for the latest shipment?', timestamp: new Date(Date.now() - 10 * 60000).toISOString() },
+    { id: 'msg-8', contactId: 'contact-2', from: 'contact', text: 'Can you check on INV-003?', timestamp: new Date(Date.now() - 9 * 60000).toISOString() },
+
+    { id: 'msg-9', contactId: 'contact-3', from: 'contact', text: 'Thanks for the update!', timestamp: new Date(Date.now() - 8 * 60000).toISOString() },
 ];

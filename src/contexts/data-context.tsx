@@ -26,8 +26,10 @@ import {
   chartOfAccounts as initialChartOfAccounts,
   journalEntries as initialJournalEntries,
   meetings as initialMeetings,
+  contacts as initialContacts,
+  messages as initialMessages,
   Project, Task, Invoice, Employee, JobPosting, Expense, Client, Estimate, Document, Service, Supplier, PurchaseOrder, Asset, StockItem, Warehouse, StockTransferLog, MoneyTransfer,
-  Payment, Account, JournalEntry, Meeting
+  Payment, Account, JournalEntry, Meeting, Contact, Message
 } from '@/lib/data';
 
 type DataContextType = {
@@ -134,6 +136,10 @@ type DataContextType = {
   addMeeting: (meeting: Omit<Meeting, 'id'>) => void;
   updateMeeting: (meeting: Meeting) => void;
   deleteMeeting: (meetingId: string) => void;
+
+  contacts: Contact[];
+  messages: Message[];
+  addMessage: (message: Omit<Message, 'id' | 'timestamp'>) => void;
 };
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -160,6 +166,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [chartOfAccounts, setChartOfAccounts] = useState<Account[]>(initialChartOfAccounts);
   const [journalEntries, setJournalEntries] = useState<JournalEntry[]>(initialJournalEntries);
   const [meetings, setMeetings] = useState<Meeting[]>(initialMeetings);
+  const [contacts, setContacts] = useState<Contact[]>(initialContacts);
+  const [messages, setMessages] = useState<Message[]>(initialMessages);
 
 
   // Projects
@@ -520,6 +528,16 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     setMeetings(prev => prev.filter(m => m.id !== meetingId));
   };
 
+  // Messages
+  const addMessage = (message: Omit<Message, 'id' | 'timestamp'>) => {
+    const newMessage: Message = { 
+        ...message, 
+        id: uuidv4(), 
+        timestamp: new Date().toISOString() 
+    };
+    setMessages(prev => [...prev, newMessage]);
+  };
+
   return (
     <DataContext.Provider value={{
       projects, addProject, updateProject, deleteProject,
@@ -543,6 +561,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       chartOfAccounts, addAccount, updateAccount, deleteAccount,
       journalEntries, addJournalEntry, updateJournalEntry, deleteJournalEntry,
       meetings, addMeeting, updateMeeting, deleteMeeting,
+      contacts, messages, addMessage,
     }}>
       {children}
     </DataContext.Provider>
