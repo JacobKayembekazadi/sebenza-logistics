@@ -46,6 +46,8 @@ type DataContextType = {
 
   payments: Payment[];
   addPayment: (payment: Omit<Payment, 'id'>) => void;
+  updatePayment: (payment: Payment) => void;
+  deletePayment: (paymentId: string) => void;
 
   employees: Employee[];
   addEmployee: (employee: Omit<Employee, 'id'>) => void;
@@ -199,6 +201,59 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       const totalAmount = invoiceToUpdate.amount + (invoiceToUpdate.tax || 0) - (invoiceToUpdate.discount || 0) + (invoiceToUpdate.lateFee || 0);
       const newPaidAmount = (invoiceToUpdate.paidAmount || 0) + payment.amount;
       
+      let newStatus: Invoice['status'] = 'Partial';
+      if (newPaidAmount >= totalAmount) {
+        newStatus = 'Paid';
+      } else if (newPaidAmount <= 0) {
+        newStatus = 'Pending';
+      }
+
+      updateInvoice({
+        ...invoiceToUpdate,
+        paidAmount: newPaidAmount,
+        status: newStatus
+      });
+    }
+  };
+
+  const updatePayment = (updatedPayment: Payment) => {
+    const oldPayment = payments.find(p => p.id === updatedPayment.id);
+    if (!oldPayment) return;
+
+    setPayments(prev => prev.map(p => (p.id === updatedPayment.id ? updatedPayment : p)));
+    
+    const invoiceToUpdate = invoices.find(inv => inv.id === updatedPayment.invoiceId);
+    if (invoiceToUpdate) {
+      const amountDifference = updatedPayment.amount - oldPayment.amount;
+      const newPaidAmount = (invoiceToUpdate.paidAmount || 0) + amountDifference;
+      
+      const totalAmount = invoiceToUpdate.amount + (invoiceToUpdate.tax || 0) - (invoiceToUpdate.discount || 0) + (invoiceToUpdate.lateFee || 0);
+      let newStatus: Invoice['status'] = 'Partial';
+      if (newPaidAmount >= totalAmount) {
+        newStatus = 'Paid';
+      } else if (newPaidAmount <= 0) {
+        newStatus = 'Pending';
+      }
+
+      updateInvoice({
+        ...invoiceToUpdate,
+        paidAmount: newPaidAmount,
+        status: newStatus
+      });
+    }
+  };
+
+  const deletePayment = (paymentId: string) => {
+    const paymentToDelete = payments.find(p => p.id === paymentId);
+    if (!paymentToDelete) return;
+
+    setPayments(prev => prev.filter(p => p.id !== paymentId));
+
+    const invoiceToUpdate = invoices.find(inv => inv.id === paymentToDelete.invoiceId);
+    if (invoiceToUpdate) {
+      const newPaidAmount = (invoiceToUpdate.paidAmount || 0) - paymentToDelete.amount;
+      
+      const totalAmount = invoiceToUpdate.amount + (invoiceToUpdate.tax || 0) - (invoiceToUpdate.discount || 0) + (invoiceToUpdate.lateFee || 0);
       let newStatus: Invoice['status'] = 'Partial';
       if (newPaidAmount >= totalAmount) {
         newStatus = 'Paid';
@@ -412,7 +467,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       projects, addProject, updateProject, deleteProject,
       tasks, getTasksByProjectId, addTask, updateTask, deleteTask,
       invoices, addInvoice, updateInvoice, deleteInvoice,
-      payments, addPayment,
+      payments, addPayment, updatePayment, deletePayment,
       employees, addEmployee, updateEmployee, deleteEmployee,
       jobPostings, addJobPosting, updateJobPosting, deleteJobPosting,
       expenses, addExpense, updateExpense, deleteExpense,
