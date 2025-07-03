@@ -69,7 +69,7 @@ const accountingNavItems = [
 ];
 
 const logisticsNavItems = [
-    { href: '/inventory', label: 'Stock Manifest', icon: Package },
+    { href: '/inventory', label: 'Stock Management', icon: Package },
     { href: '/warehouses', label: 'Warehouses', icon: Building2 },
     { href: '/stock-transfers', label: 'Transfer History', icon: ScrollText },
     { href: '/money-transfers', label: 'Money Transfers', icon: Send },

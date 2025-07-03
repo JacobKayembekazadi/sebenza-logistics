@@ -63,13 +63,13 @@ export default function InventoryPage() {
   return (
     <>
       <div className="flex flex-col gap-8">
-        <h1 className="text-3xl font-bold tracking-tight">Stock Manifest</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Stock Management</h1>
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
-              <CardTitle>Consignment Manifest</CardTitle>
-              <CardDescription>A detailed record of all goods received and dispatched.</CardDescription>
+              <CardTitle>All Stock Items</CardTitle>
+              <CardDescription>Track and manage your inventory items.</CardDescription>
             </div>
             <div className="flex items-center gap-2">
               <Button size="sm" variant="outline" onClick={() => window.print()}>
