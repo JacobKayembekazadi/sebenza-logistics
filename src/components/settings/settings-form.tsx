@@ -146,7 +146,7 @@ export function SettingsForm() {
              <div className="flex items-center justify-between">
                 <div>
                     <Label htmlFor="marketing-emails">Marketing Emails</Label>
-                    <p className="text-sm text-muted-foreground">Receive news, offers, and updates from WareFlow.</p>
+                    <p className="text-sm text-muted-foreground">Receive news, offers, and updates from Sebenza.</p>
                 </div>
                 <Switch id="marketing-emails" defaultChecked />
             </div>

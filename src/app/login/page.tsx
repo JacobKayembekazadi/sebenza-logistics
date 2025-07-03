@@ -12,7 +12,7 @@ export default function LoginPage() {
             <div className="flex justify-center mb-4">
                 <Warehouse className="size-10 text-primary" />
             </div>
-            <CardTitle className="text-2xl">Log In to WareFlow</CardTitle>
+            <CardTitle className="text-2xl">Log In to Sebenza</CardTitle>
             <CardDescription>Enter your credentials to access your account.</CardDescription>
         </CardHeader>
         <CardContent>

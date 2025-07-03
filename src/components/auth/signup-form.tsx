@@ -35,7 +35,7 @@ export function SignUpForm() {
       );
       toast({
         title: 'Account Created!',
-        description: 'Welcome to WareFlow. Redirecting you to the dashboard.',
+        description: 'Welcome to Sebenza. Redirecting you to the dashboard.',
       });
       router.push('/dashboard');
     }, 1000);

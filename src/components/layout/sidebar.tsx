@@ -114,7 +114,7 @@ export function SiteSidebar() {
         <Button variant="ghost" className="w-full justify-start gap-2 px-2 text-lg h-12" asChild>
           <Link href="/dashboard">
             <Warehouse className="size-6 text-primary" />
-            <span className="font-bold" suppressHydrationWarning>WareFlow</span>
+            <span className="font-bold" suppressHydrationWarning>Sebenza</span>
           </Link>
         </Button>
       </SidebarHeader>

@@ -34,7 +34,7 @@ export default function HomePage() {
                 <div className="flex justify-center mb-4">
                     <Warehouse className="size-10 text-primary" />
                 </div>
-                <CardTitle className="text-2xl">Welcome to WareFlow</CardTitle>
+                <CardTitle className="text-2xl">Welcome to Sebenza</CardTitle>
                 <CardDescription>Your all-in-one logistics solution.</CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">

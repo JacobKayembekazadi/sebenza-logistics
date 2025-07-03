@@ -12,7 +12,7 @@ export default function SignUpPage() {
             <div className="flex justify-center mb-4">
                 <Warehouse className="size-10 text-primary" />
             </div>
-            <CardTitle className="text-2xl">Create your WareFlow Account</CardTitle>
+            <CardTitle className="text-2xl">Create your Sebenza Account</CardTitle>
             <CardDescription>Fill out the form to get started.</CardDescription>
         </CardHeader>
         <CardContent>

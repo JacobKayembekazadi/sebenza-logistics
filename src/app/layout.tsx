@@ -41,7 +41,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className="dark">
       <head>
-        <title>WareFlow</title>
+        <title>Sebenza Logistics Suite</title>
         <meta name="description" content="SaaS platform for logistics and warehouse management." />
         <link rel="manifest" href="/manifest.json" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
