@@ -30,6 +30,7 @@ export function InvoiceFormDialog({ open, onOpenChange, invoice }: InvoiceFormDi
   const [status, setStatus] = useState<Invoice['status']>('Pending');
   const [date, setDate] = useState('');
   const [projectId, setProjectId] = useState<string | undefined>();
+  const [invoiceFile, setInvoiceFile] = useState<File | null>(null);
   
   const isEditMode = !!invoice;
 
@@ -47,6 +48,7 @@ export function InvoiceFormDialog({ open, onOpenChange, invoice }: InvoiceFormDi
       setDate(new Date().toISOString().split('T')[0]);
       setProjectId(undefined);
     }
+    setInvoiceFile(null);
   }, [invoice, open, clients]);
 
   const handleSubmit = () => {
@@ -61,7 +63,22 @@ export function InvoiceFormDialog({ open, onOpenChange, invoice }: InvoiceFormDi
     if (isEditMode && invoice) {
       updateInvoice({ ...invoice, ...invoiceData });
     } else {
-      addInvoice(invoiceData);
+      let documentData;
+      if (invoiceFile) {
+        const getFileType = (mimeType: string) => {
+          if (mimeType.includes('pdf')) return 'PDF';
+          if (mimeType.includes('word')) return 'Word';
+          if (mimeType.includes('image')) return 'Image';
+          if (mimeType.includes('zip') || mimeType.includes('archive')) return 'Archive';
+          return 'File';
+        }
+        documentData = {
+          name: invoiceFile.name,
+          type: getFileType(invoiceFile.type),
+          size: `${(invoiceFile.size / 1024 / 1024).toFixed(2)} MB`,
+        };
+      }
+      addInvoice(invoiceData, documentData);
     }
     onOpenChange(false);
   };
@@ -120,6 +137,19 @@ export function InvoiceFormDialog({ open, onOpenChange, invoice }: InvoiceFormDi
               </SelectContent>
             </Select>
           </div>
+          {!isEditMode && (
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="invoice-file" className="text-right">
+                Attachment
+              </Label>
+              <Input
+                id="invoice-file"
+                type="file"
+                className="col-span-3"
+                onChange={(e) => setInvoiceFile(e.target.files?.[0] || null)}
+              />
+            </div>
+          )}
         </div>
         <DialogFooter>
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>

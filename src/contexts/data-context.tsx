@@ -37,7 +37,7 @@ type DataContextType = {
   deleteTask: (taskId: string) => void;
 
   invoices: Invoice[];
-  addInvoice: (invoice: Omit<Invoice, 'id'>) => void;
+  addInvoice: (invoice: Omit<Invoice, 'id'>, document?: { name: string; type: string; size: string }) => void;
   updateInvoice: (invoice: Invoice) => void;
   deleteInvoice: (invoiceId: string) => void;
 
@@ -158,9 +158,22 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Invoices
-  const addInvoice = (invoice: Omit<Invoice, 'id'>) => {
-    const newInvoice: Invoice = { ...invoice, id: `INV-${(invoices.length + 1).toString().padStart(3, '0')}` };
+  const addInvoice = (invoice: Omit<Invoice, 'id'>, document?: { name: string; type: string; size: string }) => {
+    const newInvoiceId = `INV-${(invoices.length + 1).toString().padStart(3, '0')}`;
+    const newInvoice: Invoice = { ...invoice, id: newInvoiceId };
     setInvoices(prev => [newInvoice, ...prev]);
+
+    if (document) {
+      const newDocument: Document = {
+        id: uuidv4(),
+        name: document.name,
+        type: document.type,
+        size: document.size,
+        uploadDate: new Date().toISOString().split('T')[0],
+        relatedTo: newInvoiceId,
+      };
+      setDocuments(prev => [newDocument, ...prev]);
+    }
   };
   const updateInvoice = (updatedInvoice: Invoice) => {
     setInvoices(prev => prev.map(i => i.id === updatedInvoice.id ? updatedInvoice : i));
