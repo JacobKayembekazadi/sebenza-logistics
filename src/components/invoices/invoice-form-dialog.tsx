@@ -30,6 +30,7 @@ export function InvoiceFormDialog({ open, onOpenChange, invoice }: InvoiceFormDi
   const [status, setStatus] = useState<Invoice['status']>('Pending');
   const [date, setDate] = useState('');
   const [projectId, setProjectId] = useState<string | undefined>();
+  const [type, setType] = useState<Invoice['type']>('Standard');
   const [invoiceFile, setInvoiceFile] = useState<File | null>(null);
   
   const isEditMode = !!invoice;
@@ -41,12 +42,14 @@ export function InvoiceFormDialog({ open, onOpenChange, invoice }: InvoiceFormDi
       setStatus(invoice.status);
       setDate(invoice.date);
       setProjectId(invoice.projectId);
+      setType(invoice.type);
     } else {
       setClient(clients[0]?.name || '');
       setAmount('');
       setStatus('Pending');
       setDate(new Date().toISOString().split('T')[0]);
       setProjectId(undefined);
+      setType('Standard');
     }
     setInvoiceFile(null);
   }, [invoice, open, clients]);
@@ -58,6 +61,7 @@ export function InvoiceFormDialog({ open, onOpenChange, invoice }: InvoiceFormDi
       status, 
       date,
       projectId,
+      type,
     };
 
     if (isEditMode && invoice) {
@@ -101,6 +105,19 @@ export function InvoiceFormDialog({ open, onOpenChange, invoice }: InvoiceFormDi
               </SelectTrigger>
               <SelectContent>
                 {clients.map(c => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="type" className="text-right">Type</Label>
+            <Select onValueChange={(value: Invoice['type']) => setType(value)} value={type}>
+              <SelectTrigger className="col-span-3">
+                <SelectValue placeholder="Select type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Standard">Standard</SelectItem>
+                <SelectItem value="Retainer">Retainer</SelectItem>
+                <SelectItem value="Pro-forma">Pro-forma</SelectItem>
               </SelectContent>
             </Select>
           </div>

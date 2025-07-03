@@ -122,6 +122,7 @@ export default function InvoicesPage() {
                 <TableRow>
                   <TableHead>Invoice ID</TableHead>
                   <TableHead>Client</TableHead>
+                  <TableHead>Type</TableHead>
                   <TableHead>Project</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>Status</TableHead>
@@ -143,6 +144,7 @@ export default function InvoicesPage() {
                     <TableRow key={invoice.id}>
                       <TableCell className="font-medium">{invoice.id}</TableCell>
                       <TableCell>{invoice.client}</TableCell>
+                      <TableCell>{invoice.type}</TableCell>
                       <TableCell>
                         {invoice.projectId && projectName ? (
                           <Link href={`/projects/${invoice.projectId}`} className="hover:underline">
