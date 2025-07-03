@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -9,6 +10,7 @@ import { useData } from '@/contexts/data-context';
 import { Badge } from '@/components/ui/badge';
 import { Upload, CheckCircle, HelpCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 // Mocked bank statement data
 const mockBankTransactions = [
@@ -21,11 +23,14 @@ const mockBankTransactions = [
 ];
 
 type BankTransaction = typeof mockBankTransactions[0];
+type SystemTransaction = ReturnType<typeof useMemo<any>>[0];
+
 
 export default function ReconciliationPage() {
     const { invoices, expenses } = useData();
+    const { toast } = useToast();
     const [selectedBankTx, setSelectedBankTx] = useState<BankTransaction | null>(null);
-    const [reconciledItems, setReconciledItems] = useState<Record<string, string>>({}); // { bankTxId: systemTxId }
+    const [reconciledItems, setReconciledItems] = useState<Record<string, string>>({'bt-3': 'INV-001'}); // { bankTxId: systemTxId }
 
     const systemTransactions = useMemo(() => {
         const invoiceTxs = invoices
@@ -42,37 +47,64 @@ export default function ReconciliationPage() {
             id: exp.id,
             date: exp.date,
             description: exp.description,
-            amount: -exp.amount,
+            amount: exp.amount,
             type: 'debit' as const
         }));
 
         return [...invoiceTxs, ...expenseTxs].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     }, [invoices, expenses]);
+    
+    const unMatch = (bankTxId: string) => {
+        const newReconciledItems = { ...reconciledItems };
+        delete newReconciledItems[bankTxId];
+        setReconciledItems(newReconciledItems);
+        if (selectedBankTx?.id === bankTxId) {
+            setSelectedBankTx(null);
+        }
+        toast({ title: 'Match Removed', description: 'The transaction has been un-matched.' });
+    };
 
     const handleSelectBankTx = (tx: BankTransaction) => {
         if (reconciledItems[tx.id]) {
-            setSelectedBankTx(null); // Don't select already reconciled items
-        } else {
+            unMatch(tx.id);
+        } else if (selectedBankTx?.id === tx.id) {
+            setSelectedBankTx(null); // Deselect if clicked again
+        }
+        else {
             setSelectedBankTx(tx);
         }
     };
-
-    const handleMatch = (systemTxId: string) => {
+    
+     const handleMatch = (systemTxId: string) => {
         if (selectedBankTx) {
             setReconciledItems(prev => ({
                 ...prev,
                 [selectedBankTx.id]: systemTxId,
             }));
             setSelectedBankTx(null);
+            toast({
+                title: 'Transaction Matched',
+                description: 'The transactions have been successfully reconciled.',
+            })
         }
     };
 
-    const isMatch = (bankTx: BankTransaction, systemTx: typeof systemTransactions[0]) => {
+    const handleSystemTxClick = (systemTx: SystemTransaction) => {
+        const isReconciled = Object.values(reconciledItems).includes(systemTx.id);
+
+        if (isReconciled) {
+            const bankTxId = Object.keys(reconciledItems).find(key => reconciledItems[key] === systemTx.id);
+            if (bankTxId) {
+                unMatch(bankTxId);
+            }
+        } else if (selectedBankTx) {
+            handleMatch(systemTx.id);
+        }
+    };
+
+    const isMatch = (bankTx: BankTransaction, systemTx: SystemTransaction) => {
         if (!bankTx) return false;
         const amountMatch = bankTx.type === 'credit' ? bankTx.amount === systemTx.amount : bankTx.amount === -systemTx.amount;
-        // A more sophisticated date check would be needed in a real app
-        // const dateDiff = Math.abs(new Date(bankTx.date).getTime() - new Date(systemTx.date).getTime());
-        // const isDateClose = dateDiff <= 3 * 24 * 60 * 60 * 1000; // within 3 days
         return amountMatch;
     };
 
@@ -106,26 +138,29 @@ export default function ReconciliationPage() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {mockBankTransactions.map(tx => (
-                                        <TableRow 
-                                            key={tx.id} 
-                                            onClick={() => handleSelectBankTx(tx)}
-                                            className={cn(
-                                                "cursor-pointer",
-                                                selectedBankTx?.id === tx.id && "bg-accent",
-                                                reconciledItems[tx.id] && "bg-green-100/50 text-muted-foreground hover:bg-green-100/50"
-                                            )}
-                                        >
-                                            <TableCell>{tx.date}</TableCell>
-                                            <TableCell>{tx.description}</TableCell>
-                                            <TableCell className={cn(
-                                                "text-right font-medium",
-                                                tx.type === 'credit' ? 'text-green-600' : 'text-destructive'
-                                            )}>
-                                                {tx.amount > 0 ? '+' : ''}${tx.amount.toFixed(2)}
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
+                                    {mockBankTransactions.map(tx => {
+                                        const isReconciled = !!reconciledItems[tx.id];
+                                        return (
+                                            <TableRow 
+                                                key={tx.id} 
+                                                onClick={() => handleSelectBankTx(tx)}
+                                                className={cn(
+                                                    "cursor-pointer",
+                                                    selectedBankTx?.id === tx.id && "bg-accent",
+                                                    isReconciled && "bg-green-100/50 text-muted-foreground hover:bg-green-200/50"
+                                                )}
+                                            >
+                                                <TableCell>{tx.date}</TableCell>
+                                                <TableCell>{tx.description}</TableCell>
+                                                <TableCell className={cn(
+                                                    "text-right font-medium",
+                                                    tx.type === 'credit' ? 'text-green-600' : 'text-destructive'
+                                                )}>
+                                                    {tx.amount > 0 ? '+' : ''}${tx.amount.toFixed(2)}
+                                                </TableCell>
+                                            </TableRow>
+                                        );
+                                    })}
                                 </TableBody>
                             </Table>
                         </ScrollArea>
@@ -150,16 +185,17 @@ export default function ReconciliationPage() {
                                 </TableHeader>
                                 <TableBody>
                                     {systemTransactions.map(tx => {
-                                        const potentialMatch = selectedBankTx && !reconciledItems[selectedBankTx.id] && isMatch(selectedBankTx, tx);
                                         const isReconciled = Object.values(reconciledItems).includes(tx.id);
+                                        const potentialMatch = selectedBankTx && !reconciledItems[selectedBankTx.id] && isMatch(selectedBankTx, tx);
+                                        
                                         return (
                                             <TableRow 
                                                 key={tx.id}
-                                                onClick={() => selectedBankTx && !isReconciled && handleMatch(tx.id)}
+                                                onClick={() => handleSystemTxClick(tx)}
                                                 className={cn(
-                                                    selectedBankTx && !isReconciled && "cursor-pointer",
+                                                    (selectedBankTx || isReconciled) && "cursor-pointer",
                                                     potentialMatch && "bg-blue-100/50 dark:bg-blue-900/30",
-                                                    isReconciled && "bg-green-100/50 text-muted-foreground hover:bg-green-100/50"
+                                                    isReconciled && "bg-green-100/50 text-muted-foreground hover:bg-green-200/50"
                                                 )}
                                             >
                                                 <TableCell>{tx.date}</TableCell>
