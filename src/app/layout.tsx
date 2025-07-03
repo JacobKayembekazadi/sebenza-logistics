@@ -24,9 +24,9 @@ function AppLayout({ children }: { children: React.ReactNode }) {
             <SidebarInset>
                 <div className="flex flex-col h-full">
                     <SiteHeader />
-                    <main className="flex-1 p-4 md:p-6 lg:p-8">
+                    <div className="flex-1 p-4 md:p-6 lg:p-8">
                         {children}
-                    </main>
+                    </div>
                 </div>
             </SidebarInset>
         </SidebarProvider>
