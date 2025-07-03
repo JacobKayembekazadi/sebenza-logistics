@@ -37,6 +37,7 @@ export function InventoryFormDialog({ open, onOpenChange, item }: InventoryFormD
   const [status, setStatus] = useState<StockItem['status']>('In Warehouse');
   const [entryDate, setEntryDate] = useState('');
   const [warehouseId, setWarehouseId] = useState<string | undefined>('');
+  const [color, setColor] = useState('');
   
   const isEditMode = !!item;
 
@@ -52,6 +53,7 @@ export function InventoryFormDialog({ open, onOpenChange, item }: InventoryFormD
       setStatus(item.status);
       setEntryDate(item.entryDate);
       setWarehouseId(item.warehouseId || '');
+      setColor(item.color || '');
     } else {
       setReference('');
       setSenderName('');
@@ -63,6 +65,7 @@ export function InventoryFormDialog({ open, onOpenChange, item }: InventoryFormD
       setStatus('In Warehouse');
       setEntryDate(new Date().toISOString().split('T')[0]);
       setWarehouseId(warehouses[0]?.id || '');
+      setColor('');
     }
   }, [item, open, warehouses]);
 
@@ -81,6 +84,7 @@ export function InventoryFormDialog({ open, onOpenChange, item }: InventoryFormD
       entryDate,
       warehouseId,
       warehouseName: selectedWarehouse?.name,
+      color: color || undefined,
     };
 
     if (isEditMode && item) {
@@ -108,6 +112,10 @@ export function InventoryFormDialog({ open, onOpenChange, item }: InventoryFormD
           <div className="grid grid-cols-4 items-start gap-4">
             <Label htmlFor="description" className="text-right pt-2">Description</Label>
             <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} className="col-span-3" />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="color" className="text-right">Color</Label>
+            <Input id="color" value={color} onChange={(e) => setColor(e.target.value)} className="col-span-3" />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="senderName" className="text-right">Sender</Label>
@@ -156,6 +164,10 @@ export function InventoryFormDialog({ open, onOpenChange, item }: InventoryFormD
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="entryDate" className="text-right">Entry Date</Label>
             <Input id="entryDate" type="date" value={entryDate} onChange={(e) => setEntryDate(e.target.value)} className="col-span-3" />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="document" className="text-right">Document</Label>
+            <Input id="document" type="file" className="col-span-3" />
           </div>
         </div>
         <DialogFooter>

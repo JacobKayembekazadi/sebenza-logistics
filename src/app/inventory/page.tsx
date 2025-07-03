@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, PlusCircle, Repeat, ScrollText } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Repeat, ScrollText, Printer } from 'lucide-react';
 import { useData } from '@/contexts/data-context';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
@@ -68,10 +68,14 @@ export default function InventoryPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
-              <CardTitle>Stock Items</CardTitle>
+              <CardTitle>Stock Manifest</CardTitle>
               <CardDescription>Track all incoming and outgoing stock consignments.</CardDescription>
             </div>
             <div className="flex items-center gap-2">
+              <Button size="sm" variant="outline" onClick={() => window.print()}>
+                <Printer className="mr-2 h-4 w-4" />
+                Print/Download Report
+              </Button>
               <Button size="sm" variant="outline" asChild>
                 <Link href="/stock-transfers">
                   <ScrollText className="mr-2 h-4 w-4" />
@@ -90,6 +94,7 @@ export default function InventoryPage() {
                 <TableRow>
                   <TableHead>Reference</TableHead>
                   <TableHead>Description</TableHead>
+                  <TableHead>Color</TableHead>
                   <TableHead>Warehouse</TableHead>
                   <TableHead>Sender</TableHead>
                   <TableHead>Receiver</TableHead>
@@ -103,6 +108,7 @@ export default function InventoryPage() {
                   <TableRow key={item.id}>
                     <TableCell className="font-medium">{item.reference}</TableCell>
                     <TableCell>{item.description}</TableCell>
+                    <TableCell>{item.color || 'N/A'}</TableCell>
                     <TableCell>{item.warehouseName || 'N/A'}</TableCell>
                     <TableCell>{item.senderName}</TableCell>
                     <TableCell>{item.receiverName}</TableCell>
