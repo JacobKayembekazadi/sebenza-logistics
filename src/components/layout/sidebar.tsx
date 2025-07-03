@@ -47,7 +47,6 @@ import {
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useAuth } from '@/contexts/auth-context';
-import { useState, useEffect } from 'react';
 
 const mainNavItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -98,11 +97,6 @@ export function SiteSidebar() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const router = useRouter();
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   const handleLogout = () => {
     logout();
@@ -120,7 +114,7 @@ export function SiteSidebar() {
         <Button variant="ghost" className="w-full justify-start gap-2 px-2 text-lg h-12" asChild>
           <Link href="/dashboard">
             <Warehouse className="size-6 text-primary" />
-            <span className="font-bold">WareFlow</span>
+            <span className="font-bold" suppressHydrationWarning>WareFlow</span>
           </Link>
         </Button>
       </SidebarHeader>
@@ -135,7 +129,7 @@ export function SiteSidebar() {
               >
                 <Link href={item.href}>
                   <item.icon />
-                  {isClient && <span>{item.label}</span>}
+                  <span suppressHydrationWarning>{item.label}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -153,7 +147,7 @@ export function SiteSidebar() {
                 >
                   <Link href={item.href}>
                     <item.icon />
-                    {isClient && <span>{item.label}</span>}
+                    <span suppressHydrationWarning>{item.label}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -172,7 +166,7 @@ export function SiteSidebar() {
                 >
                   <Link href={item.href}>
                     <item.icon />
-                    {isClient && <span>{item.label}</span>}
+                    <span suppressHydrationWarning>{item.label}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -191,7 +185,7 @@ export function SiteSidebar() {
                 >
                   <Link href={item.href}>
                     <item.icon />
-                    {isClient && <span>{item.label}</span>}
+                    <span suppressHydrationWarning>{item.label}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -208,7 +202,7 @@ export function SiteSidebar() {
               >
                 <Link href={item.href}>
                   <item.icon />
-                  {isClient && <span>{item.label}</span>}
+                  <span suppressHydrationWarning>{item.label}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -228,7 +222,7 @@ export function SiteSidebar() {
                   >
                     <Link href={item.href}>
                       <item.icon />
-                      {isClient && <span>{item.label}</span>}
+                      <span suppressHydrationWarning>{item.label}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -243,7 +237,7 @@ export function SiteSidebar() {
             <SidebarMenuButton asChild tooltip={{ children: 'Settings', side: 'right' }}>
               <Link href="/settings">
                 <Settings />
-                {isClient && <span>Settings</span>}
+                <span suppressHydrationWarning>Settings</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -251,7 +245,7 @@ export function SiteSidebar() {
             <SidebarMenuItem>
               <SidebarMenuButton onClick={handleLogout} tooltip={{ children: 'Logout', side: 'right' }}>
                 <LogOut />
-                {isClient && <span>Logout</span>}
+                <span suppressHydrationWarning>Logout</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           )}
