@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, PlusCircle, FolderKanban, Receipt } from "lucide-react";
+import { MoreHorizontal, PlusCircle, FolderKanban, Receipt, Copy, Mail, Printer, History } from "lucide-react";
 import { useData } from "@/contexts/data-context";
 import type { Estimate } from "@/lib/data";
 import { DeleteConfirmationDialog } from "@/components/common/delete-confirmation-dialog";
@@ -16,7 +16,7 @@ import { EstimateFormDialog } from "@/components/estimates/estimate-form-dialog"
 import { useToast } from "@/hooks/use-toast";
 
 export default function EstimatesPage() {
-  const { estimates, deleteEstimate, addInvoice, addProject } = useData();
+  const { estimates, deleteEstimate, addInvoice, addProject, addEstimate } = useData();
   const router = useRouter();
   const { toast } = useToast();
   const [isFormOpen, setFormOpen] = useState(false);
@@ -67,7 +67,7 @@ export default function EstimatesPage() {
       name: `Project for ${estimate.client} - ${estimate.estimateNumber}`,
       description: `Project created from estimate #${estimate.estimateNumber} for an amount of $${totalAmount.toFixed(2)}.`,
       location: 'To be determined',
-      endDate: new Date(new Date().setMonth(new Date().getMonth() + 3)).toISOString().split('T')[0], // Default end date: 3 months from now
+      endDate: new Date(new Date().setMonth(new Date().getMonth() + 3)).toISOString().split('T')[0],
     });
     toast({
       title: "Project Created",
@@ -75,6 +75,31 @@ export default function EstimatesPage() {
     });
     router.push('/projects');
   };
+
+  const handleDuplicate = (estimate: Estimate) => {
+    const { id, estimateNumber, ...dataToCopy } = estimate;
+    addEstimate({
+        ...dataToCopy,
+        status: 'Draft',
+        date: new Date().toISOString().split('T')[0],
+    });
+    toast({
+        title: "Estimate Duplicated",
+        description: `A new draft has been created from ${estimateNumber}.`
+    });
+  };
+
+  const handleEmailToClient = (estimate: Estimate) => {
+    toast({
+        title: "Email Sent",
+        description: `Estimate ${estimate.estimateNumber} has been sent to the client.`
+    });
+  };
+  
+  const handlePrint = () => {
+    window.print();
+  };
+
 
   const statusVariant: { [key: string]: "default" | "secondary" | "destructive" | "outline" } = {
     'Draft': 'secondary',
@@ -138,6 +163,23 @@ export default function EstimatesPage() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem onClick={() => handleEdit(estimate)}>Edit</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleDuplicate(estimate)}>
+                                <Copy className="mr-2 h-4 w-4" />
+                                Duplicate
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleEmailToClient(estimate)}>
+                                <Mail className="mr-2 h-4 w-4" />
+                                Email to Client
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={handlePrint}>
+                                <Printer className="mr-2 h-4 w-4" />
+                                Print / Download PDF
+                            </DropdownMenuItem>
+                            <DropdownMenuItem disabled>
+                                <History className="mr-2 h-4 w-4" />
+                                View History
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
                             <DropdownMenuItem 
                               onClick={() => handleConvertToInvoice(estimate)}
                               disabled={estimate.status !== 'Accepted'}
