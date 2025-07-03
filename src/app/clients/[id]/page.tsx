@@ -13,7 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { Pencil, File, Receipt, FileText, FolderKanban } from 'lucide-react';
 import type { Invoice, Estimate } from '@/lib/data';
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 
 type EffectiveStatus = Invoice['status'] | 'Overdue';
 
@@ -48,6 +48,12 @@ export default function ClientProfilePage() {
 
     const clientDocuments = useMemo(() => documents.filter(d => clientDocumentIds.has(d.id)), [documents, clientDocumentIds]);
 
+    useEffect(() => {
+        if (!client) {
+          router.push('/clients');
+        }
+    }, [client, router]);
+
     const getInvoiceEffectiveStatus = (invoice: Invoice): EffectiveStatus => {
         if (invoice.status === 'Paid') return 'Paid';
         const today = new Date();
@@ -65,10 +71,7 @@ export default function ClientProfilePage() {
     };
 
     if (!client) {
-        if (typeof window !== 'undefined') {
-            router.push('/clients');
-        }
-        return <p>Client not found.</p>;
+        return <p>Client not found. Redirecting...</p>;
     }
 
     return (

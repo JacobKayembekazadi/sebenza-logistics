@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useData } from '@/contexts/data-context';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -28,14 +28,15 @@ export default function ProjectDetailPage() {
   const [isConfirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   
   const project = projects.find((p) => p.id === params.id as string);
+
+  useEffect(() => {
+    if (!project) {
+      router.push('/projects');
+    }
+  }, [project, router]);
   
   if (!project) {
-    // We can't use notFound() in a client component after hooks.
-    // So we can show a message or redirect.
-    if (typeof window !== 'undefined') {
-       router.push('/projects');
-    }
-    return <p>Project not found.</p>;
+    return <p>Project not found. Redirecting...</p>;
   }
 
   const handleDelete = () => {
