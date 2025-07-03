@@ -108,6 +108,17 @@ export type PurchaseOrder = {
   status: 'Draft' | 'Sent' | 'Fulfilled' | 'Cancelled';
 };
 
+export type Asset = {
+  id: string;
+  name: string;
+  description: string;
+  quantity: number;
+  purchaseDate: string;
+  value: number;
+  receiptUrl?: string;
+};
+
+
 export const projects: Project[] = [
   {
     id: 'proj-1',
@@ -228,4 +239,10 @@ export const purchaseOrders: PurchaseOrder[] = [
     { id: 'po-1', poNumber: 'PO-1001', supplierId: 'sup-1', supplierName: 'Global Shipping Supply', date: '2023-10-20', amount: 1500.00, status: 'Sent' },
     { id: 'po-2', poNumber: 'PO-1002', supplierId: 'sup-2', supplierName: 'Packaging Pros Inc.', date: '2023-10-22', amount: 450.75, status: 'Fulfilled' },
     { id: 'po-3', poNumber: 'PO-1003', supplierId: 'sup-1', supplierName: 'Global Shipping Supply', date: '2023-10-25', amount: 2500.00, status: 'Draft' },
+];
+
+export const assets: Asset[] = [
+  { id: 'asset-1', name: 'Dell Latitude 7420 Laptop', description: 'Laptop for office admin', quantity: 1, purchaseDate: '2023-05-10', value: 1450.00 },
+  { id: 'asset-2', name: 'Zebra ZD421 Label Printer', description: 'For printing shipping labels in warehouse A', quantity: 3, purchaseDate: '2023-08-22', value: 450.00 },
+  { id: 'asset-3', name: 'Hyster Forklift E50XN', description: 'Primary forklift for heavy lifting', quantity: 1, purchaseDate: '2022-11-01', value: 25000.00 },
 ];

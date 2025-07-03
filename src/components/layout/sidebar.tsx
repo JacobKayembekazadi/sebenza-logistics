@@ -32,7 +32,8 @@ import {
   Briefcase,
   LineChart,
   ClipboardList,
-  Truck
+  Truck,
+  Archive
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useAuth } from '@/contexts/auth-context';
@@ -53,6 +54,7 @@ const accountingNavItems = [
 const logisticsNavItems = [
     { href: '/suppliers', label: 'Suppliers', icon: Truck },
     { href: '/purchase-orders', label: 'Purchase Orders', icon: ClipboardList },
+    { href: '/assets', label: 'Assets', icon: Archive },
 ];
 
 const businessNavItems = [
