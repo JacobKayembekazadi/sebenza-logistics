@@ -38,7 +38,7 @@ export default function ReportingPage() {
               <CardDescription>
                 A breakdown of your total sales attributed to each client.
               </CardDescription>
-            </Header>
+            </CardHeader>
             <CardContent>
               <SalesByClientReport />
             </CardContent>
@@ -51,7 +51,7 @@ export default function ReportingPage() {
               <CardDescription>
                 A visual breakdown of your spending across different categories.
               </CardDescription>
-            </Header>
+            </CardHeader>
             <CardContent>
               <ExpensesByCategoryReport />
             </CardContent>
