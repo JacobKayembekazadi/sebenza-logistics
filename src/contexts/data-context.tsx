@@ -20,7 +20,8 @@ import {
   stockItems as initialStockItems,
   warehouses as initialWarehouses,
   stockTransferLogs as initialStockTransferLogs,
-  Project, Task, Invoice, Employee, JobPosting, Expense, Client, Estimate, Document, Service, Supplier, PurchaseOrder, Asset, StockItem, Warehouse, StockTransferLog
+  moneyTransfers as initialMoneyTransfers,
+  Project, Task, Invoice, Employee, JobPosting, Expense, Client, Estimate, Document, Service, Supplier, PurchaseOrder, Asset, StockItem, Warehouse, StockTransferLog, MoneyTransfer
 } from '@/lib/data';
 
 type DataContextType = {
@@ -102,6 +103,11 @@ type DataContextType = {
 
   stockTransferLogs: StockTransferLog[];
   transferStockItem: (itemId: string, toWarehouseId: string) => void;
+
+  moneyTransfers: MoneyTransfer[];
+  addMoneyTransfer: (transfer: Omit<MoneyTransfer, 'id' | 'amountToCollect'>) => void;
+  updateMoneyTransfer: (transfer: MoneyTransfer) => void;
+  deleteMoneyTransfer: (transferId: string) => void;
 };
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -123,6 +129,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [stockItems, setStockItems] = useState<StockItem[]>(initialStockItems);
   const [warehouses, setWarehouses] = useState<Warehouse[]>(initialWarehouses);
   const [stockTransferLogs, setStockTransferLogs] = useState<StockTransferLog[]>(initialStockTransferLogs);
+  const [moneyTransfers, setMoneyTransfers] = useState<MoneyTransfer[]>(initialMoneyTransfers);
 
   // Projects
   const addProject = (project: Omit<Project, 'id' | 'status' | 'progress'>) => {
@@ -335,6 +342,26 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Money Transfers
+  const addMoneyTransfer = (transfer: Omit<MoneyTransfer, 'id' | 'amountToCollect'>) => {
+    const newTransfer: MoneyTransfer = {
+      ...transfer,
+      id: `mt-${uuidv4()}`,
+      amountToCollect: transfer.amountSent * transfer.exchangeRate,
+    };
+    setMoneyTransfers(prev => [newTransfer, ...prev]);
+  };
+  const updateMoneyTransfer = (updatedTransfer: MoneyTransfer) => {
+    const transferWithRecalculation = {
+        ...updatedTransfer,
+        amountToCollect: updatedTransfer.amountSent * updatedTransfer.exchangeRate
+    }
+    setMoneyTransfers(prev => prev.map(t => t.id === updatedTransfer.id ? transferWithRecalculation : t));
+  };
+  const deleteMoneyTransfer = (transferId: string) => {
+    setMoneyTransfers(prev => prev.filter(t => t.id !== transferId));
+  };
+
   return (
     <DataContext.Provider value={{
       projects, addProject, updateProject, deleteProject,
@@ -352,7 +379,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       assets, addAsset, updateAsset, deleteAsset,
       stockItems, addStockItem, updateStockItem, deleteStockItem,
       warehouses, addWarehouse, updateWarehouse, deleteWarehouse,
-      stockTransferLogs, transferStockItem
+      stockTransferLogs, transferStockItem,
+      moneyTransfers, addMoneyTransfer, updateMoneyTransfer, deleteMoneyTransfer
     }}>
       {children}
     </DataContext.Provider>

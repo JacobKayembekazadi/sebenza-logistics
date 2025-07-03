@@ -2,6 +2,7 @@
 
 
 
+
 export type Project = {
   id: string;
   name: string;
@@ -155,6 +156,20 @@ export type StockTransferLog = {
   date: string;
 };
 
+export type MoneyTransfer = {
+  id: string;
+  fromLocation: string;
+  toLocation: string;
+  senderName: string;
+  receiverName: string;
+  amountSent: number;
+  exchangeRate: number;
+  amountToCollect: number;
+  referenceCode: string;
+  status: 'Pending Collection' | 'Collected';
+  date: string;
+};
+
 
 export const projects: Project[] = [
   {
@@ -303,3 +318,8 @@ export const stockItems: StockItem[] = [
 ];
 
 export const stockTransferLogs: StockTransferLog[] = [];
+
+export const moneyTransfers: MoneyTransfer[] = [
+  { id: 'mt-1', fromLocation: 'USA', toLocation: 'Nigeria', senderName: 'John Appleseed', receiverName: 'Adebayo Akinwunmi', amountSent: 500, exchangeRate: 1450.50, amountToCollect: 725250, referenceCode: 'USA-NGA-001', status: 'Pending Collection', date: '2024-10-28' },
+  { id: 'mt-2', fromLocation: 'UK', toLocation: 'Ghana', senderName: 'Sarah Connor', receiverName: 'Kwame Nkrumah', amountSent: 300, exchangeRate: 15.20, amountToCollect: 4560, referenceCode: 'UK-GHA-001', status: 'Collected', date: '2024-10-25' },
+];
