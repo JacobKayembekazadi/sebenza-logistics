@@ -1,4 +1,5 @@
 
+
 export type Project = {
   id: string;
   name: string;
@@ -25,6 +26,7 @@ export type Invoice = {
   tax?: number;
   discount?: number;
   lateFee?: number;
+  paidAmount?: number;
   notes?: string;
   termsAndConditions?: string;
   signature?: string;
@@ -32,6 +34,19 @@ export type Invoice = {
   date: string;
   projectId?: string;
   type: 'Standard' | 'Retainer' | 'Pro-forma';
+};
+
+export const paymentMethods = ['Cash', 'Bank Transfer', 'Credit Card', 'Other'] as const;
+export type PaymentMethod = (typeof paymentMethods)[number];
+
+export type Payment = {
+  id: string;
+  invoiceId: string;
+  clientName: string;
+  amount: number;
+  date: string;
+  method: PaymentMethod;
+  notes?: string;
 };
 
 export const employeeRoles = ['Manager', 'Warehouse Staff', 'Accountant', 'Driver', 'Contractor'] as const;
@@ -251,10 +266,16 @@ export const tasks: Task[] = [
 ];
 
 export const invoices: Invoice[] = [
-  { id: 'INV-001', client: 'Nexus Corp', amount: 2500.00, status: 'Paid', date: '2024-10-15', projectId: 'proj-1', type: 'Standard', tax: 200, discount: 50 },
-  { id: 'INV-002', client: 'Quantum Solutions', amount: 1200.50, status: 'Pending', date: '2024-12-22', type: 'Standard' },
-  { id: 'INV-003', client: 'Stellar Goods', amount: 850.00, status: 'Paid', date: '2024-09-30', type: 'Standard' },
-  { id: 'INV-004', client: 'Apex Logistics', amount: 3400.00, status: 'Partial', date: '2024-11-01', projectId: 'proj-2', lateFee: 50.00, type: 'Standard', discount: 100 },
+  { id: 'INV-001', client: 'Nexus Corp', amount: 2500.00, status: 'Paid', date: '2024-10-15', projectId: 'proj-1', type: 'Standard', tax: 200, discount: 50, paidAmount: 2650.00 },
+  { id: 'INV-002', client: 'Quantum Solutions', amount: 1200.50, status: 'Pending', date: '2024-12-22', type: 'Standard', paidAmount: 0 },
+  { id: 'INV-003', client: 'Stellar Goods', amount: 850.00, status: 'Paid', date: '2024-09-30', type: 'Standard', paidAmount: 850.00 },
+  { id: 'INV-004', client: 'Apex Logistics', amount: 3400.00, status: 'Partial', date: '2024-11-01', projectId: 'proj-2', lateFee: 50.00, type: 'Standard', discount: 100, paidAmount: 2000.00 },
+];
+
+export const payments: Payment[] = [
+    { id: 'pay-1', invoiceId: 'INV-001', clientName: 'Nexus Corp', amount: 2650.00, date: '2024-10-20', method: 'Bank Transfer' },
+    { id: 'pay-2', invoiceId: 'INV-003', clientName: 'Stellar Goods', amount: 850.00, date: '2024-10-05', method: 'Credit Card' },
+    { id: 'pay-3', invoiceId: 'INV-004', clientName: 'Apex Logistics', amount: 2000.00, date: '2024-11-10', method: 'Bank Transfer' },
 ];
 
 export const employees: Employee[] = [

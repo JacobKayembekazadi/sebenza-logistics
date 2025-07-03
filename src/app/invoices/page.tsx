@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState } from "react";
@@ -8,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, PlusCircle, Bot, Loader2, Paperclip, Mail } from "lucide-react";
+import { MoreHorizontal, PlusCircle, Bot, Loader2, Paperclip, Mail, Wallet } from "lucide-react";
 import { useData } from "@/contexts/data-context";
 import type { Invoice } from "@/lib/data";
 import { DeleteConfirmationDialog } from "@/components/common/delete-confirmation-dialog";
@@ -16,6 +17,7 @@ import { InvoiceFormDialog } from "@/components/invoices/invoice-form-dialog";
 import { handleCalculateLateFee } from "@/app/actions";
 import { useToast } from "@/hooks/use-toast";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { PaymentFormDialog } from "@/components/payments/payment-form-dialog";
 
 type EffectiveStatus = Invoice['status'] | 'Overdue';
 
@@ -23,6 +25,7 @@ export default function InvoicesPage() {
   const { invoices, deleteInvoice, projects, updateInvoice, documents } = useData();
   const [isFormOpen, setFormOpen] = useState(false);
   const [isConfirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [isPaymentDialogOpen, setPaymentDialogOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | undefined>(undefined);
   const [isApplyingFee, setIsApplyingFee] = useState<string | null>(null);
   const { toast } = useToast();
@@ -35,6 +38,11 @@ export default function InvoicesPage() {
   const handleDelete = (invoice: Invoice) => {
     setSelectedInvoice(invoice);
     setConfirmDeleteOpen(true);
+  };
+  
+  const handleRecordPayment = (invoice: Invoice) => {
+    setSelectedInvoice(invoice);
+    setPaymentDialogOpen(true);
   };
 
   const confirmDelete = () => {
@@ -122,37 +130,30 @@ export default function InvoicesPage() {
                 <TableRow>
                   <TableHead>Invoice ID</TableHead>
                   <TableHead>Client</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Project</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Attachments</TableHead>
-                  <TableHead className="text-right">Subtotal</TableHead>
-                  <TableHead className="text-right">Late Fee</TableHead>
                   <TableHead className="text-right">Total</TableHead>
+                  <TableHead className="text-right">Paid</TableHead>
+                  <TableHead className="text-right">Balance Due</TableHead>
                   <TableHead><span className="sr-only">Actions</span></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {invoices.map((invoice) => {
                   const effectiveStatus = getEffectiveStatus(invoice);
-                  const projectName = invoice.projectId ? projects.find(p => p.id === invoice.projectId)?.name : null;
                   const totalAmount = invoice.amount + (invoice.tax || 0) - (invoice.discount || 0) + (invoice.lateFee || 0);
+                  const paidAmount = invoice.paidAmount || 0;
+                  const balanceDue = totalAmount - paidAmount;
                   const attachmentsCount = getRelatedDocumentsCount(invoice.id);
 
                   return (
                     <TableRow key={invoice.id}>
                       <TableCell className="font-medium">{invoice.id}</TableCell>
-                      <TableCell>{invoice.client}</TableCell>
-                      <TableCell>{invoice.type}</TableCell>
                       <TableCell>
-                        {invoice.projectId && projectName ? (
-                          <Link href={`/projects/${invoice.projectId}`} className="hover:underline">
-                            {projectName}
-                          </Link>
-                        ) : (
-                          <span className="text-muted-foreground">N/A</span>
-                        )}
+                         <Link href={`/clients/${projects.find(p => p.id === invoice.projectId)?.name}`} className="hover:underline">
+                           {invoice.client}
+                         </Link>
                       </TableCell>
                       <TableCell>{invoice.date}</TableCell>
                       <TableCell>
@@ -185,9 +186,9 @@ export default function InvoicesPage() {
                           </TooltipProvider>
                         )}
                       </TableCell>
-                      <TableCell className="text-right">${invoice.amount.toFixed(2)}</TableCell>
-                      <TableCell className="text-right text-destructive">${(invoice.lateFee || 0).toFixed(2)}</TableCell>
-                      <TableCell className="text-right font-medium">${totalAmount.toFixed(2)}</TableCell>
+                      <TableCell className="text-right">${totalAmount.toFixed(2)}</TableCell>
+                      <TableCell className="text-right text-green-600">${paidAmount.toFixed(2)}</TableCell>
+                      <TableCell className="text-right font-medium">${balanceDue.toFixed(2)}</TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -197,6 +198,10 @@ export default function InvoicesPage() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem onClick={() => handleEdit(invoice)}>Edit</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleRecordPayment(invoice)} disabled={balanceDue <= 0}>
+                              <Wallet className="mr-2 h-4 w-4" />
+                              Record Payment
+                            </DropdownMenuItem>
                             <DropdownMenuItem 
                                 onClick={() => handleApplyLateFee(invoice)} 
                                 disabled={effectiveStatus !== 'Overdue' || !!isApplyingFee}
@@ -231,6 +236,11 @@ export default function InvoicesPage() {
       <InvoiceFormDialog
         open={isFormOpen}
         onOpenChange={setFormOpen}
+        invoice={selectedInvoice}
+      />
+      <PaymentFormDialog
+        open={isPaymentDialogOpen}
+        onOpenChange={setPaymentDialogOpen}
         invoice={selectedInvoice}
       />
       <DeleteConfirmationDialog

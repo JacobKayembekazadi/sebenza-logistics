@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState } from 'react';
@@ -109,12 +110,15 @@ export default function ProjectDetailPage() {
                                 <TableHead>Invoice ID</TableHead>
                                 <TableHead>Date</TableHead>
                                 <TableHead>Status</TableHead>
-                                <TableHead className="text-right">Amount</TableHead>
+                                <TableHead className="text-right">Total</TableHead>
+                                <TableHead className="text-right">Balance Due</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {projectInvoices.map((invoice) => {
                                 const effectiveStatus = getEffectiveStatus(invoice);
+                                const totalAmount = invoice.amount + (invoice.tax || 0) - (invoice.discount || 0) + (invoice.lateFee || 0);
+                                const balanceDue = totalAmount - (invoice.paidAmount || 0);
                                 return (
                                     <TableRow key={invoice.id}>
                                         <TableCell className="font-medium">
@@ -136,7 +140,8 @@ export default function ProjectDetailPage() {
                                               {effectiveStatus}
                                             </Badge>
                                         </TableCell>
-                                        <TableCell className="text-right">${invoice.amount.toFixed(2)}</TableCell>
+                                        <TableCell className="text-right">${totalAmount.toFixed(2)}</TableCell>
+                                        <TableCell className="text-right font-medium">${balanceDue.toFixed(2)}</TableCell>
                                     </TableRow>
                                 );
                             })}

@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
@@ -21,7 +22,9 @@ import {
   warehouses as initialWarehouses,
   stockTransferLogs as initialStockTransferLogs,
   moneyTransfers as initialMoneyTransfers,
-  Project, Task, Invoice, Employee, JobPosting, Expense, Client, Estimate, Document, Service, Supplier, PurchaseOrder, Asset, StockItem, Warehouse, StockTransferLog, MoneyTransfer
+  payments as initialPayments,
+  Project, Task, Invoice, Employee, JobPosting, Expense, Client, Estimate, Document, Service, Supplier, PurchaseOrder, Asset, StockItem, Warehouse, StockTransferLog, MoneyTransfer,
+  Payment
 } from '@/lib/data';
 
 type DataContextType = {
@@ -40,6 +43,9 @@ type DataContextType = {
   addInvoice: (invoice: Omit<Invoice, 'id'>, document?: { name: string; type: string; size: string }) => void;
   updateInvoice: (invoice: Invoice) => void;
   deleteInvoice: (invoiceId: string) => void;
+
+  payments: Payment[];
+  addPayment: (payment: Omit<Payment, 'id'>) => void;
 
   employees: Employee[];
   addEmployee: (employee: Omit<Employee, 'id'>) => void;
@@ -116,6 +122,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [projects, setProjects] = useState<Project[]>(initialProjects);
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [invoices, setInvoices] = useState<Invoice[]>(initialInvoices);
+  const [payments, setPayments] = useState<Payment[]>(initialPayments);
   const [employees, setEmployees] = useState<Employee[]>(initialEmployees);
   const [jobPostings, setJobPostings] = useState<JobPosting[]>(initialJobPostings);
   const [expenses, setExpenses] = useState<Expense[]>(initialExpenses);
@@ -160,7 +167,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   // Invoices
   const addInvoice = (invoice: Omit<Invoice, 'id'>, document?: { name: string; type: string; size: string }) => {
     const newInvoiceId = `INV-${(invoices.length + 1).toString().padStart(3, '0')}`;
-    const newInvoice: Invoice = { ...invoice, id: newInvoiceId };
+    const newInvoice: Invoice = { ...invoice, id: newInvoiceId, paidAmount: 0 };
     setInvoices(prev => [newInvoice, ...prev]);
 
     if (document) {
@@ -180,6 +187,31 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   };
   const deleteInvoice = (invoiceId: string) => {
     setInvoices(prev => prev.filter(i => i.id !== invoiceId));
+  };
+  
+  // Payments
+  const addPayment = (payment: Omit<Payment, 'id'>) => {
+    const newPayment: Payment = { ...payment, id: uuidv4() };
+    setPayments(prev => [newPayment, ...prev]);
+
+    const invoiceToUpdate = invoices.find(inv => inv.id === payment.invoiceId);
+    if (invoiceToUpdate) {
+      const totalAmount = invoiceToUpdate.amount + (invoiceToUpdate.tax || 0) - (invoiceToUpdate.discount || 0) + (invoiceToUpdate.lateFee || 0);
+      const newPaidAmount = (invoiceToUpdate.paidAmount || 0) + payment.amount;
+      
+      let newStatus: Invoice['status'] = 'Partial';
+      if (newPaidAmount >= totalAmount) {
+        newStatus = 'Paid';
+      } else if (newPaidAmount <= 0) {
+        newStatus = 'Pending';
+      }
+
+      updateInvoice({
+        ...invoiceToUpdate,
+        paidAmount: newPaidAmount,
+        status: newStatus
+      });
+    }
   };
 
   // Employees
@@ -380,6 +412,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       projects, addProject, updateProject, deleteProject,
       tasks, getTasksByProjectId, addTask, updateTask, deleteTask,
       invoices, addInvoice, updateInvoice, deleteInvoice,
+      payments, addPayment,
       employees, addEmployee, updateEmployee, deleteEmployee,
       jobPostings, addJobPosting, updateJobPosting, deleteJobPosting,
       expenses, addExpense, updateExpense, deleteExpense,

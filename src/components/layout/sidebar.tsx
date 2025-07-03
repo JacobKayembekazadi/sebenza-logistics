@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import Link from 'next/link';
@@ -39,6 +40,7 @@ import {
   ScrollText,
   Send,
   HandCoins,
+  Wallet,
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useAuth } from '@/contexts/auth-context';
@@ -52,6 +54,7 @@ const mainNavItems = [
 const accountingNavItems = [
   { href: '/invoices', label: 'Invoices', icon: Receipt },
   { href: '/estimates', label: 'Estimates', icon: FileText },
+  { href: '/payments', label: 'Payments', icon: Wallet },
   { href: '/expenses', label: 'Expenses', icon: CreditCard },
   { href: '/clients', label: 'Clients', icon: Contact },
   { href: '/reporting', label: 'Reporting', icon: LineChart },

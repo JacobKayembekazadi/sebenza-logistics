@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
@@ -129,12 +130,16 @@ export default function ClientProfilePage() {
                                         <TableHead>Invoice ID</TableHead>
                                         <TableHead>Date</TableHead>
                                         <TableHead>Status</TableHead>
-                                        <TableHead className="text-right">Amount</TableHead>
+                                        <TableHead className="text-right">Total</TableHead>
+                                        <TableHead className="text-right">Balance Due</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {clientInvoices.map(invoice => {
                                         const status = getInvoiceEffectiveStatus(invoice);
+                                        const totalAmount = invoice.amount + (invoice.tax || 0) - (invoice.discount || 0) + (invoice.lateFee || 0);
+                                        const balanceDue = totalAmount - (invoice.paidAmount || 0);
+
                                         return (
                                             <TableRow key={invoice.id}>
                                                 <TableCell>
@@ -144,7 +149,8 @@ export default function ClientProfilePage() {
                                                 <TableCell>
                                                     <Badge variant={status === 'Paid' ? 'outline' : status === 'Overdue' ? 'destructive' : 'default'} className={status === 'Paid' ? 'bg-accent text-accent-foreground' : ''}>{status}</Badge>
                                                 </TableCell>
-                                                <TableCell className="text-right">${(invoice.amount + (invoice.lateFee || 0)).toFixed(2)}</TableCell>
+                                                <TableCell className="text-right">${totalAmount.toFixed(2)}</TableCell>
+                                                <TableCell className="text-right font-medium">${balanceDue.toFixed(2)}</TableCell>
                                             </TableRow>
                                         );
                                     })}
