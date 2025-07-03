@@ -43,6 +43,31 @@ export default function ClientsPage() {
     setFormOpen(true);
   };
 
+  const handleExport = () => {
+    const headers = ['ID', 'Name', 'Email', 'Phone', 'Address'];
+    const csvRows = [
+      headers.join(','), // header row
+      ...clients.map(client => [
+        client.id,
+        `"${client.name.replace(/"/g, '""')}"`, // handle quotes in name
+        client.email,
+        client.phone,
+        `"${client.address.replace(/"/g, '""').replace(/\\n/g, ' ')}"`, // handle quotes and newlines in address
+      ].join(','))
+    ];
+
+    const csvContent = csvRows.join('\\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.href = url;
+    link.setAttribute('download', 'clients-export.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+
   return (
     <>
       <div className="flex flex-col gap-8">
@@ -59,9 +84,9 @@ export default function ClientsPage() {
                 <Upload className="mr-2 h-4 w-4" />
                 Import Clients
               </Button>
-              <Button size="sm" variant="outline">
+              <Button size="sm" variant="outline" onClick={handleExport}>
                 <Download className="mr-2 h-4 w-4" />
-                Export Clients
+                Export CSV
               </Button>
               <Button size="sm" onClick={openAddDialog}>
                 <PlusCircle className="mr-2 h-4 w-4" />

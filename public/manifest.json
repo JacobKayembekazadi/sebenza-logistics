@@ -1,0 +1,10 @@
+{
+  "name": "WareFlow",
+  "short_name": "WareFlow",
+  "description": "SaaS platform for logistics and warehouse management.",
+  "theme_color": "#6495ED",
+  "background_color": "#E0E0E0",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait"
+}
