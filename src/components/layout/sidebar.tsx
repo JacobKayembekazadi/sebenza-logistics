@@ -114,7 +114,10 @@ export function SiteSidebar() {
         <Button variant="ghost" className="w-full justify-start gap-2 px-2 h-12" asChild>
           <Link href="/dashboard">
             <Warehouse className="size-6 text-primary" />
-            <div className="flex flex-col items-start group-data-[collapsible=icon]:hidden">
+            <div
+              className="flex flex-col items-start group-data-[collapsible=icon]:hidden"
+              suppressHydrationWarning
+            >
               <span className="font-bold text-md leading-none" suppressHydrationWarning>Sebenza</span>
               <span className="text-xs text-muted-foreground leading-none" suppressHydrationWarning>Logistics Suite</span>
             </div>
