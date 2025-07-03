@@ -1,7 +1,6 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -95,12 +94,6 @@ const adminNavItems = [
 ];
 
 export function SiteSidebar() {
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const router = useRouter();
@@ -115,10 +108,6 @@ export function SiteSidebar() {
     return pathname.startsWith(path);
   }
 
-  if (!isClient) {
-    return null;
-  }
-
   return (
     <Sidebar collapsible="icon" className="border-r">
       <SidebarHeader>
@@ -127,9 +116,10 @@ export function SiteSidebar() {
             <Warehouse className="size-6 text-primary" />
             <div
               className="flex flex-col items-start group-data-[collapsible=icon]:hidden"
+              suppressHydrationWarning
             >
-              <span className="font-bold text-md leading-none">Sebenza</span>
-              <span className="text-xs text-muted-foreground leading-none">Logistics Suite</span>
+              <span className="font-bold text-md leading-none" suppressHydrationWarning>Sebenza</span>
+              <span className="text-xs text-muted-foreground leading-none" suppressHydrationWarning>Logistics Suite</span>
             </div>
           </Link>
         </Button>

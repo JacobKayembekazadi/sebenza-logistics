@@ -9,13 +9,29 @@ import { Toaster } from '@/components/ui/toaster';
 import { DataProvider } from '@/contexts/data-context';
 import { AuthProvider } from '@/contexts/auth-context';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { Loader2 } from 'lucide-react';
 
 function AppLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const noLayoutPages = ['/', '/login', '/signup'];
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
 
     if (noLayoutPages.includes(pathname)) {
         return <>{children}</>;
+    }
+
+    if (!isClient) {
+        return (
+            <div className="flex h-screen w-full items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+        );
     }
 
     return (
