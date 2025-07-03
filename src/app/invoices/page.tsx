@@ -7,20 +7,24 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, PlusCircle } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
+import { MoreHorizontal, PlusCircle, Bot, Loader2 } from "lucide-react";
 import { useData } from "@/contexts/data-context";
 import type { Invoice } from "@/lib/data";
 import { DeleteConfirmationDialog } from "@/components/common/delete-confirmation-dialog";
 import { InvoiceFormDialog } from "@/components/invoices/invoice-form-dialog";
+import { handleCalculateLateFee } from "@/app/actions";
+import { useToast } from "@/hooks/use-toast";
 
 type EffectiveStatus = Invoice['status'] | 'Overdue';
 
 export default function InvoicesPage() {
-  const { invoices, deleteInvoice, projects } = useData();
+  const { invoices, deleteInvoice, projects, updateInvoice } = useData();
   const [isFormOpen, setFormOpen] = useState(false);
   const [isConfirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | undefined>(undefined);
+  const [isApplyingFee, setIsApplyingFee] = useState<string | null>(null);
+  const { toast } = useToast();
 
   const handleEdit = (invoice: Invoice) => {
     setSelectedInvoice(invoice);
@@ -61,6 +65,29 @@ export default function InvoicesPage() {
     return invoice.status;
   };
 
+  const handleApplyLateFee = async (invoice: Invoice) => {
+    setIsApplyingFee(invoice.id);
+    const result = await handleCalculateLateFee({
+        amount: invoice.amount,
+        date: invoice.date
+    });
+
+    if (result.error) {
+        toast({
+            variant: "destructive",
+            title: "Error Calculating Fee",
+            description: result.error,
+        });
+    } else if (result.lateFee !== undefined) {
+        updateInvoice({ ...invoice, lateFee: (invoice.lateFee || 0) + result.lateFee });
+        toast({
+            title: "Late Fee Calculated",
+            description: `A late fee of $${result.lateFee.toFixed(2)} has been added to invoice ${invoice.id}.`
+        });
+    }
+    setIsApplyingFee(null);
+  };
+
   return (
     <>
       <div className="flex flex-col gap-8">
@@ -86,7 +113,9 @@ export default function InvoicesPage() {
                   <TableHead>Project</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
+                  <TableHead className="text-right">Original</TableHead>
+                  <TableHead className="text-right">Late Fee</TableHead>
+                  <TableHead className="text-right">Total</TableHead>
                   <TableHead><span className="sr-only">Actions</span></TableHead>
                 </TableRow>
               </TableHeader>
@@ -94,6 +123,8 @@ export default function InvoicesPage() {
                 {invoices.map((invoice) => {
                   const effectiveStatus = getEffectiveStatus(invoice);
                   const projectName = invoice.projectId ? projects.find(p => p.id === invoice.projectId)?.name : null;
+                  const totalAmount = invoice.amount + (invoice.lateFee || 0);
+
                   return (
                     <TableRow key={invoice.id}>
                       <TableCell className="font-medium">{invoice.id}</TableCell>
@@ -122,6 +153,8 @@ export default function InvoicesPage() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">${invoice.amount.toFixed(2)}</TableCell>
+                      <TableCell className="text-right text-destructive">${(invoice.lateFee || 0).toFixed(2)}</TableCell>
+                      <TableCell className="text-right font-medium">${totalAmount.toFixed(2)}</TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
@@ -131,6 +164,18 @@ export default function InvoicesPage() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem onClick={() => handleEdit(invoice)}>Edit</DropdownMenuItem>
+                            <DropdownMenuItem 
+                                onClick={() => handleApplyLateFee(invoice)} 
+                                disabled={effectiveStatus !== 'Overdue' || !!isApplyingFee}
+                            >
+                                {isApplyingFee === invoice.id ? (
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                ) : (
+                                    <Bot className="mr-2 h-4 w-4" />
+                                )}
+                                Apply Late Fee (AI)
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
                             <DropdownMenuItem onClick={() => handleDelete(invoice)} className="text-destructive">Delete</DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>

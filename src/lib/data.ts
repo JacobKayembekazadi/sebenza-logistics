@@ -22,6 +22,7 @@ export type Invoice = {
   id: string;
   client: string;
   amount: number;
+  lateFee?: number;
   status: 'Paid' | 'Pending' | 'Partial';
   date: string;
   projectId?: string;
@@ -317,6 +318,6 @@ export const stockTransferLogs: StockTransferLog[] = [
 ];
 
 export const moneyTransfers: MoneyTransfer[] = [
-    { id: 'mt-1', fromLocation: 'USA', toLocation: 'Mexico', senderName: 'John Doe', receiverName: 'Maria Garcia', amountSent: 500, exchangeRate: 17.5, amountToCollect: 8750, referenceCode: 'MT12345', status: 'Collected', date: '2024-10-28' },
+    { id: 'mt-1', fromLocation: 'USA', toLocation: 'Mexico', senderName: 'John Doe', receiverName: 'Maria Garcia', amountSent: 500, exchangeRate: 17.5, amountToCollect: 8750, status: 'Collected', date: '2024-10-28' },
     { id: 'mt-2', fromLocation: 'Canada', toLocation: 'USA', senderName: 'Pierre Dubois', receiverName: 'Jane Smith', amountSent: 1000, exchangeRate: 0.75, amountToCollect: 750, referenceCode: 'MT67890', status: 'Pending Collection', date: '2024-11-01' },
 ];
