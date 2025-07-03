@@ -17,7 +17,6 @@ import {
 import {
   LayoutDashboard,
   FolderKanban,
-  CircleDollarSign,
   Package,
   MessageSquare,
   Settings,
@@ -30,6 +29,7 @@ import {
   CreditCard,
   Contact,
   Folder,
+  Briefcase,
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useAuth } from '@/contexts/auth-context';
@@ -46,6 +46,10 @@ const accountingNavItems = [
   { href: '/clients', label: 'Clients', icon: Contact },
 ];
 
+const businessNavItems = [
+    { href: '/my-services', label: 'My Services', icon: Briefcase },
+];
+
 const secondaryNavItems = [
   { href: '/documents', label: 'Documents', icon: Folder },
   { href: '/messaging', label: 'Messaging', icon: MessageSquare },
@@ -54,7 +58,7 @@ const secondaryNavItems = [
 const adminNavItems = [
   { href: '/employees', label: 'Employees', icon: UserCog },
   { href: '/hr', label: 'HR', icon: Users },
-  { href: '/packages', label: 'My Packages', icon: Package },
+  { href: '/packages', label: 'Packages', icon: Package },
 ];
 
 export function SiteSidebar() {
@@ -103,6 +107,25 @@ export function SiteSidebar() {
            <SidebarGroupLabel>Accounting</SidebarGroupLabel>
            <SidebarMenu>
              {accountingNavItems.map((item) => (
+              <SidebarMenuItem key={item.href}>
+                <SidebarMenuButton
+                  asChild
+                  isActive={isActive(item.href)}
+                  tooltip={{ children: item.label, side: 'right' }}
+                >
+                  <Link href={item.href}>
+                    <item.icon />
+                    <span>{item.label}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+           </SidebarMenu>
+        </SidebarGroup>
+         <SidebarGroup>
+           <SidebarGroupLabel>Business</SidebarGroupLabel>
+           <SidebarMenu>
+             {businessNavItems.map((item) => (
               <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton
                   asChild

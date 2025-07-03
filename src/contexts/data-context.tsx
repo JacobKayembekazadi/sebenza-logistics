@@ -13,7 +13,8 @@ import {
   clients as initialClients,
   estimates as initialEstimates,
   documents as initialDocuments,
-  Project, Task, Invoice, Employee, JobPosting, Expense, Client, Estimate, Document
+  services as initialServices,
+  Project, Task, Invoice, Employee, JobPosting, Expense, Client, Estimate, Document, Service
 } from '@/lib/data';
 
 type DataContextType = {
@@ -62,6 +63,11 @@ type DataContextType = {
   addDocument: (document: Omit<Document, 'id'>) => void;
   updateDocument: (document: Document) => void;
   deleteDocument: (documentId: string) => void;
+
+  services: Service[];
+  addService: (service: Omit<Service, 'id'>) => void;
+  updateService: (service: Service) => void;
+  deleteService: (serviceId: string) => void;
 };
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -76,6 +82,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [clients, setClients] = useState<Client[]>(initialClients);
   const [estimates, setEstimates] = useState<Estimate[]>(initialEstimates);
   const [documents, setDocuments] = useState<Document[]>(initialDocuments);
+  const [services, setServices] = useState<Service[]>(initialServices);
 
   // Projects
   const addProject = (project: Omit<Project, 'id' | 'status' | 'progress'>) => {
@@ -187,6 +194,18 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     setDocuments(prev => prev.filter(d => d.id !== documentId));
   };
 
+  // Services
+  const addService = (service: Omit<Service, 'id'>) => {
+    const newService: Service = { ...service, id: uuidv4() };
+    setServices(prev => [newService, ...prev]);
+  };
+  const updateService = (updatedService: Service) => {
+    setServices(prev => prev.map(s => s.id === updatedService.id ? updatedService : s));
+  };
+  const deleteService = (serviceId: string) => {
+    setServices(prev => prev.filter(s => s.id !== serviceId));
+  };
+
   return (
     <DataContext.Provider value={{
       projects, addProject, updateProject, deleteProject,
@@ -197,7 +216,8 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       expenses, addExpense, updateExpense, deleteExpense,
       clients, addClient, updateClient, deleteClient,
       estimates, addEstimate, updateEstimate, deleteEstimate,
-      documents, addDocument, updateDocument, deleteDocument
+      documents, addDocument, updateDocument, deleteDocument,
+      services, addService, updateService, deleteService
     }}>
       {children}
     </DataContext.Provider>

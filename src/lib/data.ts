@@ -24,10 +24,13 @@ export type Invoice = {
   date: string;
 };
 
+export const employeeRoles = ['Manager', 'Warehouse Staff', 'Accountant', 'Driver', 'Contractor'] as const;
+export type EmployeeRole = (typeof employeeRoles)[number];
+
 export type Employee = {
   id: string;
   name: string;
-  role: string;
+  role: EmployeeRole;
   department: string;
   email: string;
   avatar: string;
@@ -76,6 +79,13 @@ export type Document = {
   size: string; // e.g., '2.5 MB'
   uploadDate: string;
   relatedTo: string; // e.g., 'INV-001', 'proj-1'
+};
+
+export type Service = {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
 };
 
 export const projects: Project[] = [
@@ -143,10 +153,10 @@ export const invoices: Invoice[] = [
 ];
 
 export const employees: Employee[] = [
-  { id: 'emp-1', name: 'Alice Johnson', role: 'Logistics Manager', department: 'Operations', email: 'alice.j@wareflow.com', avatar: 'https://placehold.co/100x100.png', timesheetEnabled: true, payrollManaged: true },
-  { id: 'emp-2', name: 'Bob Williams', role: 'Warehouse Supervisor', department: 'Operations', email: 'bob.w@wareflow.com', avatar: 'https://placehold.co/100x100.png', timesheetEnabled: true, payrollManaged: false },
+  { id: 'emp-1', name: 'Alice Johnson', role: 'Manager', department: 'Operations', email: 'alice.j@wareflow.com', avatar: 'https://placehold.co/100x100.png', timesheetEnabled: true, payrollManaged: true },
+  { id: 'emp-2', name: 'Bob Williams', role: 'Warehouse Staff', department: 'Operations', email: 'bob.w@wareflow.com', avatar: 'https://placehold.co/100x100.png', timesheetEnabled: true, payrollManaged: false },
   { id: 'emp-3', name: 'Charlie Brown', role: 'Accountant', department: 'Finance', email: 'charlie.b@wareflow.com', avatar: 'https://placehold.co/100x100.png', timesheetEnabled: false, payrollManaged: true },
-  { id: 'emp-4', name: 'Diana Prince', role: 'HR Manager', department: 'Human Resources', email: 'diana.p@wareflow.com', avatar: 'https://placehold.co/100x100.png', timesheetEnabled: true, payrollManaged: true },
+  { id: 'emp-4', name: 'Diana Prince', role: 'Manager', department: 'Human Resources', email: 'diana.p@wareflow.com', avatar: 'https://placehold.co/100x100.png', timesheetEnabled: true, payrollManaged: true },
 ];
 
 export const jobPostings: JobPosting[] = [
@@ -179,4 +189,11 @@ export const documents: Document[] = [
   { id: 'doc-1', name: 'Contract_NexusCorp.pdf', type: 'PDF', size: '1.2 MB', uploadDate: '2023-10-15', relatedTo: 'client-1' },
   { id: 'doc-2', name: 'Shipping_Manifest_INV-003.docx', type: 'Word', size: '800 KB', uploadDate: '2023-09-30', relatedTo: 'INV-003' },
   { id: 'doc-3', name: 'Warehouse_Photos.zip', type: 'Image', size: '15.4 MB', uploadDate: '2023-08-20', relatedTo: 'proj-1' },
+];
+
+export const services: Service[] = [
+  { id: 'svc-1', name: 'Standard Pallet Storage', description: 'Per pallet, per month storage fee.', price: 25.00 },
+  { id: 'svc-2', name: 'Order Fulfillment', description: 'Pick, pack, and ship per order.', price: 3.50 },
+  { id: 'svc-3', name: 'Cross-Docking', description: 'Unload, sort, and reload per shipment.', price: 250.00 },
+  { id: 'svc-4', name: 'Local Delivery', description: 'Per delivery within a 50-mile radius.', price: 75.00 },
 ];

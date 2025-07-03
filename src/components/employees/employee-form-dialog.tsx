@@ -14,8 +14,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useData } from "@/contexts/data-context";
-import type { Employee } from "@/lib/data";
+import type { Employee, EmployeeRole } from "@/lib/data";
+import { employeeRoles } from "@/lib/data";
 import { useEffect, useState } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 interface EmployeeFormDialogProps {
   open: boolean;
@@ -26,7 +28,7 @@ interface EmployeeFormDialogProps {
 export function EmployeeFormDialog({ open, onOpenChange, employee }: EmployeeFormDialogProps) {
   const { addEmployee, updateEmployee } = useData();
   const [name, setName] = useState('');
-  const [role, setRole] = useState('');
+  const [role, setRole] = useState<EmployeeRole>(employeeRoles[0]);
   const [department, setDepartment] = useState('');
   const [email, setEmail] = useState('');
   const [timesheetEnabled, setTimesheetEnabled] = useState(true);
@@ -44,7 +46,7 @@ export function EmployeeFormDialog({ open, onOpenChange, employee }: EmployeeFor
       setPayrollManaged(employee.payrollManaged);
     } else {
       setName('');
-      setRole('');
+      setRole(employeeRoles[0]);
       setDepartment('');
       setEmail('');
       setTimesheetEnabled(true);
@@ -83,7 +85,14 @@ export function EmployeeFormDialog({ open, onOpenChange, employee }: EmployeeFor
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="role" className="text-right">Role</Label>
-            <Input id="role" value={role} onChange={(e) => setRole(e.target.value)} className="col-span-3" />
+            <Select onValueChange={(value: EmployeeRole) => setRole(value)} value={role}>
+              <SelectTrigger className="col-span-3">
+                <SelectValue placeholder="Select role" />
+              </SelectTrigger>
+              <SelectContent>
+                {employeeRoles.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+              </SelectContent>
+            </Select>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="department" className="text-right">Department</Label>
