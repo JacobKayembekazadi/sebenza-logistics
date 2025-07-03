@@ -127,7 +127,7 @@ export default function InvoicesPage() {
                   <TableHead>Date</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Attachments</TableHead>
-                  <TableHead className="text-right">Original</TableHead>
+                  <TableHead className="text-right">Subtotal</TableHead>
                   <TableHead className="text-right">Late Fee</TableHead>
                   <TableHead className="text-right">Total</TableHead>
                   <TableHead><span className="sr-only">Actions</span></TableHead>
@@ -137,7 +137,7 @@ export default function InvoicesPage() {
                 {invoices.map((invoice) => {
                   const effectiveStatus = getEffectiveStatus(invoice);
                   const projectName = invoice.projectId ? projects.find(p => p.id === invoice.projectId)?.name : null;
-                  const totalAmount = invoice.amount + (invoice.lateFee || 0);
+                  const totalAmount = invoice.amount + (invoice.tax || 0) - (invoice.discount || 0) + (invoice.lateFee || 0);
                   const attachmentsCount = getRelatedDocumentsCount(invoice.id);
 
                   return (

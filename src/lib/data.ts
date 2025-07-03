@@ -21,8 +21,13 @@ export type Task = {
 export type Invoice = {
   id: string;
   client: string;
-  amount: number;
+  amount: number; // Represents subtotal
+  tax?: number;
+  discount?: number;
   lateFee?: number;
+  notes?: string;
+  termsAndConditions?: string;
+  signature?: string;
   status: 'Paid' | 'Pending' | 'Partial';
   date: string;
   projectId?: string;
@@ -242,10 +247,10 @@ export const tasks: Task[] = [
 ];
 
 export const invoices: Invoice[] = [
-  { id: 'INV-001', client: 'Nexus Corp', amount: 2500.00, status: 'Paid', date: '2024-10-15', projectId: 'proj-1', type: 'Standard' },
+  { id: 'INV-001', client: 'Nexus Corp', amount: 2500.00, status: 'Paid', date: '2024-10-15', projectId: 'proj-1', type: 'Standard', tax: 200, discount: 50 },
   { id: 'INV-002', client: 'Quantum Solutions', amount: 1200.50, status: 'Pending', date: '2024-12-22', type: 'Standard' },
   { id: 'INV-003', client: 'Stellar Goods', amount: 850.00, status: 'Paid', date: '2024-09-30', type: 'Standard' },
-  { id: 'INV-004', client: 'Apex Logistics', amount: 3400.00, status: 'Partial', date: '2024-11-01', projectId: 'proj-2', lateFee: 50.00, type: 'Standard' },
+  { id: 'INV-004', client: 'Apex Logistics', amount: 3400.00, status: 'Partial', date: '2024-11-01', projectId: 'proj-2', lateFee: 50.00, type: 'Standard', discount: 100 },
 ];
 
 export const employees: Employee[] = [
