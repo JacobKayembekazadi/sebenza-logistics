@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -11,6 +12,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import type { Client } from '@/lib/data';
 import { DeleteConfirmationDialog } from '@/components/common/delete-confirmation-dialog';
 import { ClientFormDialog } from '@/components/clients/client-form-dialog';
+import Link from 'next/link';
 
 export default function ClientsPage() {
   const { clients, deleteClient } = useData();
@@ -86,7 +88,9 @@ export default function ClientsPage() {
                           <AvatarImage src={client.avatar} data-ai-hint="person" />
                           <AvatarFallback>{client.name.charAt(0)}</AvatarFallback>
                         </Avatar>
-                        <p className="font-medium">{client.name}</p>
+                        <Link href={`/clients/${client.id}`} className="font-medium hover:underline">
+                          {client.name}
+                        </Link>
                       </div>
                     </TableCell>
                     <TableCell>
