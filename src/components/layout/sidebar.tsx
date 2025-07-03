@@ -109,7 +109,7 @@ export function SiteSidebar() {
   }
 
   return (
-    <Sidebar collapsible="icon" className="border-r">
+    <Sidebar collapsible="icon" className="border-r" suppressHydrationWarning>
       <SidebarHeader>
         <Button variant="ghost" className="w-full justify-start gap-2 px-2 h-12" asChild>
           <Link href="/dashboard">
