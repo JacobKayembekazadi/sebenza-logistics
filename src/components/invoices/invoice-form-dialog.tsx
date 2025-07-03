@@ -24,11 +24,12 @@ interface InvoiceFormDialogProps {
 }
 
 export function InvoiceFormDialog({ open, onOpenChange, invoice }: InvoiceFormDialogProps) {
-  const { clients, addInvoice, updateInvoice } = useData();
+  const { clients, projects, addInvoice, updateInvoice } = useData();
   const [client, setClient] = useState('');
   const [amount, setAmount] = useState('');
   const [status, setStatus] = useState<'Paid' | 'Pending' | 'Overdue'>('Pending');
   const [date, setDate] = useState('');
+  const [projectId, setProjectId] = useState<string | undefined>();
   
   const isEditMode = !!invoice;
 
@@ -38,11 +39,13 @@ export function InvoiceFormDialog({ open, onOpenChange, invoice }: InvoiceFormDi
       setAmount(invoice.amount.toString());
       setStatus(invoice.status);
       setDate(invoice.date);
+      setProjectId(invoice.projectId);
     } else {
       setClient(clients[0]?.name || '');
       setAmount('');
       setStatus('Pending');
       setDate(new Date().toISOString().split('T')[0]);
+      setProjectId(undefined);
     }
   }, [invoice, open, clients]);
 
@@ -51,7 +54,8 @@ export function InvoiceFormDialog({ open, onOpenChange, invoice }: InvoiceFormDi
       client, 
       amount: parseFloat(amount),
       status, 
-      date 
+      date,
+      projectId,
     };
 
     if (isEditMode && invoice) {
@@ -86,6 +90,18 @@ export function InvoiceFormDialog({ open, onOpenChange, invoice }: InvoiceFormDi
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="amount" className="text-right">Amount</Label>
             <Input id="amount" type="number" value={amount} onChange={(e) => setAmount(e.target.value)} className="col-span-3" />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="project" className="text-right">Project</Label>
+            <Select onValueChange={(value) => setProjectId(value === 'none' ? undefined : value)} value={projectId || 'none'}>
+              <SelectTrigger className="col-span-3">
+                <SelectValue placeholder="Assign to project" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">None</SelectItem>
+                {projects.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
+              </SelectContent>
+            </Select>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="date" className="text-right">Date</Label>

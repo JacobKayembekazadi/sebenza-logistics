@@ -2,6 +2,7 @@
 'use client';
 
 import { useState } from "react";
+import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -14,7 +15,7 @@ import { DeleteConfirmationDialog } from "@/components/common/delete-confirmatio
 import { InvoiceFormDialog } from "@/components/invoices/invoice-form-dialog";
 
 export default function InvoicesPage() {
-  const { invoices, deleteInvoice } = useData();
+  const { invoices, deleteInvoice, projects } = useData();
   const [isFormOpen, setFormOpen] = useState(false);
   const [isConfirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | undefined>(undefined);
@@ -80,6 +81,7 @@ export default function InvoicesPage() {
                 <TableRow>
                   <TableHead>Invoice ID</TableHead>
                   <TableHead>Client</TableHead>
+                  <TableHead>Project</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Amount</TableHead>
@@ -89,10 +91,20 @@ export default function InvoicesPage() {
               <TableBody>
                 {invoices.map((invoice) => {
                   const effectiveStatus = getEffectiveStatus(invoice);
+                  const projectName = invoice.projectId ? projects.find(p => p.id === invoice.projectId)?.name : null;
                   return (
                     <TableRow key={invoice.id}>
                       <TableCell className="font-medium">{invoice.id}</TableCell>
                       <TableCell>{invoice.client}</TableCell>
+                      <TableCell>
+                        {invoice.projectId && projectName ? (
+                          <Link href={`/projects/${invoice.projectId}`} className="hover:underline">
+                            {projectName}
+                          </Link>
+                        ) : (
+                          <span className="text-muted-foreground">N/A</span>
+                        )}
+                      </TableCell>
                       <TableCell>{invoice.date}</TableCell>
                       <TableCell>
                         <Badge variant={
