@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { EventFormDialog } from '@/components/calendar/event-form-dialog';
 import { DeleteConfirmationDialog } from '@/components/common/delete-confirmation-dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 type CalendarEvent = {
   id: string;
@@ -161,39 +162,65 @@ export default function CalendarPage() {
                   <ScrollArea className="h-[450px]">
                     {selectedDayEvents.length > 0 ? (
                       <div className="space-y-2">
-                        {selectedDayEvents.map(event => (
-                           <div key={event.id} className="flex items-start gap-4 p-3 rounded-lg hover:bg-accent transition-colors group">
-                              <div className={`mt-1.5 h-2 w-2 rounded-full ${eventTypeConfig[event.type].color}`} />
-                              <div className="flex-grow">
-                                {event.link ? (
-                                  <Link href={event.link} className="font-medium hover:underline focus:outline-none focus:ring-1 focus:ring-ring rounded-sm">{event.title}</Link>
-                                ) : (
-                                  <p className="font-medium">{event.title}</p>
-                                )}
-                                
-                                {event.description && event.type === 'Meeting' && (
-                                  <p className="text-sm text-muted-foreground mt-1">{event.description}</p>
-                                )}
+                        {selectedDayEvents.map(event => {
+                           if (event.type === 'Meeting') {
+                             return (
+                               <div key={event.id} className="flex items-start gap-4 p-3 rounded-lg hover:bg-accent transition-colors group">
+                                  <div className={`mt-1.5 h-2 w-2 rounded-full ${eventTypeConfig[event.type].color}`} />
+                                  <div className="flex-grow">
+                                    <p className="font-medium">{event.title}</p>
+                                    
+                                    {event.description && (
+                                      <p className="text-sm text-muted-foreground mt-1">{event.description}</p>
+                                    )}
 
-                                <Badge variant="outline" className="mt-2">{event.type}</Badge>
-                              </div>
-                              {event.type === 'Meeting' && (
-                                <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                                  <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                                        <MoreHorizontal className="h-4 w-4" />
-                                      </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end">
-                                      <DropdownMenuItem onClick={() => handleEdit(meetings.find(m => m.id === event.id)!)}>Edit</DropdownMenuItem>
-                                      <DropdownMenuItem onClick={() => handleDelete(meetings.find(m => m.id === event.id)!)} className="text-destructive">Delete</DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                  </DropdownMenu>
+                                    <Badge variant="outline" className="mt-2">{event.type}</Badge>
+                                  </div>
+                                  <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <DropdownMenu>
+                                      <DropdownMenuTrigger asChild>
+                                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                                          <MoreHorizontal className="h-4 w-4" />
+                                        </Button>
+                                      </DropdownMenuTrigger>
+                                      <DropdownMenuContent align="end">
+                                        <DropdownMenuItem onClick={() => handleEdit(meetings.find(m => m.id === event.id)!)}>Edit</DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => handleDelete(meetings.find(m => m.id === event.id)!)} className="text-destructive">Delete</DropdownMenuItem>
+                                      </DropdownMenuContent>
+                                    </DropdownMenu>
+                                  </div>
                                 </div>
-                              )}
-                            </div>
-                        ))}
+                             )
+                           } else {
+                              const pageNameMap: Record<string, string> = {
+                                'Project': 'Projects', 'Task': 'Projects', 'Invoice': 'Invoices'
+                              };
+                              const pageName = pageNameMap[event.type] || `${event.type.toLowerCase()}s`;
+                              
+                              const readOnlyEvent = (
+                                <div className="flex items-start gap-4 p-3 rounded-lg hover:bg-accent transition-colors group w-full">
+                                  <div className={`mt-1.5 h-2 w-2 rounded-full ${eventTypeConfig[event.type].color}`} />
+                                  <div className="flex-grow">
+                                    <Link href={event.link!} className="font-medium hover:underline focus:outline-none focus:ring-1 focus:ring-ring rounded-sm">{event.title}</Link>
+                                    <Badge variant="outline" className="mt-2">{event.type}</Badge>
+                                  </div>
+                                </div>
+                              );
+
+                              return (
+                                <TooltipProvider key={event.id} delayDuration={300}>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      {readOnlyEvent}
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>Manage this {event.type.toLowerCase()} on the {pageName} page.</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              );
+                           }
+                        })}
                       </div>
                     ) : (
                       <p className="text-muted-foreground text-center py-10">No events for this day.</p>
