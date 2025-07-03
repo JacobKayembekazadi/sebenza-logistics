@@ -65,16 +65,16 @@ export default function JournalEntriesPage() {
                 <Accordion type="multiple" className="w-full">
                     {journalEntries.map(entry => (
                         <AccordionItem value={entry.id} key={entry.id}>
-                            <AccordionTrigger className="hover:no-underline">
-                                <div className="flex items-center justify-between w-full pr-4">
-                                    <div className="text-left">
-                                        <p className="font-semibold">{entry.date}: {entry.description}</p>
-                                        <p className="text-sm text-muted-foreground">
-                                            {entry.lines.length} lines, Total: ${entry.lines.reduce((sum, line) => sum + line.debit, 0).toFixed(2)}
-                                        </p>
-                                    </div>
+                            <AccordionTrigger className="hover:no-underline [&>svg]:ml-4">
+                                <div className="flex-1 text-left">
+                                    <p className="font-semibold">{entry.date}: {entry.description}</p>
+                                    <p className="text-sm text-muted-foreground">
+                                        {entry.lines.length} lines, Total: ${entry.lines.reduce((sum, line) => sum + line.debit, 0).toFixed(2)}
+                                    </p>
+                                </div>
+                                <div onClick={(e) => e.stopPropagation()} className="pr-4">
                                     <DropdownMenu>
-                                        <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                                        <DropdownMenuTrigger asChild>
                                             <Button variant="ghost" size="icon">
                                                 <MoreHorizontal className="h-4 w-4" />
                                             </Button>
