@@ -38,6 +38,7 @@ import {
   Building2,
   ScrollText,
   Send,
+  HandCoins,
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useAuth } from '@/contexts/auth-context';
@@ -63,6 +64,7 @@ const logisticsNavItems = [
     { href: '/money-transfers', label: 'Money Transfers', icon: Send },
     { href: '/purchase-orders', label: 'Purchase Orders', icon: ClipboardList },
     { href: '/suppliers', label: 'Suppliers', icon: Truck },
+    { href: '/suppliers-owing', label: 'Suppliers Owing', icon: HandCoins },
     { href: '/assets', label: 'Assets', icon: Archive },
 ];
 
