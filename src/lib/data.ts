@@ -1,4 +1,5 @@
 
+
 export type Project = {
   id: string;
   name: string;
@@ -6,6 +7,7 @@ export type Project = {
   description: string;
   status: 'Active' | 'On Hold' | 'Completed';
   progress: number;
+  endDate: string;
 };
 
 export type Task = {
@@ -140,6 +142,7 @@ export const projects: Project[] = [
     description: 'Expansion of the main distribution hub to increase capacity by 30%.',
     status: 'Active',
     progress: 75,
+    endDate: '2024-12-31',
   },
   {
     id: 'proj-2',
@@ -148,6 +151,7 @@ export const projects: Project[] = [
     description: 'Integrating new automated sorting systems to improve fulfillment speed.',
     status: 'Active',
     progress: 45,
+    endDate: '2025-03-31',
   },
   {
     id: 'proj-3',
@@ -156,6 +160,7 @@ export const projects: Project[] = [
     description: 'Establishing a new warehouse to serve the pacific region.',
     status: 'Active',
     progress: 90,
+    endDate: '2024-11-30',
   },
     {
     id: 'proj-4',
@@ -164,6 +169,7 @@ export const projects: Project[] = [
     description: 'Optimizing delivery routes for the entire southern region.',
     status: 'On Hold',
     progress: 20,
+    endDate: '2025-06-30',
   },
   {
     id: 'proj-5',
@@ -172,28 +178,29 @@ export const projects: Project[] = [
     description: 'Phase 1 of the international hub for South American routes.',
     status: 'Completed',
     progress: 100,
+    endDate: '2024-09-15',
   },
 ];
 
 export const tasks: Task[] = [
-  { id: 'task-1', projectId: 'proj-1', name: 'Install new shelving units', status: 'DONE', assignee: 'John Doe', dueDate: '2023-10-15' },
-  { id: 'task-2', projectId: 'proj-1', name: 'Configure inventory management software', status: 'IN_PROGRESS', assignee: 'Jane Smith', dueDate: '2023-11-01' },
-  { id: 'task-3', projectId: 'proj-1', name: 'Hire additional warehouse staff', status: 'PENDING', assignee: 'Emily White', dueDate: '2023-11-10' },
-  { id: 'task-4', projectId: 'proj-1', name: 'Finalize safety protocols', status: 'BLOCKED', assignee: 'Mike Brown', dueDate: '2023-10-25' },
-  { id: 'task-5', projectId: 'proj-2', name: 'Procure automated sorters', status: 'DONE', assignee: 'Chris Green', dueDate: '2023-09-30' },
-  { id: 'task-6', projectId: 'proj-2', name: 'Integrate sorters with WMS', status: 'IN_PROGRESS', assignee: 'Sarah Black', dueDate: '2023-11-15' },
-  { id: 'task-7', projectId: 'proj-2', name: 'Train staff on new systems', status: 'PENDING', assignee: 'David King', dueDate: '2023-12-01' },
-  { id: 'task-8', projectId: 'proj-3', name: 'Lease warehouse space', status: 'DONE', assignee: 'Olivia Blue', dueDate: '2023-08-10' },
-  { id: 'task-9', projectId: 'proj-3', name: 'Set up initial inventory', status: 'DONE', assignee: 'Peter Pan', dueDate: '2023-09-01' },
-  { id: 'task-10', projectId: 'proj-3', name: 'Go-live operations', status: 'IN_PROGRESS', assignee: 'Wendy Darling', dueDate: '2023-10-30' },
-  { id: 'task-11', projectId: 'proj-3', name: 'Schedule first shipment reception', status: 'SCHEDULED', assignee: 'Captain Hook', dueDate: '2023-11-05' },
+  { id: 'task-1', projectId: 'proj-1', name: 'Install new shelving units', status: 'DONE', assignee: 'John Doe', dueDate: '2024-11-15' },
+  { id: 'task-2', projectId: 'proj-1', name: 'Configure inventory management software', status: 'IN_PROGRESS', assignee: 'Jane Smith', dueDate: '2024-12-01' },
+  { id: 'task-3', projectId: 'proj-1', name: 'Hire additional warehouse staff', status: 'PENDING', assignee: 'Emily White', dueDate: '2024-12-10' },
+  { id: 'task-4', projectId: 'proj-1', name: 'Finalize safety protocols', status: 'BLOCKED', assignee: 'Mike Brown', dueDate: '2024-11-25' },
+  { id: 'task-5', projectId: 'proj-2', name: 'Procure automated sorters', status: 'DONE', assignee: 'Chris Green', dueDate: '2024-10-30' },
+  { id: 'task-6', projectId: 'proj-2', name: 'Integrate sorters with WMS', status: 'IN_PROGRESS', assignee: 'Sarah Black', dueDate: '2024-12-15' },
+  { id: 'task-7', projectId: 'proj-2', name: 'Train staff on new systems', status: 'PENDING', assignee: 'David King', dueDate: '2025-01-15' },
+  { id: 'task-8', projectId: 'proj-3', name: 'Lease warehouse space', status: 'DONE', assignee: 'Olivia Blue', dueDate: '2024-09-10' },
+  { id: 'task-9', projectId: 'proj-3', name: 'Set up initial inventory', status: 'DONE', assignee: 'Peter Pan', dueDate: '2024-10-01' },
+  { id: 'task-10', projectId: 'proj-3', name: 'Go-live operations', status: 'IN_PROGRESS', assignee: 'Wendy Darling', dueDate: '2024-11-20' },
+  { id: 'task-11', projectId: 'proj-3', name: 'Schedule first shipment reception', status: 'SCHEDULED', assignee: 'Captain Hook', dueDate: '2024-11-28' },
 ];
 
 export const invoices: Invoice[] = [
-  { id: 'INV-001', client: 'Nexus Corp', amount: 2500.00, status: 'Paid', date: '2023-10-15', projectId: 'proj-1' },
-  { id: 'INV-002', client: 'Quantum Solutions', amount: 1200.50, status: 'Pending', date: '2023-10-22' },
-  { id: 'INV-003', client: 'Stellar Goods', amount: 850.00, status: 'Paid', date: '2023-09-30' },
-  { id: 'INV-004', client: 'Apex Logistics', amount: 3400.00, status: 'Pending', date: '2023-09-01', projectId: 'proj-2' },
+  { id: 'INV-001', client: 'Nexus Corp', amount: 2500.00, status: 'Paid', date: '2024-10-15', projectId: 'proj-1' },
+  { id: 'INV-002', client: 'Quantum Solutions', amount: 1200.50, status: 'Pending', date: '2024-11-22' },
+  { id: 'INV-003', client: 'Stellar Goods', amount: 850.00, status: 'Paid', date: '2024-09-30' },
+  { id: 'INV-004', client: 'Apex Logistics', amount: 3400.00, status: 'Pending', date: '2024-11-01', projectId: 'proj-2' },
 ];
 
 export const employees: Employee[] = [
@@ -211,9 +218,9 @@ export const jobPostings: JobPosting[] = [
 ];
 
 export const expenses: Expense[] = [
-  { id: 'exp-1', category: 'Office Supplies', description: 'Printer paper and ink', amount: 75.50, date: '2023-10-20' },
-  { id: 'exp-2', category: 'Software', description: 'Subscription for project management tool', amount: 200.00, date: '2023-10-01' },
-  { id: 'exp-3', category: 'Travel', description: 'Client meeting in Chicago', amount: 450.00, date: '2023-09-15' },
+  { id: 'exp-1', category: 'Office Supplies', description: 'Printer paper and ink', amount: 75.50, date: '2024-10-20' },
+  { id: 'exp-2', category: 'Software', description: 'Subscription for project management tool', amount: 200.00, date: '2024-10-01' },
+  { id: 'exp-3', category: 'Travel', description: 'Client meeting in Chicago', amount: 450.00, date: '2024-09-15' },
 ];
 
 export const clients: Client[] = [
@@ -224,15 +231,15 @@ export const clients: Client[] = [
 ];
 
 export const estimates: Estimate[] = [
-  { id: 'est-1', client: 'Nexus Corp', estimateNumber: 'EST-001', amount: 5000.00, status: 'Sent', date: '2023-10-18' },
-  { id: 'est-2', client: 'Quantum Solutions', estimateNumber: 'EST-002', amount: 7500.00, status: 'Accepted', date: '2023-10-12' },
-  { id: 'est-3', client: 'Stellar Goods', estimateNumber: 'EST-003', amount: 'Draft', date: '2023-10-25' },
+  { id: 'est-1', client: 'Nexus Corp', estimateNumber: 'EST-001', amount: 5000.00, status: 'Sent', date: '2024-10-18' },
+  { id: 'est-2', client: 'Quantum Solutions', estimateNumber: 'EST-002', amount: 7500.00, status: 'Accepted', date: '2024-10-12' },
+  { id: 'est-3', client: 'Stellar Goods', estimateNumber: 'EST-003', amount: 1200, status: 'Draft', date: '2024-10-25' },
 ];
 
 export const documents: Document[] = [
-  { id: 'doc-1', name: 'Contract_NexusCorp.pdf', type: 'PDF', size: '1.2 MB', uploadDate: '2023-10-15', relatedTo: 'client-1' },
-  { id: 'doc-2', name: 'Shipping_Manifest_INV-003.docx', type: 'Word', size: '800 KB', uploadDate: '2023-09-30', relatedTo: 'INV-003' },
-  { id: 'doc-3', name: 'Warehouse_Photos.zip', type: 'Image', size: '15.4 MB', uploadDate: '2023-08-20', relatedTo: 'proj-1' },
+  { id: 'doc-1', name: 'Contract_NexusCorp.pdf', type: 'PDF', size: '1.2 MB', uploadDate: '2024-10-15', relatedTo: 'client-1' },
+  { id: 'doc-2', name: 'Shipping_Manifest_INV-003.docx', type: 'Word', size: '800 KB', uploadDate: '2024-09-30', relatedTo: 'INV-003' },
+  { id: 'doc-3', name: 'Warehouse_Photos.zip', type: 'Image', size: '15.4 MB', uploadDate: '2024-08-20', relatedTo: 'proj-1' },
 ];
 
 export const services: Service[] = [
@@ -249,9 +256,9 @@ export const suppliers: Supplier[] = [
 ];
 
 export const purchaseOrders: PurchaseOrder[] = [
-    { id: 'po-1', poNumber: 'PO-1001', supplierId: 'sup-1', supplierName: 'Global Shipping Supply', date: '2023-10-20', amount: 1500.00, status: 'Sent' },
-    { id: 'po-2', poNumber: 'PO-1002', supplierId: 'sup-2', supplierName: 'Packaging Pros Inc.', date: '2023-10-22', amount: 450.75, status: 'Fulfilled' },
-    { id: 'po-3', poNumber: 'PO-1003', supplierId: 'sup-1', supplierName: 'Global Shipping Supply', date: '2023-10-25', amount: 2500.00, status: 'Draft' },
+    { id: 'po-1', poNumber: 'PO-1001', supplierId: 'sup-1', supplierName: 'Global Shipping Supply', date: '2024-10-20', amount: 1500.00, status: 'Sent' },
+    { id: 'po-2', poNumber: 'PO-1002', supplierId: 'sup-2', supplierName: 'Packaging Pros Inc.', date: '2024-10-22', amount: 450.75, status: 'Fulfilled' },
+    { id: 'po-3', poNumber: 'PO-1003', supplierId: 'sup-1', supplierName: 'Global Shipping Supply', date: '2024-10-25', amount: 2500.00, status: 'Draft' },
 ];
 
 export const assets: Asset[] = [
@@ -261,8 +268,8 @@ export const assets: Asset[] = [
 ];
 
 export const stockItems: StockItem[] = [
-  { id: 'stk-1', reference: 'SHP-XYZ-001', senderName: 'Nexus Corp', receiverName: 'East Coast Hub', description: 'Electronics Components', quantity: 200, weight: 5.5, value: 150.00, status: 'In Warehouse', entryDate: '2023-10-25' },
-  { id: 'stk-2', reference: 'SHP-ABC-002', senderName: 'Stellar Goods', receiverName: 'Midwest Logistics', description: 'Apparel Shipment', quantity: 500, weight: 0.8, value: 45.00, status: 'In Transit', entryDate: '2023-10-24' },
-  { id: 'stk-3', reference: 'SHP-QRT-003', senderName: 'Quantum Solutions', receiverName: 'West Coast Warehouse', description: 'Industrial Machinery Parts', quantity: 50, weight: 25.0, value: 800.00, status: 'Delivered', entryDate: '2023-10-20' },
-  { id: 'stk-4', reference: 'SHP-APX-004', senderName: 'Apex Logistics', receiverName: 'East Coast Hub', description: 'Pharmaceutical Supplies', quantity: 1000, weight: 0.2, value: 20.00, status: 'In Warehouse', entryDate: '2023-10-26' },
+  { id: 'stk-1', reference: 'SHP-XYZ-001', senderName: 'Nexus Corp', receiverName: 'East Coast Hub', description: 'Electronics Components', quantity: 200, weight: 5.5, value: 150.00, status: 'In Warehouse', entryDate: '2024-10-25' },
+  { id: 'stk-2', reference: 'SHP-ABC-002', senderName: 'Stellar Goods', receiverName: 'Midwest Logistics', description: 'Apparel Shipment', quantity: 500, weight: 0.8, value: 45.00, status: 'In Transit', entryDate: '2024-10-24' },
+  { id: 'stk-3', reference: 'SHP-QRT-003', senderName: 'Quantum Solutions', receiverName: 'West Coast Warehouse', description: 'Industrial Machinery Parts', quantity: 50, weight: 25.0, value: 800.00, status: 'Delivered', entryDate: '2024-10-20' },
+  { id: 'stk-4', reference: 'SHP-APX-004', senderName: 'Apex Logistics', receiverName: 'East Coast Hub', description: 'Pharmaceutical Supplies', quantity: 1000, weight: 0.2, value: 20.00, status: 'In Warehouse', entryDate: '2024-10-26' },
 ];

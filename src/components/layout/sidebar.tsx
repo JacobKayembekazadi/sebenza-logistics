@@ -34,6 +34,7 @@ import {
   ClipboardList,
   Truck,
   Archive,
+  Calendar,
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useAuth } from '@/contexts/auth-context';
@@ -41,6 +42,7 @@ import { useAuth } from '@/contexts/auth-context';
 const mainNavItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/projects', label: 'Projects', icon: FolderKanban },
+  { href: '/calendar', label: 'Calendar', icon: Calendar },
 ];
 
 const accountingNavItems = [

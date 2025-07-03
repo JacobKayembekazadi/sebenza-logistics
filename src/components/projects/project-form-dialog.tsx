@@ -32,6 +32,7 @@ export function ProjectFormDialog({ open, onOpenChange, project }: ProjectFormDi
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState<Project['status']>('Active');
   const [progress, setProgress] = useState(0);
+  const [endDate, setEndDate] = useState('');
 
   const isEditMode = !!project;
 
@@ -42,20 +43,23 @@ export function ProjectFormDialog({ open, onOpenChange, project }: ProjectFormDi
       setDescription(project.description);
       setStatus(project.status);
       setProgress(project.progress);
+      setEndDate(project.endDate);
     } else {
       setName('');
       setLocation('');
       setDescription('');
       setStatus('Active');
       setProgress(0);
+      setEndDate(new Date().toISOString().split('T')[0]);
     }
   }, [project, open]);
 
   const handleSubmit = () => {
+    const projectData = { name, location, description, endDate };
     if (isEditMode && project) {
-      updateProject({ ...project, name, location, description, status, progress });
+      updateProject({ ...project, ...projectData, status, progress });
     } else {
-      addProject({ name, location, description });
+      addProject(projectData);
     }
     onOpenChange(false);
   };
@@ -81,6 +85,10 @@ export function ProjectFormDialog({ open, onOpenChange, project }: ProjectFormDi
           <div className="grid grid-cols-4 items-start gap-4">
             <Label htmlFor="description" className="text-right pt-2">Description</Label>
             <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} className="col-span-3" />
+          </div>
+           <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="endDate" className="text-right">End Date</Label>
+            <Input id="endDate" type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="col-span-3" />
           </div>
           {isEditMode && (
             <>
