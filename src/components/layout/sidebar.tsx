@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -31,6 +32,7 @@ import {
   Folder,
 } from 'lucide-react';
 import { Button } from '../ui/button';
+import { useAuth } from '@/contexts/auth-context';
 
 const mainNavItems = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -47,14 +49,18 @@ const accountingNavItems = [
 const secondaryNavItems = [
   { href: '/documents', label: 'Documents', icon: Folder },
   { href: '/messaging', label: 'Messaging', icon: MessageSquare },
+  { href: '/accounting', label: 'Old Accounting', icon: CircleDollarSign },
+];
+
+const adminNavItems = [
   { href: '/employees', label: 'Employees', icon: UserCog },
   { href: '/hr', label: 'HR', icon: Users },
   { href: '/packages', label: 'My Packages', icon: Package },
-  { href: '/accounting', label: 'Old Accounting', icon: CircleDollarSign },
 ];
 
 export function SiteSidebar() {
   const pathname = usePathname();
+  const { userRole } = useAuth();
 
   const isActive = (path: string) => {
     if (path === '/') return pathname === '/';
@@ -123,6 +129,28 @@ export function SiteSidebar() {
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
+
+        {userRole === 'admin' && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Admin</SidebarGroupLabel>
+            <SidebarMenu>
+              {adminNavItems.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isActive(item.href)}
+                    tooltip={{ children: item.label, side: 'right' }}
+                  >
+                    <Link href={item.href}>
+                      <item.icon />
+                      <span>{item.label}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroup>
+        )}
       </SidebarContent>
       <SidebarFooter className="p-2">
         <SidebarMenu>

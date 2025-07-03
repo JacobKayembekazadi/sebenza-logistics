@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, PlusCircle } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, ShieldAlert } from 'lucide-react';
 import { useData } from '@/contexts/data-context';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -12,12 +12,24 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { EmployeeFormDialog } from '@/components/employees/employee-form-dialog';
 import { DeleteConfirmationDialog } from '@/components/common/delete-confirmation-dialog';
 import type { Employee } from '@/lib/data';
+import { useAuth } from '@/contexts/auth-context';
 
 export default function EmployeesPage() {
   const { employees, deleteEmployee } = useData();
+  const { userRole } = useAuth();
   const [isFormOpen, setFormOpen] = useState(false);
   const [isConfirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | undefined>(undefined);
+
+  if (userRole !== 'admin') {
+    return (
+        <div className="flex flex-col items-center justify-center h-full gap-4 text-center">
+            <ShieldAlert className="w-16 h-16 text-destructive" />
+            <h1 className="text-2xl font-bold">Access Denied</h1>
+            <p className="text-muted-foreground">You do not have permission to view this page.</p>
+        </div>
+    );
+  }
 
   const handleEdit = (employee: Employee) => {
     setSelectedEmployee(employee);

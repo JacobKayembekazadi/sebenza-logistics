@@ -1,6 +1,10 @@
+
+'use client';
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check } from "lucide-react";
+import { Check, ShieldAlert } from "lucide-react";
+import { useAuth } from "@/contexts/auth-context";
 
 const plans = [
   {
@@ -24,6 +28,18 @@ const plans = [
 ];
 
 export default function PackagesPage() {
+  const { userRole } = useAuth();
+
+  if (userRole !== 'admin') {
+    return (
+        <div className="flex flex-col items-center justify-center h-full gap-4 text-center">
+            <ShieldAlert className="w-16 h-16 text-destructive" />
+            <h1 className="text-2xl font-bold">Access Denied</h1>
+            <p className="text-muted-foreground">You do not have permission to view this page.</p>
+        </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-8">
       <div className="text-center">
