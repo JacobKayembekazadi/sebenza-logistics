@@ -30,6 +30,7 @@ import {
   Contact,
   Folder,
   Briefcase,
+  LineChart,
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useAuth } from '@/contexts/auth-context';
@@ -44,6 +45,7 @@ const accountingNavItems = [
   { href: '/estimates', label: 'Estimates', icon: FileText },
   { href: '/expenses', label: 'Expenses', icon: CreditCard },
   { href: '/clients', label: 'Clients', icon: Contact },
+  { href: '/reporting', label: 'Reporting', icon: LineChart },
 ];
 
 const businessNavItems = [
