@@ -10,6 +10,8 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarFooter,
+  SidebarGroup,
+  SidebarGroupLabel,
 } from '@/components/ui/sidebar';
 import {
   LayoutDashboard,
@@ -22,17 +24,33 @@ import {
   Warehouse,
   Users,
   UserCog,
+  Receipt,
+  FileText,
+  CreditCard,
+  Contact,
+  Folder,
 } from 'lucide-react';
 import { Button } from '../ui/button';
 
-const navItems = [
+const mainNavItems = [
   { href: '/', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/projects', label: 'Projects', icon: FolderKanban },
-  { href: '/accounting', label: 'Accounting', icon: CircleDollarSign },
-  { href: '/packages', label: 'My Packages', icon: Package },
+];
+
+const accountingNavItems = [
+  { href: '/invoices', label: 'Invoices', icon: Receipt },
+  { href: '/estimates', label: 'Estimates', icon: FileText },
+  { href: '/expenses', label: 'Expenses', icon: CreditCard },
+  { href: '/clients', label: 'Clients', icon: Contact },
+];
+
+const secondaryNavItems = [
+  { href: '/documents', label: 'Documents', icon: Folder },
   { href: '/messaging', label: 'Messaging', icon: MessageSquare },
   { href: '/employees', label: 'Employees', icon: UserCog },
   { href: '/hr', label: 'HR', icon: Users },
+  { href: '/packages', label: 'My Packages', icon: Package },
+  { href: '/accounting', label: 'Old Accounting', icon: CircleDollarSign },
 ];
 
 export function SiteSidebar() {
@@ -55,7 +73,42 @@ export function SiteSidebar() {
       </SidebarHeader>
       <SidebarContent className="p-2">
         <SidebarMenu>
-          {navItems.map((item) => (
+          {mainNavItems.map((item) => (
+            <SidebarMenuItem key={item.href}>
+              <SidebarMenuButton
+                asChild
+                isActive={isActive(item.href)}
+                tooltip={{ children: item.label, side: 'right' }}
+              >
+                <Link href={item.href}>
+                  <item.icon />
+                  <span>{item.label}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+        <SidebarGroup>
+           <SidebarGroupLabel>Accounting</SidebarGroupLabel>
+           <SidebarMenu>
+             {accountingNavItems.map((item) => (
+              <SidebarMenuItem key={item.href}>
+                <SidebarMenuButton
+                  asChild
+                  isActive={isActive(item.href)}
+                  tooltip={{ children: item.label, side: 'right' }}
+                >
+                  <Link href={item.href}>
+                    <item.icon />
+                    <span>{item.label}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+           </SidebarMenu>
+        </SidebarGroup>
+         <SidebarMenu>
+          {secondaryNavItems.map((item) => (
             <SidebarMenuItem key={item.href}>
               <SidebarMenuButton
                 asChild

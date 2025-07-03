@@ -41,6 +41,41 @@ export type JobPosting = {
   status: 'Open' | 'Closed' | 'Archived';
 }
 
+export type Expense = {
+  id: string;
+  category: string;
+  description: string;
+  amount: number;
+  date: string;
+};
+
+export type Client = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  avatar: string;
+};
+
+export type Estimate = {
+  id: string;
+  client: string;
+  estimateNumber: string;
+  amount: number;
+  status: 'Draft' | 'Sent' | 'Accepted' | 'Declined';
+  date: string;
+};
+
+export type Document = {
+  id: string;
+  name: string;
+  type: string; // e.g., 'PDF', 'Word', 'Image'
+  size: string; // e.g., '2.5 MB'
+  uploadDate: string;
+  relatedTo: string; // e.g., 'INV-001', 'proj-1'
+};
+
 export const projects: Project[] = [
   {
     id: 'proj-1',
@@ -117,4 +152,29 @@ export const jobPostings: JobPosting[] = [
     { id: 'job-2', title: 'Forklift Operator', department: 'Operations', location: 'Chicago, IL', status: 'Open' },
     { id: 'job-3', title: 'Financial Analyst', department: 'Finance', location: 'Remote', status: 'Closed' },
     { id: 'job-4', title: 'Recruiting Coordinator', department: 'Human Resources', location: 'Miami, FL', status: 'Open' },
+];
+
+export const expenses: Expense[] = [
+  { id: 'exp-1', category: 'Office Supplies', description: 'Printer paper and ink', amount: 75.50, date: '2023-10-20' },
+  { id: 'exp-2', category: 'Software', description: 'Subscription for project management tool', amount: 200.00, date: '2023-10-01' },
+  { id: 'exp-3', category: 'Travel', description: 'Client meeting in Chicago', amount: 450.00, date: '2023-09-15' },
+];
+
+export const clients: Client[] = [
+  { id: 'client-1', name: 'Nexus Corp', email: 'contact@nexuscorp.com', phone: '555-0101', address: '123 Nexus Way, Silicon Valley, CA', avatar: 'https://placehold.co/100x100/A6B1E1/FFFFFF.png' },
+  { id: 'client-2', name: 'Quantum Solutions', email: 'info@quantum.com', phone: '555-0102', address: '456 Quantum Blvd, Boston, MA', avatar: 'https://placehold.co/100x100/FFD6A5/FFFFFF.png' },
+  { id: 'client-3', name: 'Stellar Goods', email: 'support@stellargoods.co', phone: '555-0103', address: '789 Stellar Ave, Seattle, WA', avatar: 'https://placehold.co/100x100/A8D8B9/FFFFFF.png' },
+  { id: 'client-4', name: 'Apex Logistics', email: 'service@apexlogistics.net', phone: '555-0104', address: '101 Apex Circle, Newark, NJ', avatar: 'https://placehold.co/100x100/F0B8B8/FFFFFF.png' },
+];
+
+export const estimates: Estimate[] = [
+  { id: 'est-1', client: 'Nexus Corp', estimateNumber: 'EST-001', amount: 5000.00, status: 'Sent', date: '2023-10-18' },
+  { id: 'est-2', client: 'Quantum Solutions', estimateNumber: 'EST-002', amount: 7500.00, status: 'Accepted', date: '2023-10-12' },
+  { id: 'est-3', client: 'Stellar Goods', estimateNumber: 'EST-003', amount: 3200.00, status: 'Draft', date: '2023-10-25' },
+];
+
+export const documents: Document[] = [
+  { id: 'doc-1', name: 'Contract_NexusCorp.pdf', type: 'PDF', size: '1.2 MB', uploadDate: '2023-10-15', relatedTo: 'client-1' },
+  { id: 'doc-2', name: 'Shipping_Manifest_INV-003.docx', type: 'Word', size: '800 KB', uploadDate: '2023-09-30', relatedTo: 'INV-003' },
+  { id: 'doc-3', name: 'Warehouse_Photos.zip', type: 'Image', size: '15.4 MB', uploadDate: '2023-08-20', relatedTo: 'proj-1' },
 ];

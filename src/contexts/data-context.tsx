@@ -9,7 +9,11 @@ import {
   invoices as initialInvoices,
   employees as initialEmployees,
   jobPostings as initialJobPostings,
-  Project, Task, Invoice, Employee, JobPosting
+  expenses as initialExpenses,
+  clients as initialClients,
+  estimates as initialEstimates,
+  documents as initialDocuments,
+  Project, Task, Invoice, Employee, JobPosting, Expense, Client, Estimate, Document
 } from '@/lib/data';
 
 type DataContextType = {
@@ -38,6 +42,26 @@ type DataContextType = {
   addJobPosting: (jobPosting: Omit<JobPosting, 'id'>) => void;
   updateJobPosting: (jobPosting: JobPosting) => void;
   deleteJobPosting: (jobPostingId: string) => void;
+
+  expenses: Expense[];
+  addExpense: (expense: Omit<Expense, 'id'>) => void;
+  updateExpense: (expense: Expense) => void;
+  deleteExpense: (expenseId: string) => void;
+
+  clients: Client[];
+  addClient: (client: Omit<Client, 'id' | 'avatar'>) => void;
+  updateClient: (client: Client) => void;
+  deleteClient: (clientId: string) => void;
+
+  estimates: Estimate[];
+  addEstimate: (estimate: Omit<Estimate, 'id' | 'estimateNumber'>) => void;
+  updateEstimate: (estimate: Estimate) => void;
+  deleteEstimate: (estimateId: string) => void;
+
+  documents: Document[];
+  addDocument: (document: Omit<Document, 'id'>) => void;
+  updateDocument: (document: Document) => void;
+  deleteDocument: (documentId: string) => void;
 };
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -48,6 +72,10 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [invoices, setInvoices] = useState<Invoice[]>(initialInvoices);
   const [employees, setEmployees] = useState<Employee[]>(initialEmployees);
   const [jobPostings, setJobPostings] = useState<JobPosting[]>(initialJobPostings);
+  const [expenses, setExpenses] = useState<Expense[]>(initialExpenses);
+  const [clients, setClients] = useState<Client[]>(initialClients);
+  const [estimates, setEstimates] = useState<Estimate[]>(initialEstimates);
+  const [documents, setDocuments] = useState<Document[]>(initialDocuments);
 
   // Projects
   const addProject = (project: Omit<Project, 'id' | 'status' | 'progress'>) => {
@@ -77,7 +105,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
 
   // Invoices
   const addInvoice = (invoice: Omit<Invoice, 'id'>) => {
-    const newInvoice: Invoice = { ...invoice, id: uuidv4() };
+    const newInvoice: Invoice = { ...invoice, id: `INV-${(invoices.length + 1).toString().padStart(3, '0')}` };
     setInvoices(prev => [newInvoice, ...prev]);
   };
   const updateInvoice = (updatedInvoice: Invoice) => {
@@ -111,13 +139,65 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     setJobPostings(prev => prev.filter(j => j.id !== jobId));
   };
 
+  // Expenses
+  const addExpense = (expense: Omit<Expense, 'id'>) => {
+    const newExpense: Expense = { ...expense, id: uuidv4() };
+    setExpenses(prev => [newExpense, ...prev]);
+  };
+  const updateExpense = (updatedExpense: Expense) => {
+    setExpenses(prev => prev.map(e => e.id === updatedExpense.id ? updatedExpense : e));
+  };
+  const deleteExpense = (expenseId: string) => {
+    setExpenses(prev => prev.filter(e => e.id !== expenseId));
+  };
+
+  // Clients
+  const addClient = (client: Omit<Client, 'id' | 'avatar'>) => {
+    const newClient: Client = { ...client, id: uuidv4(), avatar: 'https://placehold.co/100x100.png' };
+    setClients(prev => [newClient, ...prev]);
+  };
+  const updateClient = (updatedClient: Client) => {
+    setClients(prev => prev.map(c => c.id === updatedClient.id ? updatedClient : c));
+  };
+  const deleteClient = (clientId: string) => {
+    setClients(prev => prev.filter(c => c.id !== clientId));
+  };
+
+  // Estimates
+  const addEstimate = (estimate: Omit<Estimate, 'id' | 'estimateNumber'>) => {
+    const newEstimate: Estimate = { ...estimate, id: uuidv4(), estimateNumber: `EST-${(estimates.length + 1).toString().padStart(3, '0')}` };
+    setEstimates(prev => [newEstimate, ...prev]);
+  };
+  const updateEstimate = (updatedEstimate: Estimate) => {
+    setEstimates(prev => prev.map(e => e.id === updatedEstimate.id ? updatedEstimate : e));
+  };
+  const deleteEstimate = (estimateId: string) => {
+    setEstimates(prev => prev.filter(e => e.id !== estimateId));
+  };
+
+  // Documents
+  const addDocument = (document: Omit<Document, 'id'>) => {
+    const newDocument: Document = { ...document, id: uuidv4() };
+    setDocuments(prev => [newDocument, ...prev]);
+  };
+  const updateDocument = (updatedDocument: Document) => {
+    setDocuments(prev => prev.map(d => d.id === updatedDocument.id ? updatedDocument : d));
+  };
+  const deleteDocument = (documentId: string) => {
+    setDocuments(prev => prev.filter(d => d.id !== documentId));
+  };
+
   return (
     <DataContext.Provider value={{
       projects, addProject, updateProject, deleteProject,
       tasks, getTasksByProjectId, addTask, updateTask, deleteTask,
       invoices, addInvoice, updateInvoice, deleteInvoice,
       employees, addEmployee, updateEmployee, deleteEmployee,
-      jobPostings, addJobPosting, updateJobPosting, deleteJobPosting
+      jobPostings, addJobPosting, updateJobPosting, deleteJobPosting,
+      expenses, addExpense, updateExpense, deleteExpense,
+      clients, addClient, updateClient, deleteClient,
+      estimates, addEstimate, updateEstimate, deleteEstimate,
+      documents, addDocument, updateDocument, deleteDocument
     }}>
       {children}
     </DataContext.Provider>
