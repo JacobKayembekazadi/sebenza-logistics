@@ -27,7 +27,7 @@ export function InvoiceFormDialog({ open, onOpenChange, invoice }: InvoiceFormDi
   const { addInvoice, updateInvoice } = useData();
   const [client, setClient] = useState('');
   const [amount, setAmount] = useState('');
-  const [status, setStatus] = useState<'Paid' | 'Pending' | 'Overdue'>('Pending');
+  const [status, setStatus] = useState<Invoice['status']>('Pending');
   const [date, setDate] = useState('');
   
   const isEditMode = !!invoice;
@@ -51,7 +51,8 @@ export function InvoiceFormDialog({ open, onOpenChange, invoice }: InvoiceFormDi
       client, 
       amount: parseFloat(amount),
       status, 
-      date 
+      date,
+      type: 'Standard' as const
     };
 
     if (isEditMode && invoice) {
@@ -93,7 +94,7 @@ export function InvoiceFormDialog({ open, onOpenChange, invoice }: InvoiceFormDi
               <SelectContent>
                 <SelectItem value="Pending">Pending</SelectItem>
                 <SelectItem value="Paid">Paid</SelectItem>
-                <SelectItem value="Overdue">Overdue</SelectItem>
+                <SelectItem value="Partial">Partial</SelectItem>
               </SelectContent>
             </Select>
           </div>

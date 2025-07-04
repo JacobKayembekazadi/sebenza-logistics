@@ -52,7 +52,8 @@ export default function EstimatesPage() {
       client: estimate.client,
       amount: totalAmount,
       status: 'Pending',
-      date: new Date().toISOString().split('T')[0]
+      date: new Date().toISOString().split('T')[0],
+      type: 'Standard'
     });
     toast({
       title: "Invoice Created",

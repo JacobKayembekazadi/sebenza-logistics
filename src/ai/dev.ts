@@ -1,5 +1,4 @@
-import { config } from 'dotenv';
-config();
+// AI dev server disabled - Firebase/Genkit removed
+// This file is kept for future AI integration
 
-import '@/ai/flows/update-task-status.ts';
-import '@/ai/flows/calculate-late-fee.ts';
+console.log('AI features disabled - no Firebase/Genkit integration');

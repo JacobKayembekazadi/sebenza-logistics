@@ -1,7 +1,8 @@
-import {genkit} from 'genkit';
-import {googleAI} from '@genkit-ai/googleai';
+// AI functionality disabled - Firebase/Genkit removed
+// This file is kept for future AI integration
 
-export const ai = genkit({
-  plugins: [googleAI()],
-  model: 'googleai/gemini-2.0-flash',
-});
+export const ai = {
+  // Placeholder for future AI implementation
+  defineFlow: () => null,
+  definePrompt: () => null,
+};

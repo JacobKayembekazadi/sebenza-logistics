@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { DollarSign, FileText, Banknote, AlertTriangle, Users, FilePlus, Landmark, Clock } from "lucide-react"
 import { useData } from '@/contexts/data-context';
+import type { Invoice } from '@/lib/data';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import {
@@ -34,7 +35,17 @@ export default function DashboardPage() {
 
   const totalProfits = totalIncome - totalExpenses;
 
-  const outstandingInvoices = invoices.filter(inv => inv.status === 'Pending' || inv.status === 'Overdue');
+  // Helper function to determine if invoice is overdue
+  const isOverdue = (invoice: Invoice) => {
+    if (invoice.status === 'Paid') return false;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const dueDate = new Date(invoice.date);
+    dueDate.setDate(dueDate.getDate() + 30); // Assuming 30-day payment terms
+    return dueDate < today;
+  };
+
+  const outstandingInvoices = invoices.filter(inv => inv.status === 'Pending' || inv.status === 'Partial' || isOverdue(inv));
   
   const pendingQuotes = estimates.filter(est => est.status === 'Sent' || est.status === 'Draft');
   
