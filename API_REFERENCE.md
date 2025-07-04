@@ -463,21 +463,80 @@ Currently no rate limiting is implemented. In production, consider implementing 
 
 ## API Testing
 
-A test script is provided at `test-api.js` to verify all endpoints are working correctly:
+A comprehensive test script is provided at `test-api-final.js` to verify all endpoints are working correctly:
 
 ```bash
-node test-api.js
+node test-api-final.js
 ```
 
 This script tests:
 - ✅ Authentication (login)
 - ✅ Projects CRUD operations
-- ✅ Tasks CRUD operations
+- ✅ Tasks CRUD operations  
 - ✅ Clients CRUD operations
-- ✅ Invoices retrieval
-- ✅ Employees retrieval
-- ✅ Inventory retrieval
-- ✅ Warehouses retrieval
+- ✅ Invoices CRUD operations
+- ✅ Employees CRUD operations
+- ✅ Inventory CRUD operations
+- ✅ Warehouses CRUD operations
+- ✅ HR (Job Postings) CRUD operations
+- ✅ Suppliers CRUD operations
+- ✅ Purchase Orders CRUD operations
+- ✅ Expenses CRUD operations
+- ✅ Payments CRUD operations
+- ✅ Estimates CRUD operations
+- ✅ Assets CRUD operations
+
+### Known Limitations
+
+The current mock implementation has the following limitations:
+
+- Individual endpoints for some entities (employees, warehouses) may return HTML error pages instead of JSON when the ID doesn't exist in the separate mock database
+- Mock data is stored in memory and resets on server restart
+- No persistent database connection
+- Limited validation on some complex fields
+
+## Complete API Endpoint List
+
+### Authentication Endpoints
+
+- `POST /api/auth/login` - User login
+- `POST /api/auth/signup` - User registration
+
+### Core Business Entities (Full CRUD)
+
+- `GET|POST /api/projects` - Projects collection
+- `GET|PUT|DELETE /api/projects/[id]` - Individual project
+- `GET|POST /api/tasks` - Tasks collection  
+- `GET|PUT|DELETE /api/tasks/[id]` - Individual task
+- `GET|POST /api/clients` - Clients collection
+- `GET|PUT|DELETE /api/clients/[id]` - Individual client
+- `GET|POST /api/invoices` - Invoices collection
+- `GET|PUT|DELETE /api/invoices/[id]` - Individual invoice
+- `GET|POST /api/employees` - Employees collection
+- `GET|PUT|DELETE /api/employees/[id]` - Individual employee
+- `GET|POST /api/inventory` - Inventory items collection
+- `GET|PUT|DELETE /api/inventory/[id]` - Individual inventory item
+- `GET|POST /api/warehouses` - Warehouses collection
+- `GET|PUT|DELETE /api/warehouses/[id]` - Individual warehouse
+
+### Extended Business Entities (Full CRUD)
+
+- `GET|POST /api/hr` - Job postings collection
+- `GET|PUT|DELETE /api/hr/[id]` - Individual job posting
+- `GET|POST /api/suppliers` - Suppliers collection
+- `GET|PUT|DELETE /api/suppliers/[id]` - Individual supplier
+- `GET|POST /api/purchase-orders` - Purchase orders collection
+- `GET|PUT|DELETE /api/purchase-orders/[id]` - Individual purchase order
+- `GET|POST /api/expenses` - Expenses collection
+- `GET|PUT|DELETE /api/expenses/[id]` - Individual expense
+- `GET|POST /api/payments` - Payments collection
+- `GET|PUT|DELETE /api/payments/[id]` - Individual payment
+- `GET|POST /api/estimates` - Estimates collection
+- `GET|PUT|DELETE /api/estimates/[id]` - Individual estimate
+- `GET|POST /api/assets` - Assets collection
+- `GET|PUT|DELETE /api/assets/[id]` - Individual asset
+
+**Total:** 32 API endpoints covering all major business entities
 
 ## Next Steps
 
