@@ -140,6 +140,11 @@ type DataContextType = {
   contacts: Contact[];
   messages: Message[];
   addMessage: (message: Omit<Message, 'id' | 'timestamp'>) => void;
+  updateMessage: (updatedMessage: Message) => void;
+  deleteMessage: (messageId: string) => void;
+  addContact: (contact: Omit<Contact, 'id'>) => void;
+  updateContact: (updatedContact: Contact) => void;
+  deleteContact: (contactId: string) => void;
 };
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -538,6 +543,30 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     setMessages(prev => [...prev, newMessage]);
   };
 
+  const updateMessage = (updatedMessage: Message) => {
+    setMessages(prev => prev.map(m => m.id === updatedMessage.id ? updatedMessage : m));
+  };
+
+  const deleteMessage = (messageId: string) => {
+    setMessages(prev => prev.filter(m => m.id !== messageId));
+  };
+
+  // Contacts
+  const addContact = (contact: Omit<Contact, 'id'>) => {
+    const newContact: Contact = { ...contact, id: uuidv4() };
+    setContacts(prev => [newContact, ...prev]);
+  };
+
+  const updateContact = (updatedContact: Contact) => {
+    setContacts(prev => prev.map(c => c.id === updatedContact.id ? updatedContact : c));
+  };
+
+  const deleteContact = (contactId: string) => {
+    setContacts(prev => prev.filter(c => c.id !== contactId));
+    // Also delete all messages for this contact
+    setMessages(prev => prev.filter(m => m.contactId !== contactId));
+  };
+
   return (
     <DataContext.Provider value={{
       projects, addProject, updateProject, deleteProject,
@@ -561,7 +590,7 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
       chartOfAccounts, addAccount, updateAccount, deleteAccount,
       journalEntries, addJournalEntry, updateJournalEntry, deleteJournalEntry,
       meetings, addMeeting, updateMeeting, deleteMeeting,
-      contacts, messages, addMessage,
+      contacts, messages, addMessage, updateMessage, deleteMessage, addContact, updateContact, deleteContact,
     }}>
       {children}
     </DataContext.Provider>

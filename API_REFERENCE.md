@@ -4,7 +4,7 @@
 
 This document provides comprehensive documentation for the Sebenza Logistics Suite REST API. The API follows RESTful conventions and uses JWT authentication for secure access.
 
-**Base URL**: `http://localhost:3001/api` (development)  
+**Base URL**: `http://localhost:3002/api` (development)  
 **Authentication**: Bearer token (JWT)  
 **Content Type**: `application/json`
 
@@ -16,9 +16,9 @@ This document provides comprehensive documentation for the Sebenza Logistics Sui
 
 ### Example Request
 ```bash
-curl -X POST http://localhost:3001/api/auth/login \
+curl -X POST http://localhost:3002/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"email": "admin@sebenza.com", "password": "password"}'
+  -d '{"email": "admin@sebenza.com", "password": "admin123"}'
 ```
 
 ## Authentication
@@ -407,6 +407,107 @@ Create a new warehouse.
 }
 ```
 
+## Messaging
+
+### GET `/api/messages`
+Retrieve a list of messages with pagination and search.
+
+**Query Parameters:**
+- `page` (number, default: 1): Page number
+- `limit` (number, default: 10): Items per page
+- `search` (string): Search in subject, sender, recipient
+- `sortBy` (string): Field to sort by
+- `sortOrder` ('asc' | 'desc', default: 'asc'): Sort direction
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "msg-1",
+      "subject": "Meeting Reminder",
+      "sender": "admin@sebenza.com",
+      "recipient": "john@example.com",
+      "status": "Sent",
+      "sentAt": "2025-07-04T10:00:00Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 1,
+    "totalPages": 1
+  }
+}
+```
+
+### POST `/api/messages`
+Send a new message.
+
+**Request Body:**
+```json
+{
+  "subject": "Message Subject",
+  "recipient": "recipient@example.com",
+  "body": "Message content"
+}
+```
+
+### GET, DELETE `/api/messages/{id}`
+Retrieve or delete a specific message.
+
+## Contacts
+
+### GET `/api/contacts`
+Retrieve a list of contacts with pagination and search.
+
+**Query Parameters:**
+- `page` (number, default: 1): Page number
+- `limit` (number, default: 10): Items per page
+- `search` (string): Search in name, email, phone
+- `sortBy` (string): Field to sort by
+- `sortOrder` ('asc' | 'desc', default: 'asc'): Sort direction
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "contact-1",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "phone": "555-0123",
+      "address": "123 Elm St, Springfield, IL",
+      "avatar": "https://placehold.co/100x100/FF5733/FFFFFF.png"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 1,
+    "totalPages": 1
+  }
+}
+```
+
+### POST `/api/contacts`
+Create a new contact.
+
+**Request Body:**
+```json
+{
+  "name": "Contact Name",
+  "email": "contact@example.com",
+  "phone": "555-0456",
+  "address": "456 Oak St, Metropolis, IL"
+}
+```
+
+### GET, PUT, DELETE `/api/contacts/{id}`
+Standard CRUD operations for individual contacts.
+
 ## Error Responses
 
 All endpoints may return error responses in the following format:
@@ -457,43 +558,418 @@ For all protected endpoints, include the JWT token in the Authorization header:
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
-## Rate Limiting
+## Messaging and Contacts
 
-Currently no rate limiting is implemented. In production, consider implementing rate limiting to prevent abuse.
+### Contacts
 
-## API Testing
+#### GET `/api/contacts`
+Get all contacts for the authenticated user.
 
-A comprehensive test script is provided at `test-api-final.js` to verify all endpoints are working correctly:
-
-```bash
-node test-api-final.js
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "contact-1",
+      "name": "John Doe",
+      "email": "john@example.com", 
+      "phone": "+1234567890",
+      "company": "Example Corp",
+      "avatar": "https://placehold.co/40x40.png",
+      "status": "active",
+      "createdAt": "2024-01-15T10:30:00Z",
+      "updatedAt": "2024-01-15T10:30:00Z"
+    }
+  ]
+}
 ```
 
-This script tests:
-- ✅ Authentication (login)
-- ✅ Projects CRUD operations
-- ✅ Tasks CRUD operations  
-- ✅ Clients CRUD operations
-- ✅ Invoices CRUD operations
-- ✅ Employees CRUD operations
-- ✅ Inventory CRUD operations
-- ✅ Warehouses CRUD operations
-- ✅ HR (Job Postings) CRUD operations
-- ✅ Suppliers CRUD operations
-- ✅ Purchase Orders CRUD operations
-- ✅ Expenses CRUD operations
-- ✅ Payments CRUD operations
-- ✅ Estimates CRUD operations
-- ✅ Assets CRUD operations
+#### POST `/api/contacts`
+Create a new contact.
 
-### Known Limitations
+**Request Body:**
+```json
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "phone": "+1234567890", 
+  "company": "Example Corp"
+}
+```
 
-The current mock implementation has the following limitations:
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "contact-2",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "phone": "+1234567890",
+    "company": "Example Corp",
+    "avatar": "https://placehold.co/40x40.png",
+    "status": "active",
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z"
+  }
+}
+```
 
-- Individual endpoints for some entities (employees, warehouses) may return HTML error pages instead of JSON when the ID doesn't exist in the separate mock database
-- Mock data is stored in memory and resets on server restart
-- No persistent database connection
-- Limited validation on some complex fields
+#### PUT `/api/contacts/{id}`
+Update an existing contact.
+
+**Request Body:**
+```json
+{
+  "name": "John Doe Updated",
+  "email": "john.updated@example.com",
+  "phone": "+1234567891",
+  "company": "Updated Corp"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "contact-1",
+    "name": "John Doe Updated",
+    "email": "john.updated@example.com",
+    "phone": "+1234567891",
+    "company": "Updated Corp",
+    "avatar": "https://placehold.co/40x40.png",
+    "status": "active",
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T16:45:00Z"
+  }
+}
+```
+
+#### DELETE `/api/contacts/{id}`
+Delete a contact.
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Contact deleted successfully"
+}
+```
+
+### Messages
+
+#### GET `/api/messages`
+Get all messages for the authenticated user.
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "msg-1",
+      "content": "Hello, this is a test message",
+      "sender": "admin@sebenza.com",
+      "recipient": "john@example.com",
+      "subject": "Test Message",
+      "type": "email",
+      "status": "sent",
+      "timestamp": "2024-01-15T10:30:00Z",
+      "createdAt": "2024-01-15T10:30:00Z",
+      "updatedAt": "2024-01-15T10:30:00Z"
+    }
+  ]
+}
+```
+
+#### POST `/api/messages`
+Create a new message.
+
+**Request Body:**
+```json
+{
+  "content": "Hello, this is a test message",
+  "sender": "admin@sebenza.com", 
+  "recipient": "john@example.com",
+  "subject": "Test Message",
+  "type": "email"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "msg-2",
+    "content": "Hello, this is a test message",
+    "sender": "admin@sebenza.com",
+    "recipient": "john@example.com", 
+    "subject": "Test Message",
+    "type": "email",
+    "status": "sent",
+    "timestamp": "2024-01-15T10:30:00Z",
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z"
+  }
+}
+```
+
+#### PUT `/api/messages/{id}`
+Update an existing message.
+
+**Request Body:**
+```json
+{
+  "content": "Updated message content",
+  "subject": "Updated Subject"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "msg-1",
+    "content": "Updated message content",
+    "sender": "admin@sebenza.com",
+    "recipient": "john@example.com",
+    "subject": "Updated Subject", 
+    "type": "email",
+    "status": "sent",
+    "timestamp": "2024-01-15T10:30:00Z",
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T16:45:00Z"
+  }
+}
+```
+
+#### DELETE `/api/messages/{id}`
+Delete a message.
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Message deleted successfully"
+}
+```
+
+## Time Tracking
+
+### Time Entries
+
+#### GET `/api/time-entries`
+Get all time entries for the authenticated user.
+
+**Query Parameters:**
+- `projectId` (optional): Filter by project ID
+- `employeeId` (optional): Filter by employee ID
+- `startDate` (optional): Filter entries from this date (ISO format)
+- `endDate` (optional): Filter entries until this date (ISO format)
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "entry-1",
+      "projectId": "project-1",
+      "taskId": "task-1",
+      "employeeId": "emp-1",
+      "startTime": "2024-01-15T09:00:00Z",
+      "endTime": "2024-01-15T17:00:00Z",
+      "duration": 480,
+      "description": "Working on feature implementation",
+      "billable": true,
+      "approved": false,
+      "createdAt": "2024-01-15T09:00:00Z",
+      "updatedAt": "2024-01-15T17:00:00Z"
+    }
+  ]
+}
+```
+
+#### POST `/api/time-entries`
+Create a new time entry.
+
+**Request Body:**
+```json
+{
+  "projectId": "project-1",
+  "taskId": "task-1",
+  "employeeId": "emp-1",
+  "startTime": "2024-01-15T09:00:00Z",
+  "endTime": "2024-01-15T17:00:00Z",
+  "description": "Working on feature implementation",
+  "billable": true
+}
+```
+
+#### PUT `/api/time-entries/{id}`
+Update an existing time entry.
+
+**Request Body:**
+```json
+{
+  "description": "Updated description",
+  "billable": false,
+  "approved": true
+}
+```
+
+#### DELETE `/api/time-entries/{id}`
+Delete a time entry.
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Time entry deleted successfully"
+}
+```
+
+### Timer Operations
+
+#### POST `/api/time-entries/start-timer`
+Start a new timer for time tracking.
+
+**Request Body:**
+```json
+{
+  "projectId": "project-1",
+  "taskId": "task-1",
+  "employeeId": "emp-1",
+  "description": "Starting work on new feature"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "entry-2",
+    "projectId": "project-1",
+    "taskId": "task-1", 
+    "employeeId": "emp-1",
+    "startTime": "2024-01-15T10:00:00Z",
+    "endTime": null,
+    "duration": 0,
+    "description": "Starting work on new feature",
+    "billable": true,
+    "approved": false,
+    "createdAt": "2024-01-15T10:00:00Z",
+    "updatedAt": "2024-01-15T10:00:00Z"
+  }
+}
+```
+
+#### POST `/api/time-entries/stop-timer`
+Stop an active timer.
+
+**Request Body:**
+```json
+{
+  "entryId": "entry-2"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "entry-2",
+    "projectId": "project-1",
+    "taskId": "task-1",
+    "employeeId": "emp-1", 
+    "startTime": "2024-01-15T10:00:00Z",
+    "endTime": "2024-01-15T14:00:00Z",
+    "duration": 240,
+    "description": "Starting work on new feature",
+    "billable": true,
+    "approved": false,
+    "createdAt": "2024-01-15T10:00:00Z",
+    "updatedAt": "2024-01-15T14:00:00Z"
+  }
+}
+```
+
+### Timesheets
+
+#### GET `/api/timesheets`
+Get all timesheets.
+
+**Query Parameters:**
+- `employeeId` (optional): Filter by employee ID
+- `period` (optional): Filter by period (week, month)
+- `startDate` (optional): Filter from this date
+- `endDate` (optional): Filter until this date
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "timesheet-1",
+      "employeeId": "emp-1",
+      "period": "2024-W03",
+      "startDate": "2024-01-15",
+      "endDate": "2024-01-21",
+      "totalHours": 40,
+      "billableHours": 35,
+      "status": "pending",
+      "submittedAt": "2024-01-21T17:00:00Z",
+      "approvedAt": null,
+      "createdAt": "2024-01-15T09:00:00Z",
+      "updatedAt": "2024-01-21T17:00:00Z",
+      "entries": ["entry-1", "entry-2"]
+    }
+  ]
+}
+```
+
+#### POST `/api/timesheets`
+Create a new timesheet.
+
+**Request Body:**
+```json
+{
+  "employeeId": "emp-1",
+  "period": "2024-W03",
+  "startDate": "2024-01-15",
+  "endDate": "2024-01-21",
+  "entries": ["entry-1", "entry-2"]
+}
+```
+
+#### PUT `/api/timesheets/{id}`
+Update an existing timesheet.
+
+**Request Body:**
+```json
+{
+  "status": "approved",
+  "approvedAt": "2024-01-22T09:00:00Z"
+}
+```
+
+#### DELETE `/api/timesheets/{id}`
+Delete a timesheet.
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Timesheet deleted successfully"
+}
+```
 
 ## Complete API Endpoint List
 
@@ -536,7 +1012,14 @@ The current mock implementation has the following limitations:
 - `GET|POST /api/assets` - Assets collection
 - `GET|PUT|DELETE /api/assets/[id]` - Individual asset
 
-**Total:** 32 API endpoints covering all major business entities
+### Messaging and Contacts
+
+- `GET|POST /api/messages` - Messages collection
+- `GET|DELETE /api/messages/[id]` - Individual message
+- `GET|POST /api/contacts` - Contacts collection
+- `GET|PUT|DELETE /api/contacts/[id]` - Individual contact
+
+**Total:** 36 API endpoints covering all major business entities
 
 ## Next Steps
 

@@ -7,18 +7,27 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Paperclip, Phone, Send, Video, MoreVertical, PlusCircle } from "lucide-react";
+import { Paperclip, Phone, Send, Video, MoreVertical, PlusCircle, Search } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { useData } from '@/contexts/data-context';
 import type { Contact, Message } from '@/lib/data';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { formatDistanceToNow } from 'date-fns';
+import { ContactDialog } from '@/components/messaging/contact-dialog';
+import { MessageOptionsDialog } from '@/components/messaging/message-options-dialog';
+import { useToast } from '@/hooks/use-toast';
 
 export default function MessagingPage() {
-  const { contacts, messages, addMessage } = useData();
+  const { contacts, messages, addMessage, updateMessage, deleteMessage, addContact, updateContact, deleteContact } = useData();
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [newMessage, setNewMessage] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [contactDialogOpen, setContactDialogOpen] = useState(false);
+  const [editingContact, setEditingContact] = useState<Contact | null>(null);
+  const [messageOptionsOpen, setMessageOptionsOpen] = useState(false);
+  const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     // Select the first contact by default on mount
@@ -42,6 +51,15 @@ export default function MessagingPage() {
       .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
   }, [messages, selectedContact]);
 
+  const filteredContacts = useMemo(() => {
+    if (!searchQuery) return contacts;
+    const query = searchQuery.toLowerCase();
+    return contacts.filter(contact => 
+      contact.name.toLowerCase().includes(query) ||
+      contact.role.toLowerCase().includes(query)
+    );
+  }, [contacts, searchQuery]);
+
   const latestMessages = useMemo(() => {
     const latest: Record<string, Message> = {};
     messages.forEach(msg => {
@@ -61,6 +79,10 @@ export default function MessagingPage() {
         text: newMessage,
       });
       setNewMessage('');
+      toast({
+        title: "Message sent",
+        description: "Your message has been sent successfully.",
+      });
     }
   };
   
@@ -68,10 +90,70 @@ export default function MessagingPage() {
     setSelectedContact(contact);
   };
   
-  // Placeholder functions for CRUD operations on contacts
-  const handleAddContact = () => alert("Add contact functionality not yet implemented.");
-  const handleEditContact = (contact: Contact) => alert(`Edit contact ${contact.name} not yet implemented.`);
-  const handleDeleteContact = (contact: Contact) => alert(`Delete contact ${contact.name} not yet implemented.`);
+  const handleAddContact = () => {
+    setEditingContact(null);
+    setContactDialogOpen(true);
+  };
+  
+  const handleEditContact = (contact: Contact) => {
+    setEditingContact(contact);
+    setContactDialogOpen(true);
+  };
+  
+  const handleDeleteContact = (contact: Contact) => {
+    deleteContact(contact.id);
+    if (selectedContact?.id === contact.id) {
+      setSelectedContact(null);
+    }
+    toast({
+      title: "Contact deleted",
+      description: `${contact.name} has been removed from your contacts.`,
+    });
+  };
+
+  const handleSaveContact = (contactData: Omit<Contact, 'id'> | Contact) => {
+    if ('id' in contactData) {
+      // Edit existing contact
+      updateContact(contactData as Contact);
+      toast({
+        title: "Contact updated",
+        description: "Contact information has been updated successfully.",
+      });
+    } else {
+      // Add new contact
+      addContact(contactData);
+      toast({
+        title: "Contact added",
+        description: "New contact has been added successfully.",
+      });
+    }
+  };
+
+  const handleMessageLongPress = (message: Message) => {
+    if (message.from === 'me') {
+      setSelectedMessage(message);
+      setMessageOptionsOpen(true);
+    }
+  };
+
+  const handleEditMessage = (messageId: string, newText: string) => {
+    const message = messages.find(m => m.id === messageId);
+    if (message) {
+      updateMessage({ ...message, text: newText });
+      toast({
+        title: "Message updated",
+        description: "Your message has been updated successfully.",
+      });
+    }
+  };
+
+  const handleDeleteMessage = (messageId: string) => {
+    deleteMessage(messageId);
+    toast({
+      title: "Message deleted",
+      description: "Your message has been deleted.",
+    });
+  };
 
 
   return (
@@ -80,13 +162,23 @@ export default function MessagingPage() {
       <Card className="flex-grow grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 h-full">
         <div className="col-span-1 border-r flex flex-col">
           <div className="p-4 flex items-center justify-between gap-2">
-            <Input placeholder="Search contacts..." className="flex-grow"/>
-            <Button size="icon" variant="ghost" onClick={handleAddContact}><PlusCircle className="h-5 w-5"/></Button>
+            <div className="relative flex-grow">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input 
+                placeholder="Search contacts..." 
+                className="pl-9"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <Button size="icon" variant="ghost" onClick={handleAddContact}>
+              <PlusCircle className="h-5 w-5"/>
+            </Button>
           </div>
           <Separator/>
           <ScrollArea className="flex-grow">
             <div className="p-2">
-              {contacts.map(contact => {
+              {filteredContacts.map(contact => {
                 const lastMessage = latestMessages[contact.id];
                 return (
                     <div 
@@ -101,6 +193,7 @@ export default function MessagingPage() {
                         </Avatar>
                         <div className="flex-grow overflow-hidden">
                             <p className="font-semibold truncate">{contact.name}</p>
+                            <p className="text-xs text-muted-foreground truncate">{contact.role}</p>
                             {lastMessage && <p className="text-sm text-muted-foreground truncate">{lastMessage.text}</p>}
                         </div>
                         <DropdownMenu>
@@ -115,6 +208,11 @@ export default function MessagingPage() {
                     </div>
                 );
               })}
+              {filteredContacts.length === 0 && (
+                <div className="p-4 text-center text-muted-foreground">
+                  {searchQuery ? 'No contacts found' : 'No contacts yet'}
+                </div>
+              )}
             </div>
           </ScrollArea>
         </div>
@@ -140,13 +238,34 @@ export default function MessagingPage() {
                     <ScrollArea className="flex-grow p-4 bg-gray-50 dark:bg-gray-800/20" ref={scrollAreaRef}>
                         <div className="flex flex-col gap-4">
                             {selectedContactMessages.map((msg) => (
-                                <div key={msg.id} className={`flex flex-col gap-1 ${msg.from === 'me' ? 'items-end' : 'items-start'}`}>
-                                    <div className={`p-3 rounded-lg max-w-xs lg:max-w-md ${msg.from === 'me' ? 'bg-primary text-primary-foreground' : 'bg-card'}`}>
-                                    {msg.text}
+                                <div 
+                                  key={msg.id} 
+                                  className={`flex flex-col gap-1 ${msg.from === 'me' ? 'items-end' : 'items-start'}`}
+                                  onContextMenu={(e) => {
+                                    e.preventDefault();
+                                    handleMessageLongPress(msg);
+                                  }}
+                                >
+                                    <div 
+                                      className={`p-3 rounded-lg max-w-xs lg:max-w-md cursor-pointer ${
+                                        msg.from === 'me' 
+                                          ? 'bg-primary text-primary-foreground hover:bg-primary/90' 
+                                          : 'bg-card hover:bg-accent'
+                                      }`}
+                                      onClick={() => msg.from === 'me' && handleMessageLongPress(msg)}
+                                    >
+                                      {msg.text}
                                     </div>
-                                    <p className="text-xs text-muted-foreground px-1">{formatDistanceToNow(new Date(msg.timestamp), { addSuffix: true })}</p>
+                                    <p className="text-xs text-muted-foreground px-1">
+                                      {formatDistanceToNow(new Date(msg.timestamp), { addSuffix: true })}
+                                    </p>
                                 </div>
                             ))}
+                            {selectedContactMessages.length === 0 && (
+                              <div className="text-center text-muted-foreground py-8">
+                                No messages yet. Start the conversation!
+                              </div>
+                            )}
                         </div>
                     </ScrollArea>
                     <div className="p-4 border-t bg-card">
